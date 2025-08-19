@@ -22,7 +22,10 @@ export const collections = {
       ...base,
       series: z.enum(["crypto","ai","founder"]),
       ticker: z.string().optional(),
-      links: z.array(z.object({ title: z.string(), url: z.string() })).default([]),
+      links: z.array(z.object({
+        title: z.string().optional(),
+        url: z.string().optional(),
+      })).default([]),
       readingTime: z.number().default(2)
     })
   }),

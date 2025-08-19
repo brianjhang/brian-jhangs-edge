@@ -16,10 +16,11 @@ const posts = (await getCollection("daily")).sort((a,b)=> (a.data.date < b.data.
         --shadow: 0 4px 12px rgba(0,0,0,0.15);
         --shadow-hover: 0 8px 25px rgba(0,0,0,0.25);
       }
+      * { box-sizing: border-box; }
       body{font-family:ui-sans-serif,system-ui;line-height:1.7;margin:0;background:var(--bg);color:#e5e7eb;min-height:100vh}
       .wrap{max-width:1000px;margin:40px auto;padding:0 20px}
       header{position:sticky;top:0;background:rgba(11,11,12,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:20;box-shadow:var(--shadow)}
-      .header-content{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;padding-top:16px;padding-bottom:16px}
+      .header-content{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:64px}
       .brand{font-weight:800;color:#fff;text-decoration:none;font-size:18px}
       nav{display:flex;gap:20px}
       nav a{color:#cbd5e1;font-weight:500;transition:color 0.2s ease;text-decoration:none}

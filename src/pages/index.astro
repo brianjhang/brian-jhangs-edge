@@ -1,110 +1,158 @@
 ---
 import { getCollection } from "astro:content";
 
-const daily = await getCollection("daily");
+const all = await getCollection("daily");
+const byDateDesc = (a,b) => new Date(b.data.date) - new Date(a.data.date);
+const latest = all.toSorted(byDateDesc);
 
-// 取各系列最新一篇
-function pickLatest(series) {
-  return daily
-    .filter((p) => p.data.series === series)
-    .sort((a,b) => (a.data.date < b.data.date ? 1 : -1))[0];
-}
+const pickLatest = (series) => latest.find(p => p.data.series === series);
 const latestCrypto = pickLatest("crypto");
 const latestAI = pickLatest("ai");
 const latestFounder = pickLatest("founder");
----
 
+const recent = latest.slice(0, 6);
+---
 <html lang="zh-Hant">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Brian Jhang's Edge — Startups × AI × Web3</title>
     <meta name="description" content="創業 × AI × Web3 的可執行知識基地" />
+    <meta property="og:title" content="Brian Jhang's Edge" />
+    <meta property="og:description" content="Startups × AI × Web3 — Actionable Insights for the Next Builders" />
+    <meta property="og:type" content="website" />
     <style>
-      .wrap{max-width:1100px;margin:0 auto;padding:0 16px;}
-      .btn{display:inline-block;padding:10px 14px;border-radius:12px;border:1px solid #111;color:#111;text-decoration:none;}
-      .grid{display:grid;gap:16px;}
+      :root { --bg:#0b0b0c; --muted:#9ca3af; --card:#0f1115; --border:#1f2937; --brand:#fafafa; }
+      *{box-sizing:border-box}
+      body{margin:0;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto;line-height:1.6;background:#0b0b0c;color:#e5e7eb}
+      a{color:inherit;text-decoration:none}
+      .wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+      header{position:sticky;top:0;background:rgba(11,11,12,.7);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:20}
+      header .bar{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+      nav{display:flex;gap:18px}
+      nav a{color:#cbd5e1}
+      nav a:hover{color:#fff}
+      .btn{display:inline-block;padding:10px 14px;border-radius:12px;border:1px solid #374151}
+      .btn.primary{background:#fff;color:#111;border-color:#fff}
+      .hero{padding:80px 0 56px;border-bottom:1px solid var(--border);background:radial-gradient(1200px 400px at 50% -10%, rgba(255,255,255,.06), transparent)}
+      .hero h1{margin:0 0 10px 0;font-size:44px;letter-spacing:.2px;color:#fff}
+      .hero p{margin:0;color:#cbd5e1}
+      .cta{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+      .grid{display:grid;gap:16px}
       @media(min-width:900px){.grid-3{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:repeat(2,1fr)}}
-      .card{border:1px solid #e5e7eb;border-radius:16px;padding:16px;background:#fff;}
-      .muted{color:#6b7280;font-size:14px}
-      header{padding:16px;border-bottom:1px solid #eee;background:#fff;position:sticky;top:0}
-      footer{padding:24px 0;border-top:1px solid #eee;background:#fff;margin-top:48px}
-      .hero{padding:80px 0;background:#0b0b0c;color:#fff;text-align:center}
-      .hero h1{font-size:40px;margin:0 0 8px 0}
-      .hero p{color:#cbd5e1}
+      .section{padding:28px 0}
+      .title{margin:0 0 12px 0;font-size:22px}
+      .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px}
+      .muted{color:var(--muted);font-size:14px}
+      .tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#cbd5e1;background:#111827;border:1px solid #1f2937;border-radius:999px;padding:2px 8px}
+      footer{border-top:1px solid var(--border);padding:28px 0;color:#9ca3af}
     </style>
   </head>
-  <body style="font-family:ui-sans-serif,system-ui;line-height:1.6;margin:0;background:#fafafa;">
+  <body>
     <header>
-      <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;">
-        <a href="/" style="text-decoration:none;color:#111;font-weight:800">Brian Jhang's Edge</a>
-        <nav style="display:flex;gap:16px;">
-          <a href="/daily" style="color:#333;text-decoration:none">今日精選</a>
-          <a href="/newsletter" style="color:#333;text-decoration:none">Newsletter</a>
-          <a href="https://github.com" style="color:#333;text-decoration:none">GitHub</a>
+      <div class="wrap bar">
+        <a href="/" style="font-weight:800;color:#fff">Brian Jhang's Edge</a>
+        <nav>
+          <a href="/daily">今日精選</a>
+          <a href="/newsletter">Newsletter</a>
+          <a href="https://x.com" rel="noopener" target="_blank">X</a>
+          <a href="https://github.com/brianjhang" rel="noopener" target="_blank">GitHub</a>
         </nav>
       </div>
     </header>
 
     <section class="hero">
       <div class="wrap">
-        <h1>Brian Jhang's Edge</h1>
-        <p>Startups × AI × Web3 — Actionable Insights for the Next Builders<br/>創業 × AI × Web3 的可執行知識基地</p>
-        <div style="margin-top:16px;display:flex;gap:12px;justify-content:center;">
-          <a class="btn" href="#daily">查看今日精選</a>
-          <a class="btn" href="/daily">全部文章</a>
+        <h1>Startups × AI × Web3</h1>
+        <p>Actionable Insights for the Next Builders ・ 創業 × AI × Web3 的可執行知識基地</p>
+        <div class="cta">
+          <a class="btn primary" href="#daily">查看今日精選</a>
+          <a class="btn" href="/daily">所有文章</a>
         </div>
       </div>
     </section>
 
     <main class="wrap">
-      <section id="daily" style="padding:32px 0;">
-        <h2 style="margin:0 0 12px 0">今日精選</h2>
+      <section id="daily" class="section">
+        <h2 class="title">今日精選</h2>
         <div class="grid grid-3">
           {latestCrypto && (
             <a class="card" href={`/daily/${latestCrypto.slug}`}>
-              <div class="muted">{latestCrypto.data.date} · Crypto Top 100</div>
-              <h3 style="margin:6px 0 8px 0">{latestCrypto.data.title}</h3>
+              <div class="muted">{latestCrypto.data.date} · <span class="tag">幣圈筆記</span></div>
+              <h3 style="margin:6px 0 8px 0;color:#fff">{latestCrypto.data.title}</h3>
               <p class="muted">{latestCrypto.data.summary}</p>
             </a>
           )}
           {latestAI && (
             <a class="card" href={`/daily/${latestAI.slug}`}>
-              <div class="muted">{latestAI.data.date} · AI Insight</div>
-              <h3 style="margin:6px 0 8px 0">{latestAI.data.title}</h3>
+              <div class="muted">{latestAI.data.date} · <span class="tag">AI 小百科</span></div>
+              <h3 style="margin:6px 0 8px 0;color:#fff">{latestAI.data.title}</h3>
               <p class="muted">{latestAI.data.summary}</p>
             </a>
           )}
           {latestFounder && (
             <a class="card" href={`/daily/${latestFounder.slug}`}>
-              <div class="muted">{latestFounder.data.date} · Founder's Line</div>
-              <h3 style="margin:6px 0 8px 0">{latestFounder.data.title}</h3>
+              <div class="muted">{latestFounder.data.date} · <span class="tag">創業筆記</span></div>
+              <h3 style="margin:6px 0 8px 0;color:#fff">{latestFounder.data.title}</h3>
               <p class="muted">{latestFounder.data.summary}</p>
             </a>
+          )}
+          {(!latestCrypto && !latestAI && !latestFounder) && (
+            <div class="muted">（尚無內容，請稍後再試）</div>
           )}
         </div>
       </section>
 
-      <section style="padding:8px 0 32px;">
-        <div class="grid grid-2">
+      <section class="section">
+        <h2 class="title">最新更新</h2>
+        <div class="grid grid-3">
+          {recent.map(p => (
+            <a class="card" href={`/daily/${p.slug}`}>
+              <div class="muted">{p.data.date} · {p.data.series}</div>
+              <h3 style="margin:6px 0 8px 0;color:#fff">{p.data.title}</h3>
+              <p class="muted">{p.data.summary}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="title">學習路徑</h2>
+        <div class="grid grid-3">
           <div class="card">
-            <div class="muted">學習路徑</div>
-            <h3 style="margin:6px 0 8px 0">Web3 入門 → 進階</h3>
-            <p class="muted">從錢包、安全、鏈上數據到風控框架的系統化指南。</p>
+            <div class="tag">Web3 入門 → 進階</div>
+            <h3 style="margin:8px 0 8px;color:#fff">交易所、鏈上數據、風控框架</h3>
+            <p class="muted">從錢包、安全與基礎概念開始，逐步建立你的投資決策系統。</p>
           </div>
           <div class="card">
-            <div class="muted">研究報告</div>
-            <h3 style="margin:6px 0 8px 0">市場周報 & 主題深潛</h3>
-            <p class="muted">每週/每月的觀點與圖表，幫助你把握敘事與節奏。</p>
+            <div class="tag">AI 應用與 Vibe Coding</div>
+            <h3 style="margin:8px 0 8px;color:#fff">從 0 到 1 做出原型</h3>
+            <p class="muted">框架 + 小步快跑，結合 LoRA / RAG / Agent 打出第一版產品。</p>
           </div>
+          <div class="card">
+            <div class="tag">連續創業框架</div>
+            <h3 style="margin:8px 0 8px;color:#fff">從假設 → 驗證 → 上線</h3>
+            <p class="muted">市場—產品配適、定價、MVP、迭代節奏與團隊心態。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2 class="title">Newsletter</h2>
+        <div class="card" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+          <p class="muted" style="margin:0">每週一次，把加密 × AI × 創業的重點帶到你的信箱。</p>
+          <form action="#" method="post" style="display:flex;gap:10px;flex-wrap:wrap;margin-left:auto">
+            <input type="email" placeholder="輸入你的 Email" style="border:1px solid var(--border);background:#0b0b0c;color:#fff;border-radius:12px;padding:10px 12px;min-width:240px" />
+            <button class="btn primary" type="button">訂閱</button>
+          </form>
         </div>
       </section>
     </main>
 
     <footer>
-      <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-        <p class="muted">© {new Date().getFullYear()} Brian Jhang's Edge — 教育用途，非投資建議。</p>
-        <div class="muted">X · Threads · IG · FB</div>
+      <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <p class="muted" style="margin:0">© {new Date().getFullYear()} Brian Jhang's Edge ・ 教育用途，非投資建議。</p>
+        <p class="muted" style="margin:0">X ・ Threads ・ IG ・ FB</p>
       </div>
     </footer>
   </body>

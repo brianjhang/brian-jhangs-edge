@@ -76,7 +76,7 @@ const seriesMap = {
         padding: 0 20px;
         display: flex;
         align-items: center;
-        gap: 16px;
+        justify-content: space-between;
       }
       
       .breadcrumb {
@@ -348,16 +348,22 @@ const seriesMap = {
     <header>
       <div class="header-content">
         <a href="/" class="brand">Brian Jhang's Edge</a>
-        <nav class="breadcrumb">
-          <a href="/daily">今日精選</a>
-          <span>·</span>
-          <span>{seriesMap[entry.data.series]?.name}</span>
+        <nav style="display:flex;gap:20px">
+          <a href="/daily" style="color:#cbd5e1;font-weight:500;transition:color 0.2s ease" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">今日精選</a>
+          <a href="/about" style="color:#cbd5e1;font-weight:500;transition:color 0.2s ease" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#cbd5e1'">關於</a>
         </nav>
       </div>
     </header>
     
     <main class="wrap">
       <div class="article-header">
+        <nav class="breadcrumb" style="margin-bottom: 16px;">
+          <a href="/">首頁</a>
+          <span>·</span>
+          <a href="/daily">今日精選</a>
+          <span>·</span>
+          <span>{seriesMap[entry.data.series]?.name}</span>
+        </nav>
         <div class="series-tag" style={`background: ${seriesMap[entry.data.series]?.color}`}>
           {seriesMap[entry.data.series]?.name}
         </div>

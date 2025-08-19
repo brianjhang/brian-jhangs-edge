@@ -1,7 +1,13 @@
 {
   "extends": "astro/tsconfigs/strict",
+<<<<<<< HEAD
   "compilerOptions": {
     "jsx": "preserve",
     "baseUrl": "."
   }
 }
+=======
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+>>>>>>> ba53c07 (init: Brian Jhang's Edge site)

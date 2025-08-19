@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "brianjhangs-edge",
   "private": true,
   "version": "0.0.1",
@@ -12,4 +13,21 @@
     "astro": "^4.14.0"
   },
   "packageManager": "pnpm@9.7.1"
+=======
+  "name": "deeply-doppler",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.35.2",
+    "astro": "^5.6.1",
+    "sharp": "^0.34.2"
+  }
+>>>>>>> ba53c07 (init: Brian Jhang's Edge site)
 }

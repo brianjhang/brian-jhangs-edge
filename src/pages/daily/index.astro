@@ -18,6 +18,12 @@ const posts = (await getCollection("daily")).sort((a,b)=> (a.data.date < b.data.
       }
       body{font-family:ui-sans-serif,system-ui;line-height:1.7;margin:0;background:var(--bg);color:#e5e7eb;min-height:100vh}
       .wrap{max-width:1000px;margin:40px auto;padding:0 20px}
+      header{position:sticky;top:0;background:rgba(11,11,12,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:20;box-shadow:var(--shadow)}
+      .header-content{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;padding-top:16px;padding-bottom:16px}
+      .brand{font-weight:800;color:#fff;text-decoration:none;font-size:18px}
+      nav{display:flex;gap:20px}
+      nav a{color:#cbd5e1;font-weight:500;transition:color 0.2s ease;text-decoration:none}
+      nav a:hover{color:#fff}
       .card{
         background:var(--card);
         border:1px solid var(--border);
@@ -58,6 +64,16 @@ const posts = (await getCollection("daily")).sort((a,b)=> (a.data.date < b.data.
     </style>
   </head>
   <body>
+    <header>
+      <div class="header-content">
+        <a href="/" class="brand">Brian Jhang's Edge</a>
+        <nav>
+          <a href="/daily" style="color:#fff">今日精選</a>
+          <a href="/about">關於</a>
+        </nav>
+      </div>
+    </header>
+    
     <main class="wrap">
       <a href="/" class="back-link">← 回到首頁</a>
       <h1>今日精選</h1>

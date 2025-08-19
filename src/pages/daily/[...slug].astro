@@ -1,0 +1,42 @@
+---
+import { getCollection, getEntry, getEntryBySlug } from "astro:content";
+import { MarkdownInstance } from "astro";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("daily");
+  return entries.map((e) => ({
+    params: { slug: e.slug.split("/") }, // 支援 /crypto/2025-... 這種巢狀路徑
+    props: { entry: e }
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{entry.data.title} | Brian Jhang's Edge</title>
+    <meta name="description" content={entry.data.summary} />
+  </head>
+  <body style="font-family: ui-sans-serif, system-ui; line-height:1.6; margin:0;">
+    <header style="position:sticky;top:0;background:#fff;border-bottom:1px solid #eee;padding:12px 16px;">
+      <a href="/" style="text-decoration:none;color:#111;font-weight:700;">Brian Jhang's Edge</a>
+      <a href="/daily" style="margin-left:16px;color:#333;text-decoration:none;">今日精選</a>
+    </header>
+
+    <main style="max-width:960px;margin:24px auto;padding:0 16px;">
+      <h1 style="margin:8px 0 4px 0;">{entry.data.title}</h1>
+      <div style="color:#6b7280;font-size:14px;">
+        {entry.data.date} · {entry.data.series} · {entry.data.readingTime ?? 3} min
+      </div>
+      <article style="margin-top:16px;">
+        <Content />
+      </article>
+      <hr style="margin:32px 0;border:none;border-top:1px solid #eee" />
+      <p style="color:#6b7280;font-size:14px;">教育用途，非投資建議。</p>
+    </main>
+  </body>
+</html>

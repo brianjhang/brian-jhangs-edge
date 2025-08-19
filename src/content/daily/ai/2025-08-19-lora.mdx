@@ -1,0 +1,24 @@
+---
+title: "LoRA 精煉：小數據微調大模型的工程要點"
+date: "2025-08-19"
+series: "ai"
+lang: "zh-TW"
+type: "education"
+tags: ["lora","finetune","vibe-coding"]
+summary: "LoRA 以低秩矩陣注入能力，是個人與小團隊的最佳性價比微調手段。"
+---
+
+### TL;DR
+低成本微調首選；先用預訓練能力，再以低秩參數注入領域知識。
+
+### 核心要點
+- 參數經驗：r=4–16、alpha=8–32、lr 先小後大
+- 資料：少量高質資料 > 大量雜訊
+- 評測：建立任務級指標（EM/F1/ROUGE）與人工 Spot-check
+- 何時改用 RAG：知識持續變動、高維檢索需求強
+
+### 工程片段（概念）
+```bash
+# peft + transformers 最小示意（僅概念）
+peft_config = LoraConfig(r=8, lora_alpha=16, target_modules=["q_proj","v_proj"])
+```

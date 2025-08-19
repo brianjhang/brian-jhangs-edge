@@ -1,0 +1,37 @@
+name: Daily Draft & Deploy
+on:
+  schedule:
+    - cron: "0 0 * * *"  # 00:00 UTC = 08:00 Taipei
+  workflow_dispatch:
+
+jobs:
+  draft_build_push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # allow pushing back to repo
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Generate today's crypto draft
+        run: node scripts/crypto-draft.mjs || true
+      - name: (Optional) Translate daily posts (zh-TW -> zh-CN/en)
+        run: node scripts/translate.mjs || true
+      - name: Commit changes if any
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "chore(daily): auto-draft $(date -u +%F)"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+      - name: Build site (optional, Vercel will build on push)
+        run: |
+          npm run build || true

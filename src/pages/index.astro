@@ -117,9 +117,7 @@ const recent = latest.slice(0, 6);
         <a href="/" style="font-weight:800;color:#fff">Brian Jhang's Edge</a>
         <nav>
           <a href="/daily">今日精選</a>
-          <a href="/newsletter">Newsletter</a>
-          <a href="https://x.com" rel="noopener" target="_blank">X</a>
-          <a href="https://github.com/brianjhang" rel="noopener" target="_blank">GitHub</a>
+          <a href="/about">關於</a>
         </nav>
       </div>
     </header>
@@ -205,7 +203,12 @@ const recent = latest.slice(0, 6);
     <footer>
       <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
         <p class="muted" style="margin:0">© {new Date().getFullYear()} Brian Jhang's Edge ・ 教育用途，非投資建議。</p>
-        <p class="muted" style="margin:0">X ・ Threads ・ IG ・ FB</p>
+        <div style="display:flex;gap:16px;align-items:center">
+          <a href="https://x.com/brianjhang" rel="noopener" target="_blank" class="muted" style="transition:color 0.2s ease" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#9ca3af'">X</a>
+          <a href="https://threads.net/@brianjhang" rel="noopener" target="_blank" class="muted" style="transition:color 0.2s ease" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#9ca3af'">Threads</a>
+          <a href="https://facebook.com/brianjhang" rel="noopener" target="_blank" class="muted" style="transition:color 0.2s ease" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#9ca3af'">Facebook</a>
+          <a href="https://github.com/brianjhang" rel="noopener" target="_blank" class="muted" style="transition:color 0.2s ease" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#9ca3af'">GitHub</a>
+        </div>
       </div>
     </footer>
   </body>

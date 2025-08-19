@@ -1,12 +1,16 @@
 ---
 import { getCollection } from "astro:content";
+
 export async function getStaticPaths() {
   const entries = await getCollection("daily");
-  return entries.map((e) => ({
-    params: { slug: e.slug.split("/") },
-    props: { entry: e }
+  return entries.map((entry) => ({
+    // 注意：這裡要回傳字串，而不是陣列
+    // 例如 "crypto/2025-08-19-bnb"
+    params: { slug: entry.slug },
+    props: { entry }
   }));
 }
+
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---

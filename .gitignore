@@ -19,3 +19,9 @@ pnpm-debug.log*
 
 # macOS-specific files
 .DS_Store
+
+# Private content planning files (not for public)
+src/content/ideas/
+docs/internal/
+README-dev.md
+*_PLANNING.md

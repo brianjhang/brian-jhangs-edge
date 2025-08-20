@@ -1,63 +1,107 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+這個文件為 Claude Code (claude.ai/code) 提供在此專案中工作的指導說明。
 
-## Project Overview
+## 專案概述
 
-Brian Jhang's Edge is an Astro-based multilingual knowledge website focused on Startups × AI × Web3. It features daily content in three series: crypto analysis, AI insights, and founder notes, delivered through a "daily × weekly × monthly" content strategy.
+Brian Jhang's Edge 是基於 Astro 的多語言知識網站，專注於 Startups × AI × Web3。特色是每日三大系列內容：幣圈筆記、AI 小百科、創業筆記，採用「每日 × 每週 × 每月」的內容策略。
 
-## Development Commands
+## 開發指令
 
-### Core Commands
-- `npm run dev` - Start development server on http://localhost:4321
-- `npm run build` - Build the site for production 
-- `npm run preview` - Preview the built site locally
+### 核心指令
+- `npm run dev` - 啟動開發伺服器於 http://localhost:4321
+- `npm run build` - 建置生產版本
+- `npm run preview` - 本地預覽建置後的網站
 
-### Content Generation
-- `node scripts/crypto-draft.mjs` - Auto-generate daily crypto article drafts using top 100 crypto list rotation
-- `bash tools/autofix_daily.sh` - Fix frontmatter issues and regenerate daily pages (includes git commit/push)
+### 內容生成
+- `node scripts/crypto-draft.mjs` - 自動生成每日加密貨幣文章草稿（使用 top 100 輪替）
+- `node scripts/llm-auto-generator.mjs --series=ai|crypto|founder` - LLM 自動化內容生成系統
+- `bash tools/autofix_daily.sh` - 修復 frontmatter 問題並重新生成每日頁面（包含 git commit/push）
 
-## Architecture
+## 架構說明
 
-### Content Collections (src/content/config.ts)
-The site uses Astro content collections with three main types:
-- `daily` - Daily articles with series: "crypto", "ai", "founder"
-- `weekly` - Weekly market reports 
-- `monthly` - Deep-dive thematic content
+### 內容集合 (src/content/config.ts)
+網站使用 Astro 內容集合，包含三種主要類型：
+- `daily` - 每日文章，包含系列：「crypto」、「ai」、「founder」
+- `weekly` - 每週市場報告
+- `monthly` - 深度主題內容
 
-All collections share a base schema with multilingual support (zh-TW, zh-CN, en) and social sharing flags.
+所有集合共享基礎 schema，支援多語言（zh-TW, zh-CN, en）和社交分享標記。
 
-### Key Components
-- `EmbedTradingView.astro` - TradingView chart embeds for crypto content
-- Main homepage (`src/pages/index.astro`) - Custom dark theme with "today's picks" logic that prioritizes today's date then falls back to latest per series
+### 關鍵元件
+- `EmbedTradingView.astro` - 用於加密貨幣內容的 TradingView 圖表嵌入
+- 主頁 (`src/pages/index.astro`) - 自訂深色主題，具有「今日精選」邏輯，優先顯示今日日期的文章，然後回退到各系列最新文章
 
-### Content Structure
-Daily content is organized by series in `src/content/daily/{series}/` with MDX format. Each article includes:
-- Frontmatter with title, date, series, summary, tags, links, reading time
-- Social sharing configuration
-- Optional ticker symbol for crypto content
+### 內容結構
+每日內容按系列組織在 `src/content/daily/{series}/`，使用 MDX 格式。每篇文章包含：
+- Frontmatter：標題、日期、系列、摘要、標籤、連結、閱讀時間
+- 社交分享設定
+- 加密貨幣內容的可選代碼符號
 
-### Automation
-- GitHub Actions auto-deployment to Vercel on main branch push
-- Daily crypto draft generation with rotation through top 100 cryptocurrencies
-- Automated frontmatter fixing and link normalization
+### 自動化功能
+- GitHub Actions 在 main 分支推送時自動部署到 Vercel
+- 每日加密貨幣草稿生成，輪替使用 top 100 加密貨幣
+- LLM 自動化三主題文章生成系統
+- 自動化 frontmatter 修復和連結正規化
 
-### Routing
-- `/` - Homepage with today's featured articles and latest updates
-- `/daily` - All daily articles index
-- `/daily/[slug]` - Individual article pages with breadcrumb navigation
+### 路由結構
+- `/` - 主頁，顯示今日精選文章和最新更新
+- `/daily` - 所有每日文章索引
+- `/daily/[slug]` - 個別文章頁面，包含麵包屑導航
 
-## Development Notes
+## 開發注意事項
 
-- Uses Astro 5.x with MDX integration
-- TypeScript configured with path aliases (`@/` → `src/`)
-- Site deployed to brianjhang.com via Vercel
-- Content drafts auto-created in Taiwan timezone (Asia/Taipei)
-- Starlight integration present but primarily using custom pages
+- 使用 Astro 5.x 與 MDX 整合
+- TypeScript 設定包含路徑別名（`@/` → `src/`）
+- 網站透過 Vercel 部署到 brianjhang.com
+- 內容草稿自動建立於台灣時區（Asia/Taipei）
+- 整合 Starlight 但主要使用自訂頁面
 
-## Content Workflow
+## 內容工作流程
 
-1. Auto-generate crypto drafts: `node scripts/crypto-draft.mjs`
-2. Edit content in `src/content/daily/{series}/`
-3. Run `bash tools/autofix_daily.sh` to fix any schema issues
-4. Content automatically appears on homepage if dated today, otherwise in "latest updates"
+### 傳統方式
+1. 自動生成加密貨幣草稿：`node scripts/crypto-draft.mjs`
+2. 在 `src/content/daily/{series}/` 編輯內容
+3. 執行 `bash tools/autofix_daily.sh` 修復任何 schema 問題
+4. 內容若日期為今天會自動顯示在主頁，否則顯示在「最新更新」
+
+### LLM 自動化方式 (推薦)
+1. 設定 LLM API 金鑰：`export LLM_API_KEY=your_key`
+2. 選擇系列生成：`node scripts/llm-auto-generator.mjs --series=ai|crypto|founder`
+3. 系統會自動：
+   - 從主題清單選擇下一個待寫主題
+   - 使用 LLM 生成高品質文章內容
+   - 建立正確格式的 MDX 檔案
+   - 生成多平台社交媒體內容
+   - 更新主題清單狀態
+
+## 主題管理
+
+### 主題清單位置
+- `src/content/ideas/ai-topics.md` - AI 小百科主題與狀態追蹤
+- `src/content/ideas/crypto-topics.md` - 幣圈筆記主題清單
+- `src/content/ideas/founder-topics.md` - 創業筆記主題清單
+
+### 社交媒體內容
+- 自動生成多平台內容儲存在 `docs/internal/social-content-YYYY-MM-DD.md`
+- 包含 Twitter、Threads、Facebook、小紅書、今日頭條版本
+- Threads 平台每個推文只使用一個 hashtag
+- 中國大陸版本使用簡體中文且移除 markdown 格式
+
+## 內容標準
+
+### AI 小百科 (2000-2500字)
+專注於 AI 技術的深入淺出解析，包含技術原理、實戰應用、工具推薦
+
+### 幣圈筆記 (2500-3000字)  
+客觀教育導向的加密貨幣分析，嚴格避免投資建議，必須包含風險聲明
+
+### 創業筆記 (2500-3000字)
+經典商業智慧的現代應用，提供可執行的創業框架和實戰指南
+
+## 重要提醒
+
+- 加密貨幣內容必須包含風險聲明，不可包含價格預測或投資建議
+- 所有內容以教育為目的，保持客觀中立
+- 繁體中文使用台灣用語習慣
+- 簡體中文版本適應大陸用戶表達方式

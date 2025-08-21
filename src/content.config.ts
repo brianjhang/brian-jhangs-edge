@@ -83,4 +83,17 @@ export const collections = {
       readingTime: z.number().default(2)
     })
   }),
+  // Topic planning and tracking collection
+  ideas: defineCollection({
+    type: "content",
+    schema: z.object({
+      title: z.string(),
+      description: z.string().optional(),
+      category: z.enum(["ai","crypto","startup"]),
+      status: z.enum(["draft","planned","published"]).default("draft"),
+      priority: z.enum(["high","medium","low"]).default("medium"),
+      tags: z.array(z.string()).default([]),
+      lastUpdated: z.string()
+    })
+  }),
 };

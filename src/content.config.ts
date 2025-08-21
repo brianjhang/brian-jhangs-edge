@@ -1,6 +1,4 @@
 import { defineCollection, z } from 'astro:content';
-import { docsLoader } from '@astrojs/starlight/loaders';
-import { docsSchema } from '@astrojs/starlight/schema';
 
 const base = {
   title: z.string(),
@@ -18,7 +16,6 @@ const base = {
 };
 
 export const collections = {
-	docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
   daily: defineCollection({
     type: "content",
     schema: z.object({

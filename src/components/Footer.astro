@@ -1,0 +1,64 @@
+---
+// Footer 組件 - 統一所有頁面的頁尾
+---
+
+<footer>
+  <div class="wrap">
+    <p class="copyright">© {new Date().getFullYear()} Brian Jhang's Edge ・ 教育內容，非投資建議</p>
+    <div class="social-links">
+      <a href="https://x.com/brianjhang" rel="noopener" target="_blank" class="social-link">X</a>
+      <a href="https://threads.net/@brianjhang" rel="noopener" target="_blank" class="social-link">Threads</a>
+      <a href="https://www.facebook.com/iambrianjhang" rel="noopener" target="_blank" class="social-link">Facebook</a>
+      <a href="https://github.com/brianjhang" rel="noopener" target="_blank" class="social-link">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    border-top: 1px solid var(--border, #1f2937);
+    padding: 32px 0;
+    color: var(--muted, #9ca3af);
+    background: rgba(15,17,21,0.5);
+  }
+  
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .copyright {
+    margin: 0;
+    color: var(--muted, #9ca3af);
+  }
+  
+  .social-links {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  
+  .social-link {
+    color: var(--muted, #9ca3af);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  .social-link:hover {
+    color: #fff;
+  }
+  
+  @media (max-width: 768px) {
+    .wrap {
+      flex-direction: column;
+      text-align: center;
+      gap: 16px;
+    }
+  }
+</style>

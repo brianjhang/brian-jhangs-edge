@@ -1,216 +1,307 @@
 ---
 import { getCollection } from "astro:content";
+import Layout from '../layouts/Layout.astro';
 
-const all = await getCollection("daily");
-const byDateDesc = (a,b) => new Date(b.data.date) - new Date(a.data.date);
-const latest = all.toSorted(byDateDesc);
+// 獲取各個主題的文章
+const aiPosts = await getCollection("ai");
+const startupPosts = await getCollection("startup");  
+const cryptoPosts = await getCollection("crypto");
 
-// Get today's date in YYYY-MM-DD format (Taiwan timezone)
-const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Taipei' });
+// 按日期排序的函數
+const byDateDesc = (a, b) => new Date(b.data.date) - new Date(a.data.date);
 
-// Function to pick today's article first, fallback to latest
-const pickToday = (series) => {
-  const todayArticle = all.find(p => p.data.series === series && p.data.date === today);
-  return todayArticle || latest.find(p => p.data.series === series);
-};
+// 獲取每個主題的最新文章
+const latestAI = aiPosts.toSorted(byDateDesc)[0];
+const latestStartup = startupPosts.toSorted(byDateDesc)[0];
+const latestCrypto = cryptoPosts.toSorted(byDateDesc)[0];
 
-const latestCrypto = pickToday("crypto");
-const latestAI = pickToday("ai");
-const latestFounder = pickToday("founder");
-
-const recent = latest.slice(0, 6);
+// 合併所有文章並按日期排序，用於顯示最新文章
+const allPosts = [...aiPosts, ...startupPosts, ...cryptoPosts];
+const recentPosts = allPosts.toSorted(byDateDesc).slice(0, 6);
 ---
-<html lang="zh-Hant">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Brian Jhang's Edge — Startups × AI × Web3</title>
-    <meta name="description" content="創業 × AI × Web3 的可執行知識基地" />
-    <meta property="og:title" content="Brian Jhang's Edge" />
-    <meta property="og:description" content="Startups × AI × Web3 — Actionable Insights for the Next Builders" />
-    <meta property="og:type" content="website" />
-    
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7F14DYS5K2"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-7F14DYS5K2');
-    </script>
-    <style>
-      :root { 
-        --bg:#0b0b0c; 
-        --muted:#9ca3af; 
-        --card:#0f1115; 
-        --border:#1f2937; 
-        --brand:#fafafa;
-        --card-hover:#121218;
-        --shadow: 0 4px 12px rgba(0,0,0,0.15);
-        --shadow-hover: 0 8px 25px rgba(0,0,0,0.25);
-      }
-      *{box-sizing:border-box}
-      body{margin:0;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto;line-height:1.7;background:#0b0b0c;color:#e5e7eb}
-      a{color:inherit;text-decoration:none}
-      .wrap{max-width:1200px;margin:0 auto;padding:0 20px}
-      header{position:sticky;top:0;background:rgba(11,11,12,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:20;box-shadow:var(--shadow)}
-      .header-content{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;padding-top:16px;padding-bottom:16px}
-      .brand{font-weight:800;color:#fff;text-decoration:none;font-size:18px}
-      nav{display:flex;gap:20px}
-      nav a{color:#cbd5e1;font-weight:500;transition:color 0.2s ease;text-decoration:none}
-      nav a:hover{color:#fff}
-      .btn{display:inline-block;padding:12px 18px;border-radius:12px;border:1px solid #374151;font-weight:500;transition:all 0.2s ease}
-      .btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
-      .btn.primary{background:#fff;color:#111;border-color:#fff}
-      .btn.primary:hover{background:#f0f0f0}
-      .hero{padding:90px 0 60px;border-bottom:1px solid var(--border);background:linear-gradient(135deg, #0b0b0c 0%, #111318 50%, #0b0b0c 100%)}
-      .hero h1{margin:0 0 12px 0;font-size:48px;font-weight:800;letter-spacing:-0.02em;color:#fff;line-height:1.1}
-      .hero p{margin:0;color:#cbd5e1;font-size:18px;line-height:1.6}
-      .cta{margin-top:24px;display:flex;gap:16px;flex-wrap:wrap}
-      .grid{display:grid;gap:20px}
-      @media(min-width:900px){.grid-3{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:repeat(2,1fr)}}
-      .section{padding:40px 0}
-      .title{margin:0 0 20px 0;font-size:28px;font-weight:700;color:#fff}
-      .card{
-        background:var(--card);
-        border:1px solid var(--border);
-        border-radius:16px;
-        padding:20px;
-        transition:all 0.3s ease;
-        box-shadow:var(--shadow);
-        height:100%;
-        display:flex;
-        flex-direction:column;
-      }
-      .card:hover{
-        background:var(--card-hover);
-        border-color:#374151;
-        transform:translateY(-2px);
-        box-shadow:var(--shadow-hover);
-      }
-      .card h3{
-        margin:8px 0 12px 0;
-        color:#fff;
-        font-size:18px;
-        font-weight:600;
-        line-height:1.4;
-        flex-grow:1;
-      }
-      .muted{color:var(--muted);font-size:14px;line-height:1.5}
-      .tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:#cbd5e1;background:#111827;border:1px solid #1f2937;border-radius:999px;padding:4px 10px}
-      footer{border-top:1px solid var(--border);padding:32px 0;color:#9ca3af;background:rgba(15,17,21,0.5)}
-      
-      /* Mobile responsiveness */
-      @media(max-width:768px){
-        .hero{padding:60px 0 40px}
-        .hero h1{font-size:36px}
-        .hero p{font-size:16px}
-        .section{padding:32px 0}
-        .title{font-size:24px}
-        .grid{gap:16px}
-        .card{padding:16px}
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <div class="header-content">
-        <a href="/" class="brand">Brian Jhang's Edge</a>
-        <nav>
-          <a href="/daily">今日精選</a>
-          <a href="/about">關於</a>
-        </nav>
-      </div>
-    </header>
 
-    <section class="hero">
-      <div class="wrap">
-        <h1>Startups × AI × Web3</h1>
-        <p>Actionable Insights for the Next Builders ・ 創業 × AI × Web3 的可執行知識基地</p>
-        <div class="cta">
-          <a class="btn primary" href="#daily">查看今日精選</a>
-          <a class="btn" href="/daily">所有文章</a>
-        </div>
+<Layout 
+  title="Brian Jhang's Edge — Startups × AI × Crypto"
+  description="創業 × AI × Crypto 的可執行知識庫"
+  ogTitle="Brian Jhang's Edge"
+  ogDescription="Deep Insights for Builders ・ 創業 × AI × Crypto 的可執行知識庫"
+  ogType="website"
+>
+  <section class="hero">
+    <div class="wrap">
+      <h1>Startups × AI × Crypto</h1>
+      <p>Deep Insights for Builders ・ 創業 × AI × Crypto 的可執行知識庫</p>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <section id="featured" class="section">
+      <h2 class="title">知識精選</h2>
+      <div class="grid grid-3">
+        {latestAI && (
+          <a class="card" href={`/ai/${latestAI.slug}`}>
+            <div class="muted">{latestAI.data.date} · <span class="tag tag-ai">AI小百科</span></div>
+            <h3 style="margin:6px 0 8px 0;color:#fff">{latestAI.data.title}</h3>
+            <p class="muted">{latestAI.data.summary}</p>
+          </a>
+        )}
+        {latestStartup && (
+          <a class="card" href={`/startup/${latestStartup.slug}`}>
+            <div class="muted">{latestStartup.data.date} · <span class="tag tag-startup">創業筆記</span></div>
+            <h3 style="margin:6px 0 8px 0;color:#fff">{latestStartup.data.title}</h3>
+            <p class="muted">{latestStartup.data.summary}</p>
+          </a>
+        )}
+        {latestCrypto && (
+          <a class="card" href={`/crypto/${latestCrypto.slug}`}>
+            <div class="muted">{latestCrypto.data.date} · <span class="tag tag-crypto">幣圈筆記</span></div>
+            <h3 style="margin:6px 0 8px 0;color:#fff">{latestCrypto.data.title}</h3>
+            <p class="muted">{latestCrypto.data.summary}</p>
+          </a>
+        )}
       </div>
     </section>
 
-    <main class="wrap">
-      <section id="daily" class="section">
-        <h2 class="title">今日精選</h2>
-        <div class="grid grid-3">
-          {latestCrypto && (
-            <a class="card" href={`/daily/${latestCrypto.slug}`}>
-              <div class="muted">{latestCrypto.data.date} · <span class="tag">幣圈筆記</span></div>
-              <h3 style="margin:6px 0 8px 0;color:#fff">{latestCrypto.data.title}</h3>
-              <p class="muted">{latestCrypto.data.summary}</p>
+    <section class="section">
+      <h2 class="title">最新文章</h2>
+      <div class="grid grid-2">
+        {recentPosts.map((post) => {
+          const category = post.collection === 'ai' ? 'AI小百科' : 
+                          post.collection === 'startup' ? '創業筆記' : '幣圈筆記';
+          const categoryPath = post.collection;
+          const tagClass = `tag tag-${post.collection}`;
+          return (
+            <a class="card" href={`/${categoryPath}/${post.slug}`}>
+              <div class="muted">{post.data.date} · <span class={tagClass}>{category}</span></div>
+              <h3 style="margin:6px 0 8px 0;color:#fff">{post.data.title}</h3>
+              <p class="muted">{post.data.summary}</p>
             </a>
-          )}
-          {latestAI && (
-            <a class="card" href={`/daily/${latestAI.slug}`}>
-              <div class="muted">{latestAI.data.date} · <span class="tag">AI 小百科</span></div>
-              <h3 style="margin:6px 0 8px 0;color:#fff">{latestAI.data.title}</h3>
-              <p class="muted">{latestAI.data.summary}</p>
-            </a>
-          )}
-          {latestFounder && (
-            <a class="card" href={`/daily/${latestFounder.slug}`}>
-              <div class="muted">{latestFounder.data.date} · <span class="tag">創業筆記</span></div>
-              <h3 style="margin:6px 0 8px 0;color:#fff">{latestFounder.data.title}</h3>
-              <p class="muted">{latestFounder.data.summary}</p>
-            </a>
-          )}
-          {(!latestCrypto && !latestAI && !latestFounder) && (
-            <div class="muted">（尚無內容，請稍後再試）</div>
-          )}
-        </div>
-      </section>
-
-      <section class="section">
-        <h2 class="title">最新更新</h2>
-        <div class="grid grid-3">
-          {recent.map(p => (
-            <a class="card" href={`/daily/${p.slug}`}>
-              <div class="muted">{p.data.date} · {p.data.series}</div>
-              <h3 style="margin:6px 0 8px 0;color:#fff">{p.data.title}</h3>
-              <p class="muted">{p.data.summary}</p>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      <section class="section">
-        <h2 class="title">學習路徑</h2>
-        <div class="grid grid-3">
-          <div class="card">
-            <div class="tag">Web3 入門 → 進階</div>
-            <h3 style="margin:8px 0 8px;color:#fff">交易所、鏈上數據、風控框架</h3>
-            <p class="muted">從錢包、安全與基礎概念開始，逐步建立你的投資決策系統。</p>
-          </div>
-          <div class="card">
-            <div class="tag">AI 應用與 Vibe Coding</div>
-            <h3 style="margin:8px 0 8px;color:#fff">從 0 到 1 做出原型</h3>
-            <p class="muted">框架 + 小步快跑，結合 LoRA / RAG / Agent 打出第一版產品。</p>
-          </div>
-          <div class="card">
-            <div class="tag">連續創業框架</div>
-            <h3 style="margin:8px 0 8px;color:#fff">從假設 → 驗證 → 上線</h3>
-            <p class="muted">市場—產品配適、定價、MVP、迭代節奏與團隊心態。</p>
-          </div>
-        </div>
-      </section>
-
-    </main>
-
-    <footer>
-      <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-        <p class="muted" style="margin:0">© {new Date().getFullYear()} Brian Jhang's Edge ・ 教育用途，非投資建議。</p>
-        <div style="display:flex;gap:16px;align-items:center">
-          <a href="https://x.com/brianjhang" rel="noopener" target="_blank" class="muted" style="transition:color 0.2s ease" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#9ca3af'">X</a>
-          <a href="https://threads.net/@brianjhang" rel="noopener" target="_blank" class="muted" style="transition:color 0.2s ease" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#9ca3af'">Threads</a>
-          <a href="https://www.facebook.com/iambrianjhang" rel="noopener" target="_blank" class="muted" style="transition:color 0.2s ease" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#9ca3af'">Facebook</a>
-          <a href="https://github.com/brianjhang" rel="noopener" target="_blank" class="muted" style="transition:color 0.2s ease" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#9ca3af'">GitHub</a>
-        </div>
+          );
+        })}
       </div>
-    </footer>
-  </body>
-</html>
+    </section>
+
+    <section class="section">
+      <h2 class="title">探索主題</h2>
+      <div class="grid grid-3">
+        <a class="card" href="/ai">
+          <div class="tag tag-ai">AI 教育內容</div>
+          <h3 style="margin:8px 0 8px;color:#fff">AI 知識與應用</h3>
+          <p class="muted">從基礎概念到實際應用，深入淺出的 AI 知識分享，幫助你理解人工智慧的發展與影響。</p>
+        </a>
+        <a class="card" href="/startup">
+          <div class="tag tag-startup">創業教育內容</div>
+          <h3 style="margin:8px 0 8px;color:#fff">創業實戰指南</h3>
+          <p class="muted">經典商業理論的現代應用，市場驗證、產品開發、團隊建設的實戰框架。</p>
+        </a>
+        <a class="card" href="/crypto">
+          <div class="tag tag-crypto">Crypto 教育內容</div>
+          <h3 style="margin:8px 0 8px;color:#fff">理性看待區塊鏈世界</h3>
+          <p class="muted">客觀中立的加密貨幣分析，從基礎概念到深度研究，建立正確認知。</p>
+        </a>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  :root {
+    --card-hover: #121218;
+    --shadow: 0 4px 12px rgba(0,0,0,0.15);
+    --shadow-hover: 0 8px 25px rgba(0,0,0,0.25);
+    --ai: #3b82f6;
+    --startup: #10b981;
+    --crypto: #f59e0b;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #0b0b0c 0%, #1a1a1f 100%);
+    padding: 80px 0 60px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    background: linear-gradient(135deg, #fff 0%, #9ca3af 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 18px;
+    color: var(--muted);
+    margin: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* 移除以下 CSS 區塊：
+  .cta {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border: 1px solid var(--border);
+    color: var(--brand);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .btn.primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    border-color: #3b82f6;
+    color: white;
+  }
+
+  .btn.primary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  }
+  */
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .section {
+    padding: 48px 0;
+  }
+
+  .title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 32px;
+    color: var(--brand);
+  }
+
+  .grid {
+    display: grid;
+    gap: 24px;
+  }
+
+  .grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: block;
+  }
+
+  .card:hover {
+    background: var(--card-hover);
+    border-color: #374151;
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tag-ai {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+  }
+
+  .tag-startup {
+    background: rgba(16, 185, 129, 0.1);
+    color: #34d399;
+  }
+
+  .tag-crypto {
+    background: rgba(245, 158, 11, 0.1);
+    color: #fbbf24;
+  }
+
+  .muted {
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  /* Mobile responsiveness */
+  @media(max-width:768px) {
+    .hero {
+      padding: 60px 0 40px;
+    }
+    
+    .hero h1 {
+      font-size: 36px;
+    }
+    
+    .hero p {
+      font-size: 16px;
+    }
+    
+    /* 移除以下 mobile CSS：
+    .cta {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .btn {
+      width: 200px;
+      text-align: center;
+    }
+    */
+    
+    .section {
+      padding: 32px 0;
+    }
+    
+    .title {
+      font-size: 24px;
+    }
+    
+    .grid {
+      gap: 16px;
+    }
+    
+    .card {
+      padding: 16px;
+    }
+    
+    .cta {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .btn {
+      width: 200px;
+      text-align: center;
+    }
+  }
+</style>

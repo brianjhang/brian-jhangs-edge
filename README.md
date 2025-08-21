@@ -1,7 +1,7 @@
 # Brian Jhang's Edge
 
 > **Startups × AI × Crypto — Actionable Knowledge Base**  
-> **創業 × AI × Crypto 的可執行知識基地**
+> **創業 × AI × Crypto 的可執行知識庫**
 
 Brian Jhang's Edge 是一個 **AI 驅動的知識庫型網站**，專注於 **創業、AI 與 Crypto** 三大領域，提供深度、實用的長青內容，幫助下一代建設者獲得可執行的洞見。
 
@@ -23,7 +23,7 @@ Brian Jhang's Edge 是一個 **AI 驅動的知識庫型網站**，專注於 **�
 
 ### 核心領域
 - **🤖 AI**：技術解析、工具應用、實戰指南
-- **🚀 Startup**：創業框架、募資策略、商業智慧  
+- **🚀 創業**：創業框架、募資策略、商業智慧  
 - **💎 Crypto**：基本面分析、投資策略、項目研究
 
 ---
@@ -128,7 +128,7 @@ npm run preview  # 預覽建置結果
 - 持續產出高品質原創內容
 
 ### 長期願景
-- 打造 Startups × AI × Crypto 領域的權威知識庫
+- 打造創業 × AI × Crypto 領域的權威知識庫
 - 支持個人 AI 項目開發與量化交易研究
 - 建立可持續的知識變現模式
 
@@ -137,8 +137,8 @@ npm run preview  # 預覽建置結果
 ## 📄 授權說明
 
 - 教育用途，非投資建議
-- 內容遵循 CC BY-SA 4.0 授權
-- 商業合作請聯絡：[brian@brianjhang.com](mailto:brian@brianjhang.com)
+- 程式碼與內容遵循 MIT License
+- 商業合作請聯絡：[brianjhang.ai@gmail.com](mailto:brianjhang.ai@gmail.com)
 
 ---
 

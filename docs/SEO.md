@@ -1,21 +1,21 @@
 # 🌐 Brian Jhang’s Edge SEO 網址結構設計
 
 本文件作為 Brian Jhang’s Edge 網站的 **SEO 與網址規劃準則**。  
-網站定位為 **知識庫 (Knowledge Base)**，主題聚焦 **創業 × AI × Crypto**，非新聞站點，網址結構設計以 **Evergreen（長青內容）** 與 **語義化** 為核心。  
+網站定位為 **AI 驅動的知識庫型網站**，主題聚焦 **創業 × AI × Crypto**，非新聞站點，網址結構設計以 **Evergreen（長青內容）** 與 **語義化** 為核心。  
 
 ---
 
 ## 1. 語言策略
 
 - **英文 (預設主體)** → `/ai/`, `/startup/`, `/crypto/`, `/edge/`
-- **繁體中文** → `/zh-hant/...`
-- **簡體中文** → `/zh-hans/...`
+- **繁體中文** → `/zh-tw/...`
+- **簡體中文** → `/zh-cn/...`
 
 ### hreflang 標籤範例
 ```html
-<link rel="alternate" hreflang="en" href="https://brianjhang.com/crypto/eth/fundamentals" />
-<link rel="alternate" hreflang="zh-Hant" href="https://brianjhang.com/zh-hant/crypto/eth/fundamentals" />
-<link rel="alternate" hreflang="zh-Hans" href="https://brianjhang.com/zh-hans/crypto/eth/fundamentals" />
+<link rel="alternate" hreflang="en" href="https://brianjhang.com/crypto/btc/complete-guide" />
+<link rel="alternate" hreflang="zh-TW" href="https://brianjhang.com/zh-tw/crypto/btc/complete-guide" />
+<link rel="alternate" hreflang="zh-CN" href="https://brianjhang.com/zh-cn/crypto/btc/complete-guide" />
 ```
 
 ---
@@ -32,8 +32,8 @@
 
 繁體 / 簡體：
 ```
-/zh-hant/ai/prompt-engineering-guide
-/zh-hans/ai/prompt-engineering-guide
+/zh-tw/ai/prompt-engineering-guide
+/zh-cn/ai/prompt-engineering-guide
 ```
 
 ---
@@ -48,30 +48,25 @@
 
 繁體 / 簡體：
 ```
-/zh-hant/startup/fundraising-strategy
-/zh-hans/startup/fundraising-strategy
+/zh-tw/startup/fundraising-strategy
+/zh-cn/startup/fundraising-strategy
 ```
 
 ---
 
 ### (C) Crypto 區（核心重點）
 ```
-/crypto/                         → Crypto 總覽
-/crypto/eth/fundamentals         → ETH 基本面
-/crypto/link/tokenomics          → LINK 代幣經濟
-/crypto/okb/valuation-report     → OKB 估值報告
+/crypto/btc/complete-guide       → BTC 完整指南
+/crypto/eth/complete-guide       → ETH 完整指南
 /crypto/ldo/liquid-staking       → LDO 流動質押
-/crypto/investment/portfolio-strategy
-/crypto/investment/risk-management
-/crypto/stablecoins/global-trends
 ```
 
 繁體 / 簡體：
 ```
-/zh-hant/crypto/eth/fundamentals
-/zh-hans/crypto/eth/fundamentals
-/zh-hant/crypto/okb/valuation-report
-/zh-hans/crypto/okb/valuation-report
+/zh-tw/crypto/btc/complete-guide 
+/zh-cn/crypto/btc/complete-guide 
+/zh-tw/crypto/ldo/liquid-staking
+/zh-cn/crypto/ldo/liquid-staking
 ```
 
 ---
@@ -84,8 +79,8 @@
 
 繁體 / 簡體：
 ```
-/zh-hant/edge/ai-trading-experiment
-/zh-hans/edge/ai-trading-experiment
+/zh-tw/edge/ai-trading-experiment
+/zh-cn/edge/ai-trading-experiment
 ```
 
 ---
@@ -97,7 +92,7 @@
 - [ ] **關鍵字優化**：每個網址至少包含 1 個核心關鍵字  
 - [ ] **避免日期**：文章網址不含日期，保持 Evergreen  
 - [ ] **淺層結構**：盡量不超過 3 層  
-- [ ] **語言清晰**：使用 `/zh-hant/` 和 `/zh-hans/` 分別表示繁體與簡體  
+- [ ] **語言清晰**：使用 `/zh-tw/` 和 `/zh-cn/` 分別表示繁體與簡體  
 - [ ] **SEO 標準**：使用 hreflang 標籤，避免重複收錄  
 - [ ] **HTTPS 強制**：全站使用 HTTPS，統一 domain (www / 非 www)  
 

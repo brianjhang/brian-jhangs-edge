@@ -12,5 +12,8 @@
     "@astrojs/mdx": "^4.3.4",
     "@astrojs/starlight": "^0.35.2",
     "astro": "^5.13.2"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.5.0"
   }
 }

@@ -5,9 +5,14 @@ import Footer from '@/components/Footer.astro';
 export interface Props {
   title: string;
   description?: string;
+  image?: string;
+  type?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description, image, type } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const defaultDescription = "創業 × AI × Crypto 的可執行知識基地";
+const defaultImage = `${Astro.site}favicon.svg`;
 ---
 
 <html lang="zh-tw">
@@ -15,10 +20,36 @@ const { title, description } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
-    <meta name="description" content={description || "創業 × AI × Crypto 的可執行知識基地"} />
+    <meta name="description" content={description || defaultDescription} />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href={canonicalURL} />
+    
+    <!-- Open Graph -->
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description || "創業 × AI × Crypto 的可執行知識基地"} />
-    <meta property="og:type" content="website" />
+    <meta property="og:description" content={description || defaultDescription} />
+    <meta property="og:type" content={type || "website"} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={image || defaultImage} />
+    <meta property="og:site_name" content="Brian Jhang's Edge" />
+    <meta property="og:locale" content="zh_TW" />
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@brianjhang" />
+    <meta name="twitter:creator" content="@brianjhang" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description || defaultDescription} />
+    <meta name="twitter:image" content={image || defaultImage} />
+    
+    <!-- Additional SEO -->
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Brian Jhang" />
+    <meta name="theme-color" content="#0b0b0c" />
+    
+    <!-- Language alternatives -->
+    <link rel="alternate" hreflang="zh-tw" href={canonicalURL} />
+    <link rel="alternate" hreflang="x-default" href={canonicalURL} />
     
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-7F14DYS5K2"></script>

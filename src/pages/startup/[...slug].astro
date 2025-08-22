@@ -183,6 +183,49 @@ const breadcrumbItems = [
     padding: 0;
     color: #e5e7eb;
   }
+  
+  /* 代碼區塊左邊距修復 - 針對所有代碼區塊 */
+  article pre {
+    padding: 20px 20px 20px 28px !important;
+  }
+  
+  /* 強制覆蓋所有代碼區塊的內聯樣式 */
+  article pre[class*="astro-code"] {
+    padding-left: 28px !important;
+  }
+  
+  article pre code {
+    background: none;
+    padding: 0;
+    color: #e5e7eb;
+  }
+  
+  /* 最強力的CSS修復 - 直接針對所有 .line 元素 */
+  :global(.line) {
+    padding-left: 8px !important;
+  }
+  
+  :global(.line span) {
+    padding-left: 0 !important;
+  }
+  
+  /* 額外的備用選擇器 */
+  :global(pre .line) {
+    padding-left: 8px !important;
+  }
+  
+  :global(code .line) {
+    padding-left: 8px !important;
+  }
+  
+  /* 純文字代碼區塊 */
+  article pre:not(.astro-code) {
+    padding-left: 28px !important;
+  }
+  
+  article pre[class*="astro-code"] .line span {
+    padding-left: 0 !important;
+  }
 
   article img {
     max-width: 100%;

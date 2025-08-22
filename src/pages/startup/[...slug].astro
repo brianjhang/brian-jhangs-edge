@@ -1,6 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import RelatedArticles from '../../components/RelatedArticles.astro';
 
 export async function getStaticPaths() {
   const startupPosts = await getCollection('startup');
@@ -15,26 +17,22 @@ const { Content } = await post.render();
 
 const title = post.data.title;
 const description = post.data.description || post.data.summary;
-const keywords = post.data.keywords?.join(', ');
-const ogUrl = `https://brianjhang.com/startup/${post.slug}`;
+
+// 生成麵包屑
+const breadcrumbItems = [
+  { label: '首頁', href: '/' },
+  { label: '創業筆記', href: '/startup' },
+  { label: post.data.title.split('：')[0] || post.data.title.split('|')[0] || post.data.title }
+];
 ---
 
 <Layout 
   title={title}
   description={description}
-  keywords={keywords}
-  ogTitle={title}
-  ogDescription={description}
-  ogType="article"
-  ogUrl={ogUrl}
-  articlePublishedTime={post.data.date}
-  articleTags={post.data.tags}
 >
   <main>
     <div class="content-wrap">
-      <div class="breadcrumb">
-        <a href="/">首頁</a> / <a href="/startup">創業筆記</a> / {post.data.title.split('：')[0] || post.data.title.split('|')[0]}
-      </div>
+      <Breadcrumb items={breadcrumbItems} category="startup" />
       
       <h1 class="page-title">{post.data.title}</h1>
       
@@ -48,6 +46,14 @@ const ogUrl = `https://brianjhang.com/startup/${post.slug}`;
       <article>
         <Content />
       </article>
+      
+      <!-- 相關文章推薦 -->
+      <RelatedArticles 
+        currentSlug={post.slug}
+        currentCategory="startup"
+        currentTags={post.data.tags}
+        maxItems={3}
+      />
     </div>
   </main>
 </Layout>
@@ -64,21 +70,6 @@ const ogUrl = `https://brianjhang.com/startup/${post.slug}`;
     padding: 40px 20px;
   }
 
-  .breadcrumb {
-    font-size: 0.875rem;
-    color: var(--muted);
-    margin-bottom: 24px;
-  }
-
-  .breadcrumb a {
-    color: var(--startup);
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .breadcrumb a:hover {
-    color: #34d399;
-  }
 
   .page-title {
     font-size: 2.5rem;

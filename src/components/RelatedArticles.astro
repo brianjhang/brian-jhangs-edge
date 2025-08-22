@@ -1,0 +1,383 @@
+---
+import { getCollection } from 'astro:content';
+
+export interface Props {
+  currentSlug: string;
+  currentCategory: 'ai' | 'crypto' | 'startup';
+  currentTags?: string[];
+  maxItems?: number;
+}
+
+const { 
+  currentSlug, 
+  currentCategory, 
+  currentTags = [], 
+  maxItems = 3 
+} = Astro.props;
+
+// 獲取同分類的所有文章
+const allPosts = await getCollection(currentCategory);
+
+// 過濾掉當前文章
+const otherPosts = allPosts.filter(post => post.slug !== currentSlug);
+
+// 計算相關性分數
+const relatedPosts = otherPosts.map(post => {
+  let score = 0;
+  
+  // 標籤匹配加分
+  if (post.data.tags && currentTags.length > 0) {
+    const matchingTags = post.data.tags.filter(tag => 
+      currentTags.includes(tag)
+    );
+    score += matchingTags.length * 3;
+  }
+  
+  // 同子分類加分（通過 slug 判斷）
+  const currentSubCategory = currentSlug.split('/')[0];
+  const postSubCategory = post.slug.split('/')[0];
+  if (currentSubCategory === postSubCategory) {
+    score += 2;
+  }
+  
+  // 難度等級相同加分
+  if (post.data.difficulty === currentCategory) {
+    score += 1;
+  }
+  
+  return { post, score };
+}).sort((a, b) => b.score - a.score);
+
+// 獲取推薦文章
+const recommendedPosts = relatedPosts.slice(0, maxItems);
+
+// 如果相關文章不足，補充最新文章
+if (recommendedPosts.length < maxItems) {
+  const remainingCount = maxItems - recommendedPosts.length;
+  const recentPosts = otherPosts
+    .filter(post => !recommendedPosts.find(rp => rp.post.slug === post.slug))
+    .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+    .slice(0, remainingCount)
+    .map(post => ({ post, score: 0 }));
+  
+  recommendedPosts.push(...recentPosts);
+}
+
+// 分類主題配置
+const categoryConfig = {
+  ai: { 
+    title: 'AI小百科', 
+    color: '#3b82f6',
+    icon: '🤖',
+    prefix: '/ai'
+  },
+  crypto: { 
+    title: '幣圈筆記', 
+    color: '#f59e0b',
+    icon: '💎',
+    prefix: '/crypto'
+  },
+  startup: { 
+    title: '創業筆記', 
+    color: '#10b981',
+    icon: '🚀',
+    prefix: '/startup'
+  }
+};
+
+const config = categoryConfig[currentCategory];
+
+// 生成文章 URL
+function getPostUrl(post: any) {
+  return `${config.prefix}/${post.slug}/`;
+}
+
+// 截取標題
+function truncateTitle(title: string, maxLength = 60) {
+  if (title.length <= maxLength) return title;
+  return title.substring(0, maxLength) + '...';
+}
+
+// 格式化日期
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('zh-TW', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+---
+
+{recommendedPosts.length > 0 && (
+  <section class="related-articles" aria-labelledby="related-heading">
+    <div class="related-header">
+      <h2 id="related-heading" class="related-title">
+        <span class="related-icon">{config.icon}</span>
+        相關{config.title}
+      </h2>
+      <p class="related-subtitle">延伸閱讀推薦</p>
+    </div>
+    
+    <div class="related-grid">
+      {recommendedPosts.map(({ post, score }) => (
+        <article class="related-card">
+          <a href={getPostUrl(post)} class="related-link">
+            <div class="related-content">
+              <h3 class="related-card-title">
+                {truncateTitle(post.data.title)}
+              </h3>
+              
+              <p class="related-summary">
+                {post.data.summary || post.data.description || '深入了解相關主題的專業知識與實用技巧'}
+              </p>
+              
+              <div class="related-meta">
+                <span class="related-date">
+                  📅 {formatDate(post.data.date)}
+                </span>
+                
+                {post.data.difficulty && (
+                  <span class="related-difficulty">
+                    {post.data.difficulty === 'beginner' ? '入門' : 
+                     post.data.difficulty === 'intermediate' ? '中階' : '進階'}
+                  </span>
+                )}
+                
+                <span class="related-reading-time">
+                  ⏱️ {post.data.readingTime || 5} 分鐘
+                </span>
+              </div>
+              
+              {post.data.tags && post.data.tags.length > 0 && (
+                <div class="related-tags">
+                  {post.data.tags.slice(0, 3).map(tag => (
+                    <span class="related-tag">#{tag}</span>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div class="related-arrow">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </a>
+        </article>
+      ))}
+    </div>
+    
+    <div class="related-footer">
+      <a href={config.prefix} class="view-all-link">
+        查看所有{config.title} →
+      </a>
+    </div>
+  </section>
+)}
+
+<style define:vars={{ categoryColor: config.color }}>
+  .related-articles {
+    margin: 64px 0 48px 0;
+    padding: 32px 0;
+    border-top: 1px solid var(--border);
+  }
+  
+  .related-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  
+  .related-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--brand);
+    margin: 0 0 8px 0;
+  }
+  
+  .related-icon {
+    font-size: 1.5rem;
+  }
+  
+  .related-subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+    margin: 0;
+  }
+  
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  
+  .related-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+  }
+  
+  .related-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    border-color: var(--categoryColor);
+  }
+  
+  .related-link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .related-content {
+    flex: 1;
+  }
+  
+  .related-card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--brand);
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .related-summary {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 0 0 16px 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .related-meta {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  
+  .related-date {
+    color: var(--muted);
+  }
+  
+  .related-difficulty {
+    background: var(--categoryColor);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  
+  .related-reading-time {
+    color: var(--muted);
+  }
+  
+  .related-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .related-tag {
+    background: rgba(var(--categoryColor), 0.1);
+    color: var(--categoryColor);
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 8px;
+    border: 1px solid rgba(var(--categoryColor), 0.2);
+  }
+  
+  .related-arrow {
+    align-self: flex-end;
+    margin-top: 16px;
+    color: var(--categoryColor);
+    opacity: 0.7;
+    transition: all 0.2s ease;
+  }
+  
+  .related-card:hover .related-arrow {
+    opacity: 1;
+    transform: translateX(4px);
+  }
+  
+  .related-footer {
+    text-align: center;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  
+  .view-all-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--categoryColor);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 12px 24px;
+    border: 1px solid var(--categoryColor);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  
+  .view-all-link:hover {
+    background: var(--categoryColor);
+    color: white;
+    transform: translateY(-2px);
+  }
+  
+  @media (max-width: 768px) {
+    .related-articles {
+      margin: 48px 0 32px 0;
+      padding: 24px 0;
+    }
+    
+    .related-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    
+    .related-title {
+      font-size: 1.5rem;
+    }
+    
+    .related-link {
+      padding: 20px;
+    }
+    
+    .related-card-title {
+      font-size: 1rem;
+    }
+    
+    .related-summary {
+      font-size: 0.85rem;
+    }
+    
+    .related-meta {
+      font-size: 0.75rem;
+      gap: 8px;
+    }
+  }
+</style>

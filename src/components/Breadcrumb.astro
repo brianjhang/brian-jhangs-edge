@@ -1,0 +1,118 @@
+---
+export interface Props {
+  items: Array<{
+    label: string;
+    href?: string;
+  }>;
+  category?: 'ai' | 'crypto' | 'startup';
+}
+
+const { items, category = 'ai' } = Astro.props;
+
+// 根據分類設定顏色主題
+const categoryThemes = {
+  ai: { color: '#3b82f6', hoverColor: '#60a5fa' },
+  crypto: { color: '#f59e0b', hoverColor: '#fbbf24' },
+  startup: { color: '#10b981', hoverColor: '#34d399' }
+};
+
+const theme = categoryThemes[category];
+---
+
+<nav class="breadcrumb" aria-label="麵包屑導航">
+  <ol class="breadcrumb-list">
+    {items.map((item, index) => (
+      <li class="breadcrumb-item">
+        {item.href ? (
+          <>
+            <a href={item.href} class="breadcrumb-link">
+              {item.label}
+            </a>
+            {index < items.length - 1 && (
+              <span class="breadcrumb-separator" aria-hidden="true">/</span>
+            )}
+          </>
+        ) : (
+          <span class="breadcrumb-current" aria-current="page">
+            {item.label}
+          </span>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style define:vars={{ 
+  categoryColor: theme.color, 
+  categoryHoverColor: theme.hoverColor 
+}}>
+  .breadcrumb {
+    margin-bottom: 24px;
+  }
+  
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.875rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .breadcrumb-link {
+    color: var(--categoryColor);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    padding: 4px 0;
+    border-radius: 4px;
+  }
+  
+  .breadcrumb-link:hover {
+    color: var(--categoryHoverColor);
+    text-decoration: underline;
+  }
+  
+  .breadcrumb-link:focus {
+    outline: 2px solid var(--categoryColor);
+    outline-offset: 2px;
+  }
+  
+  .breadcrumb-separator {
+    color: var(--muted);
+    margin: 0 4px;
+    font-weight: 300;
+  }
+  
+  .breadcrumb-current {
+    color: var(--brand);
+    font-weight: 500;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  @media (max-width: 768px) {
+    .breadcrumb-list {
+      font-size: 0.8rem;
+      gap: 6px;
+    }
+    
+    .breadcrumb-current {
+      max-width: 200px;
+    }
+    
+    .breadcrumb-separator {
+      margin: 0 2px;
+    }
+  }
+</style>

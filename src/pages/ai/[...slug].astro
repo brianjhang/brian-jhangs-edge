@@ -1,6 +1,8 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Layout from '@/layouts/Layout.astro';
+import Breadcrumb from '@/components/Breadcrumb.astro';
+import RelatedArticles from '@/components/RelatedArticles.astro';
 
 export async function getStaticPaths() {
   const aiPosts = await getCollection('ai');
@@ -12,6 +14,13 @@ export async function getStaticPaths() {
 
 const post = Astro.props;
 const { Content } = await post.render();
+
+// 生成麵包屑
+const breadcrumbItems = [
+  { label: '首頁', href: '/' },
+  { label: 'AI小百科', href: '/ai' },
+  { label: post.data.title.split('：')[0] || post.data.title.split('|')[0] || post.data.title }
+];
 ---
 
 <Layout 
@@ -20,9 +29,7 @@ const { Content } = await post.render();
 >
   <!-- 文章內容 -->
   <div class="content-wrap">
-    <div class="breadcrumb">
-      <a href="/">首頁</a> / <a href="/ai">AI小百科</a> / {post.data.title.split('：')[0] || post.data.title.split('|')[0]}
-    </div>
+    <Breadcrumb items={breadcrumbItems} category="ai" />
     
     <h1 class="page-title">{post.data.title}</h1>
     
@@ -36,6 +43,14 @@ const { Content } = await post.render();
     <article>
       <Content />
     </article>
+    
+    <!-- 相關文章推薦 -->
+    <RelatedArticles 
+      currentSlug={post.slug}
+      currentCategory="ai"
+      currentTags={post.data.tags}
+      maxItems={3}
+    />
   </div>
 
   <!-- 文章頁面專用樣式 -->
@@ -51,21 +66,6 @@ const { Content } = await post.render();
       padding: 40px 20px;
     }
     
-    .breadcrumb {
-      font-size: 0.875rem;
-      color: var(--muted);
-      margin-bottom: 24px;
-    }
-    
-    .breadcrumb a {
-      color: var(--ai);
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-    
-    .breadcrumb a:hover {
-      color: #60a5fa;
-    }
     
     .page-title {
       font-size: 2.5rem;

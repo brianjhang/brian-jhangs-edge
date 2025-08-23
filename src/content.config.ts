@@ -74,7 +74,7 @@ export const collections = {
     type: "content",
     schema: z.object({
       ...base,
-      series: z.enum(["crypto","ai","founder"]),
+      series: z.enum(["crypto","ai","startup"]),
       ticker: z.string().optional(),
       links: z.array(z.object({
         title: z.string().optional(),

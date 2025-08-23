@@ -25,3 +25,13 @@ src/content/ideas/
 docs/internal/
 README-dev.md
 *_PLANNING.md
+
+# AI assistant specific files (not for public)
+CLAUDE.md
+GEMINI.md
+COPILOT.md
+AI_INSTRUCTIONS.md
+.claude/
+.cursor/
+.vscode/settings.json
+.anthropic/

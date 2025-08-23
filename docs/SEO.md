@@ -42,8 +42,8 @@
 ```
 /startup/                        → 創業總覽
 /startup/fundraising-strategy    → 募資策略
-/startup/founders-notes/         → 創業心法專題
-/startup/founders-notes/lean-startup-principles
+/startup/book/                  → 創業書籍解析
+/startup/book/lean-startup-principles
 ```
 
 繁體 / 簡體：

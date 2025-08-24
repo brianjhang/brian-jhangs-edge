@@ -1,6 +1,6 @@
 # Brian Jhang's Edge
 
-> **Startups × AI × Crypto — Actionable Knowledge Base**  
+> **Startups × AI × Crypto — Deep Insights for Builders**  
 > **創業 × AI × Crypto 的可執行知識庫**
 
 Brian Jhang's Edge 是一個 **AI 驅動的知識庫型網站**，專注於 **創業、AI 與 Crypto** 三大領域，提供深度、實用的長青內容，幫助下一代建設者獲得可執行的洞見。
@@ -196,31 +196,22 @@ npm run build
 #### 2. 寫作風格定位
 採用「深入淺出的知識科普」風格：
 - **術語親民化**：「白話描述（專業術語）+ 生活化比喻」
-- **互動引導**：提問式開頭，避免學術式表達
 - **實用導向**：重點關注「怎麼用」而非純理論
+- **詳細風格指導**：請參考 `src/content/ideas/` 各主題檔案
 
 ### 三大主題系列
 
-#### 🤖 AI 小百科 (2000-2500字)
-- **風格定位**：實用導向的 AI 科普
-- **特色**：技術原理 + 實戰應用 + 工具測試
-- **主題管理**：`src/content/ideas/ai-topics.md`
-
-#### 🚀 創業筆記 (2500-3000字) 
-- **風格定位**：白話化商業智慧
-- **特色**：經典金句深度解析 + 可執行框架
-- **主題管理**：`src/content/ideas/startup-topics.md`
-
-#### 💎 幣圈筆記 (2500-3000字)
-- **風格定位**：客觀教育導向
-- **特色**：技術分析 + 客觀中立 + 必含風險聲明
-- **主題管理**：`src/content/ideas/crypto-topics.md`
+完整的寫作風格與主題規劃請參考：
+- **🤖 AI 小百科**：`src/content/ideas/ai-topics.md`
+- **🚀 創業筆記**：`src/content/ideas/startup-topics.md` 
+- **💎 幣圈筆記**：`src/content/ideas/crypto-topics.md`
 
 ### 社交媒體內容
-AI 輔助生成多平台內容：
-- **Twitter/X**：親民風格 + 適量標籤
-- **Threads**：單一主標籤策略
-- **小紅書/今日頭條**：簡體中文 + 移除 markdown
+生成多平台適配內容，詳細規範請參考各主題風格指導檔案：
+- **Twitter/X**：3條推文
+- **Threads**：3條推文（單一主標籤）
+- **Facebook**：2個教育版本
+- **小紅書/今日頭條**：簡體中文版本
 
 ---
 

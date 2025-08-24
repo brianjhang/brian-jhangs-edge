@@ -47,14 +47,14 @@ export LLM_MODEL=claude-3-5-sonnet-20241022
 ### 工作流程
 
 目前使用 Claude Code 人工輔助方式：
-1. 查閱 `src/content/ideas/` 中的主題規劃
+1. 查閱 `docs/planning/` 中的主題規劃
 2. 手動創建 MDX 內容文件
 3. 使用 `npm run dev` 檢查文章格式與顯示效果
 
 ### 現在的工作流程
 
 1. **手動內容生成**：使用 Claude Code 人工輔助
-2. **主題管理**：手動更新 `src/content/ideas/` 中的主題清單
+2. **主題管理**：手動更新 `docs/planning/` 中的主題清單
 3. **社交內容**：手動創建在 `docs/internal/social-content-YYYY-MM-DD.md`
 
 ## 文件結構
@@ -75,10 +75,6 @@ src/content/
 │   ├── book/        # 商業書籍和創業智慧
 │   ├── strategy/    # 商業策略
 │   └── growth/      # 成長與管理
-└── ideas/           # 主題管理
-    ├── ai-topics.md     # AI主題清單與狀態追蹤
-    ├── crypto-topics.md # 加密貨幣主題清單
-    └── startup-topics.md # 創業主題清單
 
 docs/internal/
 └── social-content-YYYY-MM-DD.md  # 社交媒體內容
@@ -107,16 +103,16 @@ package.json  # 包含 npm run dev 等開發指令
 ## 內容標準
 
 完整的寫作風格與內容標準請參考各主題規劃檔案：
-- **AI 小百科**：`src/content/ideas/ai-topics.md`
-- **創業筆記**：`src/content/ideas/startup-topics.md` 
-- **幣圈筆記**：`src/content/ideas/crypto-topics.md`
+- **AI 小百科**：`docs/planning/ai-topics.md`
+- **創業筆記**：`docs/planning/startup-topics.md` 
+- **幣圈筆記**：`docs/planning/crypto-topics.md`
 
 ## 社交媒體內容規範
 
 詳細的社交媒體風格規範請參考各系列主題檔案：
-- **AI 小百科**: `src/content/ideas/ai-topics.md`
-- **創業筆記**: `src/content/ideas/startup-topics.md` 
-- **幣圈筆記**: `src/content/ideas/crypto-topics.md`
+- **AI 小百科**: `docs/planning/ai-topics.md`
+- **創業筆記**: `docs/planning/startup-topics.md` 
+- **幣圈筆記**: `docs/planning/crypto-topics.md`
 
 ### 通用注意事項
 - 簡體中文版本：移除 markdown 格式符號，適應本地表達習慣

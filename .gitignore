@@ -20,9 +20,12 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
-# Private content planning files (not for public)
-src/content/ideas/
+# Private documentation and planning files (not for public)
+docs/planning/
 docs/internal/
+docs/LLM_AUTOMATION.md
+docs/SEO.md
+docs/work-logs/
 README-dev.md
 *_PLANNING.md
 
@@ -33,5 +36,5 @@ COPILOT.md
 AI_INSTRUCTIONS.md
 .claude/
 .cursor/
-.vscode/settings.json
+.vscode/
 .anthropic/

@@ -3,20 +3,20 @@
       <style>
         .title { 
           font-family: 'Arial', sans-serif; 
-          font-size: 48px; 
+          font-size: 40px; 
           font-weight: bold; 
           fill: white;
           text-anchor: middle;
         }
         .subtitle { 
           font-family: 'Arial', sans-serif; 
-          font-size: 32px; 
+          font-size: 28px; 
           font-weight: 600; 
           fill: #fbbf24;
           text-anchor: middle;
         }
         .emoji {
-          font-size: 120px;
+          font-size: 100px;
           text-anchor: middle;
         }
       </style>
@@ -26,13 +26,13 @@
     <rect width="1200" height="630" fill="#0c0a09"/>
     
     <!-- Emoji -->
-    <text x="600" y="200" class="emoji">💰</text>
+    <text x="600" y="180" class="emoji">💰</text>
     
     <!-- 標題 -->
-    <text x="600" y="320" class="title">USDC 完全解析：合規穩定幣的王者之路｜</text>
+    <text x="600" y="280" class="title">USDC 完全解析：合規穩定幣的王者之路</text>
     
     <!-- 副標題 -->
-    <text x="600" y="400" class="subtitle">Brian's 幣圈筆記</text>
+    <text x="600" y="380" class="subtitle">Brian's 幣圈筆記</text>
     
     <!-- 底部裝飾線 -->
     <rect x="0" y="622" width="1200" height="8" fill="#fbbf24"/>

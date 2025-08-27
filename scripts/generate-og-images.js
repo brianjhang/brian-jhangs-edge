@@ -17,47 +17,72 @@ function generateOGImage(title, series = 'ai') {
   
   const theme = themes[series] || themes.ai;
   
-  // 智慧處理標題長度
-  let displayTitle = title;
-  if (title.length > 25) {
-    // 尋找適當的斷點
-    const breakPoints = ['：', '｜', '的', '與', '如何', '為什麼'];
-    let bestBreak = -1;
+  // 智慧分行處理標題
+  function splitTitle(text) {
+    // 如果標題短，直接返回
+    if (text.length <= 25) return [text];
+    
+    // 移除 series 標記，專注於主標題
+    const cleanTitle = text.replace(/｜Brian's (AI小百科|幣圈筆記|創業筆記)$/, '');
+    
+    if (cleanTitle.length <= 25) return [cleanTitle];
+    
+    // 尋找適當的斷點 - 優先使用標點符號
+    const breakPoints = ['：', '｜', '、', '的', '與', '如何', '為什麼'];
     
     for (const bp of breakPoints) {
-      const pos = title.indexOf(bp);
-      if (pos > 10 && pos < 25) {
-        bestBreak = pos + bp.length;
+      const pos = cleanTitle.indexOf(bp);
+      if (pos > 10 && pos < 30) {
+        const firstLine = cleanTitle.substring(0, pos + bp.length);
+        const secondLine = cleanTitle.substring(pos + bp.length).trim();
+        
+        if (secondLine.length > 0 && firstLine.length <= 25 && secondLine.length <= 25) {
+          return [firstLine, secondLine];
+        }
+      }
+    }
+    
+    // 如果找不到好的斷點，在空格或適當位置分割
+    const midPoint = Math.floor(cleanTitle.length / 2);
+    let breakPoint = midPoint;
+    
+    // 向前找空格或標點
+    for (let i = midPoint; i >= midPoint - 5 && i > 0; i--) {
+      if ([' ', '、', '，'].includes(cleanTitle[i])) {
+        breakPoint = i + 1;
         break;
       }
     }
     
-    if (bestBreak > 0) {
-      displayTitle = title.substring(0, bestBreak);
-    } else {
-      displayTitle = title.substring(0, 22) + '...';
-    }
+    const firstLine = cleanTitle.substring(0, breakPoint).trim();
+    const secondLine = cleanTitle.substring(breakPoint).trim();
+    
+    return firstLine.length > 25 || secondLine.length > 25 
+      ? [cleanTitle.substring(0, 25) + '...']
+      : [firstLine, secondLine];
   }
+  
+  const titleLines = splitTitle(title);
   
   return `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <style>
         .title { 
           font-family: 'Arial', sans-serif; 
-          font-size: 48px; 
+          font-size: 40px; 
           font-weight: bold; 
           fill: white;
           text-anchor: middle;
         }
         .subtitle { 
           font-family: 'Arial', sans-serif; 
-          font-size: 32px; 
+          font-size: 28px; 
           font-weight: 600; 
           fill: ${theme.primary};
           text-anchor: middle;
         }
         .emoji {
-          font-size: 120px;
+          font-size: 100px;
           text-anchor: middle;
         }
       </style>
@@ -67,13 +92,15 @@ function generateOGImage(title, series = 'ai') {
     <rect width="1200" height="630" fill="${theme.bg}"/>
     
     <!-- Emoji -->
-    <text x="600" y="200" class="emoji">${theme.emoji}</text>
+    <text x="600" y="180" class="emoji">${theme.emoji}</text>
     
     <!-- 標題 -->
-    <text x="600" y="320" class="title">${displayTitle}</text>
+    ${titleLines.map((line, index) => 
+      `<text x="600" y="${280 + index * 50}" class="title">${line}</text>`
+    ).join('\n    ')}
     
     <!-- 副標題 -->
-    <text x="600" y="400" class="subtitle">Brian's ${theme.name}</text>
+    <text x="600" y="${titleLines.length === 1 ? 380 : 430}" class="subtitle">Brian's ${theme.name}</text>
     
     <!-- 底部裝飾線 -->
     <rect x="0" y="622" width="1200" height="8" fill="${theme.primary}"/>

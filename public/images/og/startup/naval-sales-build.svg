@@ -3,20 +3,20 @@
       <style>
         .title { 
           font-family: 'Arial', sans-serif; 
-          font-size: 48px; 
+          font-size: 40px; 
           font-weight: bold; 
           fill: white;
           text-anchor: middle;
         }
         .subtitle { 
           font-family: 'Arial', sans-serif; 
-          font-size: 32px; 
+          font-size: 28px; 
           font-weight: 600; 
           fill: #f97316;
           text-anchor: middle;
         }
         .emoji {
-          font-size: 120px;
+          font-size: 100px;
           text-anchor: middle;
         }
       </style>
@@ -26,13 +26,14 @@
     <rect width="1200" height="630" fill="#0a0a0a"/>
     
     <!-- Emoji -->
-    <text x="600" y="200" class="emoji">🚀</text>
+    <text x="600" y="180" class="emoji">🚀</text>
     
     <!-- 標題 -->
-    <text x="600" y="320" class="title">學會銷售，學會建造：Naval 的</text>
+    <text x="600" y="280" class="title">學會銷售，學會建造：Naval 的</text>
+    <text x="600" y="330" class="title">無可阻擋組合如何定義成功</text>
     
     <!-- 副標題 -->
-    <text x="600" y="400" class="subtitle">Brian's 創業筆記</text>
+    <text x="600" y="430" class="subtitle">Brian's 創業筆記</text>
     
     <!-- 底部裝飾線 -->
     <rect x="0" y="622" width="1200" height="8" fill="#f97316"/>

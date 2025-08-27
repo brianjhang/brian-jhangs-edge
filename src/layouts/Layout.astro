@@ -14,19 +14,24 @@ const { title, description, image, type, series } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const defaultDescription = "創業 × AI × Crypto 的可執行知識基地";
 
-// 嘗試從 URL 推導文章 slug 和系列
-let ogImagePath = `${Astro.site}favicon.svg`; // 預設
+// 處理 OG 圖片 URL
+let finalImage = `${Astro.site}favicon.svg`; // 預設
 
-if (series && Astro.url.pathname.includes('/')) {
-  // 從路徑提取 slug: /ai/llm/chatgpt-complete-guide -> chatgpt-complete-guide
+if (image) {
+  // 如果有傳入 image 參數，使用它（通常來自文章 frontmatter）
+  if (image.startsWith('http')) {
+    finalImage = image; // 已經是完整 URL
+  } else {
+    finalImage = `${Astro.site}${image.startsWith('/') ? image.slice(1) : image}`;
+  }
+} else if (series && Astro.url.pathname.includes('/')) {
+  // 備用：從 URL 推導圖片路徑
   const pathParts = Astro.url.pathname.split('/').filter(Boolean);
   if (pathParts.length >= 2) {
     const slug = pathParts[pathParts.length - 1];
-    ogImagePath = `${Astro.site}images/og/${series}/${slug}.svg`;
+    finalImage = `${Astro.site}images/og/${series}/${slug}.svg`;
   }
 }
-
-const finalImage = image || ogImagePath;
 ---
 
 <html lang="zh-tw">
@@ -42,9 +47,12 @@ const finalImage = image || ogImagePath;
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description || defaultDescription} />
-    <meta property="og:type" content={type || "website"} />
+    <meta property="og:type" content={type || "article"} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={finalImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/svg+xml" />
     <meta property="og:site_name" content="Brian Jhang's Edge" />
     <meta property="og:locale" content="zh_TW" />
     

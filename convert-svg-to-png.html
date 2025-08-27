@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SVG to PNG Converter</title>
+</head>
+<body>
+    <canvas id="canvas" width="1200" height="630"></canvas>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 繪製背景
+        ctx.fillStyle = '#0c0a09';
+        ctx.fillRect(0, 0, 1200, 630);
+        
+        // 設定字體
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'white';
+        
+        // 繪製標題
+        ctx.font = 'bold 40px Arial, sans-serif';
+        ctx.fillText('比特幣完全指南：', 600, 250);
+        ctx.fillText('從中本聰白皮書到 2025 年投資策略', 600, 300);
+        
+        // 繪製副標題
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = '600 28px Arial, sans-serif';
+        ctx.fillText("Brian's 幣圈筆記", 600, 430);
+        
+        // 繪製底部裝飾線
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillRect(0, 622, 1200, 8);
+        
+        // 轉換為 PNG 並下載
+        canvas.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.download = 'bitcoin-complete-guide.png';
+            a.href = url;
+            a.click();
+        });
+    </script>
+</body>
+</html>

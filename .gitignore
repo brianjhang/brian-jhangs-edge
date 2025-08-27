@@ -21,11 +21,7 @@ pnpm-debug.log*
 .DS_Store
 
 # Private documentation and planning files (not for public)
-docs/planning/
-docs/internal/
-docs/LLM_AUTOMATION.md
-docs/SEO.md
-docs/work-logs/
+docs/
 README-dev.md
 *_PLANNING.md
 

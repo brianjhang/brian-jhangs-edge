@@ -17,8 +17,27 @@ function generateOGImage(title, series = 'ai') {
   
   const theme = themes[series] || themes.ai;
   
-  // 截斷過長標題
-  const truncatedTitle = title.length > 50 ? title.substring(0, 50) + '...' : title;
+  // 智慧處理標題長度
+  let displayTitle = title;
+  if (title.length > 25) {
+    // 尋找適當的斷點
+    const breakPoints = ['：', '｜', '的', '與', '如何', '為什麼'];
+    let bestBreak = -1;
+    
+    for (const bp of breakPoints) {
+      const pos = title.indexOf(bp);
+      if (pos > 10 && pos < 25) {
+        bestBreak = pos + bp.length;
+        break;
+      }
+    }
+    
+    if (bestBreak > 0) {
+      displayTitle = title.substring(0, bestBreak);
+    } else {
+      displayTitle = title.substring(0, 22) + '...';
+    }
+  }
   
   return `<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -51,7 +70,7 @@ function generateOGImage(title, series = 'ai') {
     <text x="600" y="200" class="emoji">${theme.emoji}</text>
     
     <!-- 標題 -->
-    <text x="600" y="320" class="title">${truncatedTitle}</text>
+    <text x="600" y="320" class="title">${displayTitle}</text>
     
     <!-- 副標題 -->
     <text x="600" y="400" class="subtitle">Brian's ${theme.name}</text>

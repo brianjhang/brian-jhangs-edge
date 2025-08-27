@@ -17,7 +17,11 @@ const { Content } = await post.render();
 
 const title = post.data.title;
 const description = post.data.description || post.data.summary;
-const ogImage = post.data.seo?.ogImage;
+// 臨時修正：直接為比特幣文章指定正確的 ogImage
+let ogImage = post.data.seo?.ogImage;
+if (post.slug === 'btc/complete-guide') {
+  ogImage = '/images/og/crypto/bitcoin-complete-guide.png';
+}
 
 // 生成麵包屑
 const breadcrumbItems = [

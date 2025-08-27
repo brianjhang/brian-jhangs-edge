@@ -7,12 +7,16 @@ export interface Props {
   description?: string;
   image?: string;
   type?: string;
+  series?: string;
 }
 
-const { title, description, image, type } = Astro.props;
+const { title, description, image, type, series } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const defaultDescription = "創業 × AI × Crypto 的可執行知識基地";
-const defaultImage = `${Astro.site}favicon.svg`;
+
+// 自動生成 OG 圖片 URL
+const autoOGImage = `${Astro.site}api/og?title=${encodeURIComponent(title)}&series=${series || 'ai'}`;
+const finalImage = image || autoOGImage;
 ---
 
 <html lang="zh-tw">
@@ -30,7 +34,7 @@ const defaultImage = `${Astro.site}favicon.svg`;
     <meta property="og:description" content={description || defaultDescription} />
     <meta property="og:type" content={type || "website"} />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:image" content={image || defaultImage} />
+    <meta property="og:image" content={finalImage} />
     <meta property="og:site_name" content="Brian Jhang's Edge" />
     <meta property="og:locale" content="zh_TW" />
     
@@ -40,7 +44,7 @@ const defaultImage = `${Astro.site}favicon.svg`;
     <meta name="twitter:creator" content="@brianjhang" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description || defaultDescription} />
-    <meta name="twitter:image" content={image || defaultImage} />
+    <meta name="twitter:image" content={finalImage} />
     
     <!-- Additional SEO -->
     <meta name="robots" content="index, follow" />

@@ -24,13 +24,6 @@ if (image) {
   } else {
     finalImage = `${Astro.site}${image.startsWith('/') ? image.slice(1) : image}`;
   }
-} else if (series && Astro.url.pathname.includes('/')) {
-  // 備用：從 URL 推導圖片路徑
-  const pathParts = Astro.url.pathname.split('/').filter(Boolean);
-  if (pathParts.length >= 2) {
-    const slug = pathParts[pathParts.length - 1];
-    finalImage = `${Astro.site}images/og/${series}/${slug}.svg`;
-  }
 }
 ---
 

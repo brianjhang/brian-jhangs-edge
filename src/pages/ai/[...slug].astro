@@ -15,6 +15,11 @@ export async function getStaticPaths() {
 const post = Astro.props;
 const { Content } = await post.render();
 
+const title = post.data.title;
+const description = post.data.description || post.data.summary;
+// 直接從 data 物件中讀取，避開型別檢查問題
+const ogImage = post.data['seo']?.['ogImage'];
+
 // 生成麵包屑
 const breadcrumbItems = [
   { label: '首頁', href: '/' },
@@ -24,10 +29,10 @@ const breadcrumbItems = [
 ---
 
 <Layout 
-  title={post.data.title}
-  description={post.data.description || post.data.summary}
+  title={title}
+  description={description}
+  image={ogImage}
   series="ai"
-  image={post.data.seo?.ogImage}
 >
   <!-- 文章內容 -->
   <div class="content-wrap">

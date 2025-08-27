@@ -17,6 +17,8 @@ const { Content } = await post.render();
 
 const title = post.data.title;
 const description = post.data.description || post.data.summary;
+// 直接從 data 物件中讀取，避開型別檢查問題
+const ogImage = post.data['seo']?.['ogImage'];
 
 // 生成麵包屑
 const breadcrumbItems = [
@@ -30,7 +32,7 @@ const breadcrumbItems = [
   title={title}
   series="startup"
   description={description}
-  image={post.data.seo?.ogImage}
+  image={ogImage}
 >
   <main>
     <div class="content-wrap">

@@ -14,9 +14,19 @@ const { title, description, image, type, series } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const defaultDescription = "創業 × AI × Crypto 的可執行知識基地";
 
-// 自動生成 OG 圖片 URL
-const autoOGImage = `${Astro.site}api/og?title=${encodeURIComponent(title)}&series=${series || 'ai'}`;
-const finalImage = image || autoOGImage;
+// 嘗試從 URL 推導文章 slug 和系列
+let ogImagePath = `${Astro.site}favicon.svg`; // 預設
+
+if (series && Astro.url.pathname.includes('/')) {
+  // 從路徑提取 slug: /ai/llm/chatgpt-complete-guide -> chatgpt-complete-guide
+  const pathParts = Astro.url.pathname.split('/').filter(Boolean);
+  if (pathParts.length >= 2) {
+    const slug = pathParts[pathParts.length - 1];
+    ogImagePath = `${Astro.site}images/og/${series}/${slug}.svg`;
+  }
+}
+
+const finalImage = image || ogImagePath;
 ---
 
 <html lang="zh-tw">

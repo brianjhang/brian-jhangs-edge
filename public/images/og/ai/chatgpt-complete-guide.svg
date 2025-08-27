@@ -1,0 +1,39 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <style>
+        .title { 
+          font-family: 'Arial', sans-serif; 
+          font-size: 48px; 
+          font-weight: bold; 
+          fill: white;
+          text-anchor: middle;
+        }
+        .subtitle { 
+          font-family: 'Arial', sans-serif; 
+          font-size: 32px; 
+          font-weight: 600; 
+          fill: #60a5fa;
+          text-anchor: middle;
+        }
+        .emoji {
+          font-size: 120px;
+          text-anchor: middle;
+        }
+      </style>
+    </defs>
+    
+    <!-- 背景 -->
+    <rect width="1200" height="630" fill="#0f172a"/>
+    
+    <!-- Emoji -->
+    <text x="600" y="200" class="emoji">🤖</text>
+    
+    <!-- 標題 -->
+    <text x="600" y="320" class="title">ChatGPT 完全解析：OpenAI 如何重新定義人機對話｜Brian's AI小百科</text>
+    
+    <!-- 副標題 -->
+    <text x="600" y="400" class="subtitle">Brian's AI小百科</text>
+    
+    <!-- 底部裝飾線 -->
+    <rect x="0" y="622" width="1200" height="8" fill="#60a5fa"/>
+  </svg>

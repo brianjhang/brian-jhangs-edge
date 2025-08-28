@@ -24,7 +24,7 @@ function generateOgImagePath(slug, seoOgImage) {
     return seoOgImage;
   }
   
-  // 特殊映射規則
+  // 特殊映射規則 - 舊檔案位置
   const slugMappings = {
     'btc/complete-guide': 'bitcoin-complete-guide.png',
     'eth/complete-guide': 'ethereum-complete-guide.png',
@@ -40,6 +40,13 @@ function generateOgImagePath(slug, seoOgImage) {
   // 如果有特殊映射，使用映射
   if (slugMappings[slug]) {
     return `/images/og/crypto/${slugMappings[slug]}`;
+  }
+  
+  // 新規則：保持目錄結構，按照實際檔案路徑
+  if (slug.includes('/')) {
+    const parts = slug.split('/');
+    const filename = `${parts[0]}-${parts[1]}.png`;
+    return `/images/og/crypto/${parts[0]}/${filename}`;
   }
   
   // 預設規則：用 slug 生成檔名

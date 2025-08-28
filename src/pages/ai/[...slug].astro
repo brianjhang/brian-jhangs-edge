@@ -25,8 +25,15 @@ function generateOgImagePath(slug, seoOgImage, series) {
     return seoOgImage;
   }
   
-  // 根據 slug 生成檔名
-  const fileName = slug.replace('/', '-') + '.png';
+  // 保持目錄結構，按照實際檔案路徑
+  if (slug.includes('/')) {
+    const parts = slug.split('/');
+    const filename = `${parts[1]}.png`; // 使用文章名稱作為檔名
+    return `/images/og/${series}/${parts[0]}/${filename}`;
+  }
+  
+  // 預設規則：用 slug 生成檔名
+  const fileName = slug + '.png';
   return `/images/og/${series}/${fileName}`;
 }
 

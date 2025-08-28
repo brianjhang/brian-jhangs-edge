@@ -37,6 +37,13 @@ const baseSchema = z.object({
     x: z.boolean().optional(),
     fb: z.boolean().optional(),
   }).optional(),
+  // AI SEO 優化欄位
+  entities: z.array(z.string()).optional(),
+  related_topics: z.array(z.string()).optional(),
+  content_type: z.string().optional(),
+  expertise_level: z.string().optional(),
+  last_fact_check: z.string().optional(),
+  primary_sources: z.array(z.string()).optional(),
   seo: seoSchema.optional(),
 });
 

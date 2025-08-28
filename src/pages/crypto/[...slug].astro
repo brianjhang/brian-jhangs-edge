@@ -17,8 +17,37 @@ const { Content } = await post.render();
 
 const title = post.data.title;
 const description = post.data.description || post.data.summary;
-// 直接從 data 物件中讀取，避開型別檢查問題
-const ogImage = post.data['seo']?.['ogImage'];
+// 動態生成 ogImage 路徑
+function generateOgImagePath(slug, seoOgImage) {
+  // 如果 SEO 中有設定，優先使用
+  if (seoOgImage) {
+    return seoOgImage;
+  }
+  
+  // 特殊映射規則
+  const slugMappings = {
+    'btc/complete-guide': 'bitcoin-complete-guide.png',
+    'eth/complete-guide': 'ethereum-complete-guide.png',
+    'sol/complete-guide': 'solana-complete-guide.png',
+    'bnb/complete-guide': 'bnb-complete-guide.png',
+    'usdt/complete-guide': 'usdt-complete-guide.png',
+    'usdc/usdc-complete-guide': 'usdc-complete-guide.png',
+    'xrp/complete-guide': 'xrp-complete-guide.png',
+    'top-10/doge-complete-guide': 'doge-complete-guide.png',
+    'coins/cardano-complete-guide': 'cardano-complete-guide.png'
+  };
+  
+  // 如果有特殊映射，使用映射
+  if (slugMappings[slug]) {
+    return `/images/og/crypto/${slugMappings[slug]}`;
+  }
+  
+  // 預設規則：用 slug 生成檔名
+  const fileName = slug.replace('/', '-') + '.png';
+  return `/images/og/crypto/${fileName}`;
+}
+
+const ogImage = generateOgImagePath(post.slug, post.data.seo?.ogImage);
 
 // 生成麵包屑
 const breadcrumbItems = [

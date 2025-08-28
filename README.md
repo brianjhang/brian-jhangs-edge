@@ -132,6 +132,18 @@ npm run lint
 npm run build
 ```
 
+### OG 圖片生成（2025-08-28 新增）
+```bash
+# 重新生成所有系列 OG 圖片
+node scripts/simple-png-generator.js
+
+# 僅修復創業筆記配色
+node scripts/startup-png-fix.js
+
+# 修復特定檔案
+node scripts/fix-contrarian.js
+```
+
 ---
 
 ## ✨ 核心特色
@@ -146,12 +158,20 @@ npm run build
 - **深度解析**：每篇專業內容詳盡分析
 - **實戰導向**：提供可執行的框架與工具
 
-### 3. 全面 SEO 優化（2025-08-22 更新）
+### 3. 全面 SEO 優化（2025-08-28 更新）
 - **Sitemap 自動生成**：XML sitemap 包含所有頁面，按優先級分類
 - **Meta 標籤完善**：canonical URL、Open Graph、Twitter Cards 完整支援
 - **多語言支援**：hreflang 標籤與語言替代設定
 - **搜尋引擎友善**：robots.txt 優化，專業 SEO 配置
 - **語義化 URL**：SEO 優化的路由結構（2025年重構）
+- **OG 圖片系統**：文章路徑與圖片路徑完全對應，自動生成社群分享預覽圖
+
+### 4. 視覺品牌系統（2025-08-28 建立）
+- **🟢 創業筆記**：綠色主題 (#10b981)
+- **🟠 幣圈筆記**：橘色主題 (#fbbf24) 
+- **🔵 AI 小百科**：藍色主題 (#60a5fa)
+- **高品質 PNG**：1200x630 標準 OG 尺寸，支援中文字體
+- **路徑對應**：`/startup/concepts/article` → `/images/og/startup/concepts/article.png`
 
 ---
 

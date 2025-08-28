@@ -24,6 +24,14 @@ const baseSchema = z.object({
   category: z.string().optional(),
   subcategory: z.string().optional(),
   featured: z.boolean().optional(),
+  business_concept: z.string().optional(),
+  bookReference: z.object({
+    title: z.string(),
+    author: z.string(),
+    isbn: z.string().optional(),
+    publisher: z.string().optional(),
+    year: z.number().optional(),
+  }).optional(),
   links: z.array(z.object({
     title: z.string(),
     url: z.string(),
@@ -44,6 +52,7 @@ const baseSchema = z.object({
   expertise_level: z.string().optional(),
   last_fact_check: z.string().optional(),
   primary_sources: z.array(z.string()).optional(),
+  targetAudience: z.array(z.string()).optional(),
   seo: seoSchema.optional(),
 });
 

@@ -56,9 +56,19 @@ if (image) {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description || defaultDescription} />
     <meta name="twitter:image" content={finalImage} />
+    <meta name="twitter:image:src" content={finalImage} />
     <meta name="twitter:image:width" content="1200" />
     <meta name="twitter:image:height" content="630" />
     <meta name="twitter:image:alt" content={`${title} - Brian Jhang's Edge`} />
+    
+    <!-- Facebook specific -->
+    <meta property="fb:app_id" content="" />
+    <meta property="article:author" content="Brian Jhang" />
+    <meta property="article:publisher" content="https://www.facebook.com/brianjhang" />
+    
+    <!-- Additional OG tags for better compatibility -->
+    <meta property="og:image:secure_url" content={finalImage} />
+    <meta property="og:image:alt" content={`${title} - Brian Jhang's Edge`} />
     
     <!-- Additional SEO -->
     <meta name="robots" content="index, follow" />

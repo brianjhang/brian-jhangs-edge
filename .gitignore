@@ -35,12 +35,7 @@ AI_INSTRUCTIONS.md
 .vscode/
 .anthropic/
 
-# Script tools (keep local only)
-scripts/simple-png-generator.js
-scripts/generate-png-with-vercel-og.js
-scripts/*-generator.js
-scripts/convert-*.js
-scripts/convert-*.sh
-scripts/fix-*.js
-scripts/fix-*.sh
-scripts/update-*.js
+# Script tools (keep local only, except README.md)
+scripts/*.js
+scripts/*.sh
+!scripts/README.md

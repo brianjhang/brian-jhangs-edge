@@ -45,7 +45,7 @@ function generateOgImagePath(slug, seoOgImage) {
   // 新規則：保持目錄結構，按照實際檔案路徑
   if (slug.includes('/')) {
     const parts = slug.split('/');
-    const filename = `${parts[0]}-${parts[1]}.png`;
+    const filename = `${parts[1]}.png`; // 只使用檔案名稱，不加前綴
     return `/images/og/crypto/${parts[0]}/${filename}`;
   }
   

@@ -1,3 +1,11 @@
+#!/usr/bin/env node
+
+/**
+ * SVG OG 圖片生成器
+ * 用途: 生成 SVG 格式的 Open Graph 圖片
+ * 注意: 目前項目使用 PNG 格式，此工具保留供參考
+ */
+
 import { readdir, readFile, writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';

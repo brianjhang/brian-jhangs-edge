@@ -34,3 +34,13 @@ AI_INSTRUCTIONS.md
 .cursor/
 .vscode/
 .anthropic/
+
+# Script tools (keep local only)
+scripts/simple-png-generator.js
+scripts/generate-png-with-vercel-og.js
+scripts/*-generator.js
+scripts/convert-*.js
+scripts/convert-*.sh
+scripts/fix-*.js
+scripts/fix-*.sh
+scripts/update-*.js

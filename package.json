@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build > docs/build.log 2>&1",
     "preview": "astro preview"
   },
   "devDependencies": {

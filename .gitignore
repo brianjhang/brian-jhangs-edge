@@ -20,6 +20,10 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
+# Build and debug logs
+*.log
+debug-*.js
+
 # Private documentation and planning files (not for public)
 docs/
 README-dev.md

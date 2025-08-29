@@ -1,0 +1,156 @@
+---
+interface Props {
+  currencyid: string;
+  base?: string;
+  secondary?: string;
+  ticker?: boolean;
+  rank?: boolean;
+  marketcap?: boolean;
+  volume?: boolean;
+  statsticker?: boolean;
+  stats?: string;
+}
+
+const {
+  currencyid,
+  base = "USD",
+  secondary = "",
+  ticker = true,
+  rank = true,
+  marketcap = true,
+  volume = true,
+  statsticker = true,
+  stats = "USD"
+} = Astro.props;
+---
+
+<div class="coinmarketcap-widget-wrapper">
+  <div class="widget-header">
+    <h3>即時市場數據</h3>
+    <span class="data-source">數據來源：CoinMarketCap</span>
+  </div>
+  
+  <div class="coinmarketcap-widget-container">
+    <script type="text/javascript" src="https://files.coinmarketcap.com/static/widget/currency.js"></script>
+    <div 
+      class="coinmarketcap-currency-widget" 
+      data-currencyid={currencyid}
+      data-base={base}
+      data-secondary={secondary}
+      data-ticker={ticker}
+      data-rank={rank}
+      data-marketcap={marketcap}
+      data-volume={volume}
+      data-statsticker={statsticker}
+      data-stats={stats}>
+    </div>
+  </div>
+</div>
+
+<style>
+  .coinmarketcap-widget-wrapper {
+    margin: 24px 0;
+    background: linear-gradient(145deg, #0a0a0a 0%, #111111 100%);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.3),
+      0 2px 4px -1px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(251, 191, 36, 0.1);
+  }
+  
+  .widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(251, 191, 36, 0.15);
+  }
+  
+  .widget-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fbbf24;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .widget-header h3::before {
+    content: "💰";
+    font-size: 1.2em;
+  }
+  
+  .data-source {
+    font-size: 0.8rem;
+    color: rgba(251, 191, 36, 0.7);
+    font-weight: 500;
+  }
+  
+  .coinmarketcap-widget-container {
+    background: rgba(15, 15, 15, 0.8);
+    border-radius: 8px;
+    padding: 16px;
+    min-height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(251, 191, 36, 0.1);
+  }
+  
+  .coinmarketcap-currency-widget {
+    width: 100%;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  /* 自定義載入狀態 */
+  .coinmarketcap-currency-widget::before {
+    content: "載入市場數據中...";
+    position: absolute;
+    color: rgba(251, 191, 36, 0.6);
+    font-size: 0.9rem;
+    z-index: 1;
+    pointer-events: none;
+  }
+  
+  /* 當數據載入後隱藏載入文字 */
+  .coinmarketcap-currency-widget:has(> *)::before {
+    display: none;
+  }
+  
+  /* 響應式設計 */
+  @media (max-width: 768px) {
+    .coinmarketcap-widget-wrapper {
+      margin: 20px 0;
+      padding: 16px;
+    }
+    
+    .widget-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    
+    .widget-header h3 {
+      font-size: 1rem;
+    }
+    
+    .data-source {
+      font-size: 0.75rem;
+    }
+  }
+  
+  /* Dark mode compatibility */
+  @media (prefers-color-scheme: dark) {
+    .coinmarketcap-widget-wrapper {
+      background: linear-gradient(145deg, #0a0a0a 0%, #111111 100%);
+    }
+  }
+</style>

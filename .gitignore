@@ -39,7 +39,7 @@ AI_INSTRUCTIONS.md
 .vscode/
 .anthropic/
 
-# Script tools (keep local only, except README.md)
+# Script tools (keep local only)
 scripts/*.js
 scripts/*.sh
-!scripts/README.md
+scripts/README.md

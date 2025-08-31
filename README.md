@@ -136,12 +136,6 @@ npm run build
 ```bash
 # 重新生成所有系列 OG 圖片
 node scripts/simple-png-generator.js
-
-# 僅修復創業筆記配色
-node scripts/startup-png-fix.js
-
-# 修復特定檔案
-node scripts/fix-contrarian.js
 ```
 
 ---

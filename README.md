@@ -132,10 +132,19 @@ npm run lint
 npm run build
 ```
 
-### OG 圖片生成（2025-08-28 新增）
+### OG 圖片管理（2025-09-01 完整自動化）
 ```bash
-# 重新生成所有系列 OG 圖片
-node scripts/simple-png-generator.js
+# 路徑結構同步
+npm run og:sync          # 增量同步檢查
+npm run og:sync-full     # 完整重建同步  
+npm run og:sync-preview  # 預覽模式（不執行實際變更）
+
+# OG 圖片生成
+npm run og:generate      # 智慧增量生成
+npm run og:generate-all  # 強制重新生成所有圖片
+
+# 清理多餘檔案
+npm run og:clean         # 清理並歸檔多餘的 OG 圖片
 ```
 
 ---
@@ -158,7 +167,7 @@ node scripts/simple-png-generator.js
 - **多語言支援**：hreflang 標籤與語言替代設定
 - **搜尋引擎友善**：robots.txt 優化，專業 SEO 配置
 - **語義化 URL**：SEO 優化的路由結構（2025年重構）
-- **OG 圖片系統**：文章路徑與圖片路徑完全對應，自動生成社群分享預覽圖
+- **OG 圖片自動化系統**：完全自動化的路徑同步、智慧生成與清理管理（2025-09-01 完成）
 
 ### 4. 視覺品牌系統（2025-08-28 建立）
 - **🟢 創業筆記**：綠色主題 (#10b981)

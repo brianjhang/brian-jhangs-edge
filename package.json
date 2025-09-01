@@ -9,7 +9,10 @@
     "preview": "astro preview",
     "og:generate": "node scripts/simple-png-generator.js",
     "og:generate-all": "node scripts/simple-png-generator.js --all",
-    "og:clean": "node cleanup-og-images.js"
+    "og:clean": "node cleanup-og-images.js",
+    "og:sync": "node scripts/sync-og-paths.js",
+    "og:sync-full": "node scripts/sync-og-paths.js --full",
+    "og:sync-preview": "node scripts/sync-og-paths.js --dry-run"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.3.4",
@@ -17,9 +20,12 @@
     "astro": "^5.13.2"
   },
   "dependencies": {
+    "@astrojs/react": "^4.3.0",
     "@astrojs/sitemap": "^3.5.0",
     "@astrojs/vercel": "^8.2.6",
     "@vercel/og": "^0.8.5",
-    "gray-matter": "^4.0.3"
+    "gray-matter": "^4.0.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   }
 }

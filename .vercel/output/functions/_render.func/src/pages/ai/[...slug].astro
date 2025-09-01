@@ -1,0 +1,300 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import Layout from '@/layouts/Layout.astro';
+import Breadcrumb from '@/components/Breadcrumb.astro';
+import RelatedArticles from '@/components/RelatedArticles.astro';
+
+export async function getStaticPaths() {
+  const aiPosts = await getCollection('ai');
+  return aiPosts.map((post) => ({
+    params: { slug: post.slug }, 
+    props: post,
+  }));
+}
+
+const post = Astro.props;
+const { Content } = await post.render();
+
+const title = post.data.title;
+const description = post.data.description || post.data.summary;
+
+// 動態生成 ogImage 路徑
+function generateOgImagePath(slug, seoOgImage, series) {
+  // 如果 SEO 中有設定，優先使用
+  if (seoOgImage) {
+    return seoOgImage;
+  }
+  
+  // 保持目錄結構，按照實際檔案路徑
+  if (slug.includes('/')) {
+    const parts = slug.split('/');
+    const filename = `${parts[1]}.png`; // 使用文章名稱作為檔名
+    return `/images/og/${series}/${parts[0]}/${filename}`;
+  }
+  
+  // 預設規則：用 slug 生成檔名
+  const fileName = slug + '.png';
+  return `/images/og/${series}/${fileName}`;
+}
+
+const ogImage = generateOgImagePath(post.slug, post.data.seo?.ogImage, 'ai');
+
+// 生成麵包屑
+const breadcrumbItems = [
+  { label: '首頁', href: '/' },
+  { label: 'AI小百科', href: '/ai' },
+  { label: post.data.title.split('：')[0] || post.data.title.split('|')[0] || post.data.title }
+];
+---
+
+<Layout 
+  title={title}
+  description={description}
+  image={ogImage}
+  series="ai"
+>
+  <!-- 文章內容 -->
+  <div class="content-wrap">
+    <Breadcrumb items={breadcrumbItems} category="ai" />
+    
+    <h1 class="page-title">{post.data.title}</h1>
+    
+    <div class="meta">
+      <span>📅 {post.data.date}</span>
+      {post.data.difficulty && <span class="difficulty">{post.data.difficulty === 'beginner' ? '入門' : post.data.difficulty === 'intermediate' ? '中階' : '進階'}</span>}
+      {post.data.category && <span class="category">{post.data.category}</span>}
+      <span>⏱️ {post.data.readingTime || 5} 分鐘閱讀</span>
+    </div>
+    
+    <article>
+      <Content />
+    </article>
+    
+    <!-- 相關文章推薦 -->
+    <RelatedArticles 
+      currentSlug={post.slug}
+      currentCategory="ai"
+      currentTags={post.data.tags}
+      maxItems={3}
+    />
+  </div>
+
+  <!-- 文章頁面專用樣式 -->
+  <style>
+    :root {
+      --ai: #3b82f6;
+      --shadow-hover: 0 8px 25px rgba(59, 130, 246, 0.15);
+    }
+    
+    .content-wrap {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--brand);
+      margin-bottom: 24px;
+      line-height: 1.2;
+    }
+    
+    .meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      align-items: center;
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+    
+    .difficulty {
+      background: linear-gradient(135deg, var(--ai), #60a5fa);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .category {
+      background: var(--card);
+      color: var(--ai);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      border: 1px solid var(--ai);
+    }
+    
+    article {
+      color: var(--brand);
+      line-height: 1.8;
+      font-size: 1.1rem;
+    }
+    
+    article h1, article h2, article h3, article h4, article h5, article h6 {
+      color: var(--brand);
+      margin: 32px 0 16px 0;
+      font-weight: 600;
+    }
+    
+    article h1 { font-size: 2rem; }
+    article h2 { font-size: 1.75rem; }
+    article h3 { font-size: 1.5rem; }
+    article h4 { font-size: 1.25rem; }
+    
+    article p {
+      margin: 16px 0;
+      color: #e5e7eb;
+    }
+    
+    article a {
+      color: var(--ai);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+    
+    article a:hover {
+      color: #60a5fa;
+      border-bottom-color: #60a5fa;
+    }
+    
+    article ul, article ol {
+      margin: 16px 0;
+      padding-left: 24px;
+    }
+    
+    article li {
+      margin: 8px 0;
+      color: #e5e7eb;
+    }
+    
+    article blockquote {
+      border-left: 4px solid var(--ai);
+      padding: 16px 24px;
+      margin: 24px 0;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+    }
+    
+    article code {
+      background: var(--card);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.9em;
+      color: var(--ai);
+    }
+    
+    article pre {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 24px 0;
+      border: 1px solid var(--border);
+    }
+    
+    article pre code {
+      background: none;
+      padding: 0;
+      color: #e5e7eb;
+    }
+    
+    /* 代碼區塊左邊距修復 - 針對所有代碼區塊 */
+    article pre {
+      padding: 20px 20px 20px 28px !important;
+    }
+    
+    /* 強制覆蓋所有代碼區塊的內聯樣式 */
+    article pre[class*="astro-code"] {
+      padding-left: 28px !important;
+    }
+    
+    article pre code {
+      background: none;
+      padding: 0;
+      color: #e5e7eb;
+    }
+    
+    /* 最強力的CSS修復 - 直接針對所有 .line 元素 */
+    :global(.line) {
+      padding-left: 8px !important;
+    }
+    
+    :global(.line span) {
+      padding-left: 0 !important;
+    }
+    
+    /* 額外的備用選擇器 */
+    :global(pre .line) {
+      padding-left: 8px !important;
+    }
+    
+    :global(code .line) {
+      padding-left: 8px !important;
+    }
+    
+    /* 純文字代碼區塊 */
+    article pre:not(.astro-code) {
+      padding-left: 28px !important;
+    }
+    
+    article pre[class*="astro-code"] .line span {
+      padding-left: 0 !important;
+    }
+    
+    article img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 24px 0;
+    }
+    
+    article table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+    }
+    
+    article th, article td {
+      border: 1px solid var(--border);
+      padding: 12px;
+      text-align: left;
+    }
+    
+    article th {
+      background: var(--card);
+      font-weight: 600;
+      color: var(--ai);
+    }
+    
+    @media (max-width: 768px) {
+      .content-wrap {
+        padding: 20px 16px;
+      }
+      
+      .page-title {
+        font-size: 2rem;
+      }
+      
+      .meta {
+        font-size: 0.8rem;
+        gap: 12px;
+      }
+      
+      article {
+        font-size: 1rem;
+      }
+      
+      article h1 { font-size: 1.75rem; }
+      article h2 { font-size: 1.5rem; }
+      article h3 { font-size: 1.25rem; }
+    }
+  </style>
+</Layout>

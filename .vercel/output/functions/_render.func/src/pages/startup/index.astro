@@ -1,0 +1,304 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '@/layouts/Layout.astro';
+
+const startupPosts = await getCollection('startup');
+const sortedPosts = startupPosts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+
+<Layout 
+  title="創業筆記 - Brian Jhang's Edge" 
+  description="創業路上實戰心得與商業智慧，從經典理論到現代應用，陪妳一起成長"
+>
+  <div class="wrap">
+    <div class="breadcrumb">
+      <a href="/">首頁</a> / <span>創業筆記</span>
+    </div>
+  </div>
+  
+  <div class="series-header">
+    <div class="wrap">
+      <h1>🚀 Brian's 創業筆記</h1>
+      <p class="series-description">創業路上實戰心得與商業智慧，從經典理論到現代應用。每篇都是踩過坑後的真實分享，希望能為你的創業旅程提供一些啟發。</p>
+      
+      <div class="series-stats">
+        <div class="stat">
+          <span class="number">{startupPosts.length}</span>
+          <div class="label">篇文章</div>
+        </div>
+        <div class="stat">
+          <span class="number">{startupPosts.reduce((total, post) => total + (post.data.readingTime || 0), 0)}</span>
+          <div class="label">分鐘閱讀</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="posts-section">
+    <div class="wrap">
+      <div class="posts-grid">
+        {sortedPosts.map((post) => (
+          <article class="post-card" onclick={`location.href='/startup/${post.slug}'`}>
+            <div class="post-meta">
+              <time>{post.data.date}</time>
+              <div class="meta-right">
+                <span class="difficulty" data-level={post.data.difficulty}>
+                  {post.data.difficulty === 'beginner' ? '入門' : 
+                   post.data.difficulty === 'intermediate' ? '進階' : '高級'}
+                </span>
+              </div>
+            </div>
+            
+            <h2><a href={`/startup/${post.slug}`}>{post.data.title}</a></h2>
+            <p class="post-summary">{post.data.summary}</p>
+            
+            {post.data.bookReference && (
+              <div class="book-reference">
+                <span>📚</span>
+                <span>{post.data.bookReference.title} - {post.data.bookReference.author}</span>
+              </div>
+            )}
+            
+            <div class="post-footer">
+              <div class="tags">
+                {post.data.tags?.slice(0, 3).map((tag) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+              <div class="reading-time">{post.data.readingTime} 分鐘</div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <style>
+    :root { 
+      --startup: #10b981;
+      --shadow-hover: 0 8px 25px rgba(0,0,0,0.25);
+    }
+    
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    
+    .breadcrumb {
+      padding: 20px 0 10px 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    
+    .breadcrumb a {
+      color: var(--startup);
+      text-decoration: none;
+    }
+    
+    .breadcrumb a:hover { text-decoration: underline; }
+    
+    .series-header {
+      text-align: center;
+      padding: 40px 0 60px 0;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--bg) 0%, #111318 50%, var(--bg) 100%);
+    }
+    
+    .series-header h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin: 0 0 16px 0;
+      color: var(--brand);
+      line-height: 1.1;
+    }
+    
+    .series-description {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      max-width: 600px;
+      margin: 0 auto 32px auto;
+    }
+    
+    .series-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+    }
+    
+    .stat {
+      text-align: center;
+    }
+    
+    .stat .number {
+      display: block;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--startup);
+      line-height: 1;
+    }
+    
+    .stat .label {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    
+    .posts-section {
+      padding: 60px 0;
+    }
+    
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    
+    .post-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .post-card:hover {
+      transform: translateY(-4px);
+      background: var(--card-hover);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--startup);
+    }
+    
+    .post-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    
+    .post-meta time {
+      color: var(--muted);
+    }
+    
+    .meta-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .difficulty {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .difficulty[data-level="beginner"] {
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+    
+    .difficulty[data-level="intermediate"] {
+      background: rgba(251, 191, 36, 0.1);
+      color: #fbbf24;
+      border: 1px solid rgba(251, 191, 36, 0.2);
+    }
+    
+    .difficulty[data-level="advanced"] {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    
+    .post-card h2 {
+      margin-bottom: 12px;
+      line-height: 1.3;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--brand);
+    }
+    
+    .post-card h2 a {
+      color: inherit;
+      text-decoration: none;
+    }
+    
+    .post-card:hover h2 {
+      color: var(--startup);
+    }
+    
+    .post-summary {
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+    
+    .book-reference {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: #6ee7b7;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .post-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+    
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .tag {
+      background: rgba(55, 65, 81, 0.5);
+      color: #cbd5e1;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+    }
+    
+    .reading-time {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+      .posts-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .series-header h1 {
+        font-size: 32px;
+      }
+      
+      .series-stats {
+        gap: 24px;
+      }
+      
+      .post-card {
+        padding: 20px;
+      }
+      
+      .meta-right {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+      }
+    }
+  </style>
+</Layout>

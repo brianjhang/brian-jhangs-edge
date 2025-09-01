@@ -7,10 +7,13 @@
 
 import { ImageResponse } from '@vercel/og';
 import type { APIRoute } from 'astro';
+import React from 'react';
 
 export const config = {
   runtime: 'edge',
 };
+
+export const prerender = false;
 
 // 主題配置
 const themes = {
@@ -91,88 +94,84 @@ export const GET: APIRoute = async ({ params, request }) => {
     const titleLines = processTitle(title);
     
     return new ImageResponse(
-      (
-        <div
-          style={{
-            height: '100%',
-            width: '100%',
+      React.createElement('div', {
+        style: {
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: theme.bg,
+          fontSize: 60,
+          fontWeight: 700,
+          textAlign: 'center',
+          position: 'relative',
+        }
+      }, [
+        // 裝飾背景
+        React.createElement('div', {
+          key: 'bg',
+          style: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: `radial-gradient(circle at 30% 40%, ${theme.primary}15 0%, transparent 50%)`,
+          }
+        }),
+        
+        // 品牌標識
+        React.createElement('div', {
+          key: 'brand',
+          style: {
+            position: 'absolute',
+            top: 60,
+            left: 80,
+            fontSize: 24,
+            color: theme.primary,
+            fontWeight: 600,
+          }
+        }, `${theme.name} • Brian Chang`),
+        
+        // 主標題
+        React.createElement('div', {
+          key: 'title',
+          style: {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
-            background: theme.bg,
-            fontSize: 60,
-            fontWeight: 700,
-            textAlign: 'center',
-            position: 'relative',
-          }}
-        >
-          {/* 裝飾背景 */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: `radial-gradient(circle at 30% 40%, ${theme.primary}15 0%, transparent 50%)`,
-            }}
-          />
-          
-          {/* 品牌標識 */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 60,
-              left: 80,
-              fontSize: 24,
-              color: theme.primary,
-              fontWeight: 600,
-            }}
-          >
-            {theme.name} • Brian Chang
-          </div>
-          
-          {/* 主標題 */}
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: titleLines.length > 1 ? 20 : 0,
-              paddingLeft: 80,
-              paddingRight: 80,
-            }}
-          >
-            {titleLines.map((line, index) => (
-              <div
-                key={index}
-                style={{
-                  color: '#ffffff',
-                  fontSize: titleLines.length === 1 ? 72 : 64,
-                  lineHeight: 1.1,
-                  textShadow: `0 4px 8px ${theme.primary}40`,
-                }}
-              >
-                {line}
-              </div>
-            ))}
-          </div>
-          
-          {/* 底部裝飾線 */}
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 80,
-              left: 80,
-              right: 80,
-              height: 6,
-              background: `linear-gradient(90deg, ${theme.primary} 0%, ${theme.accent} 100%)`,
-              borderRadius: 3,
-            }}
-          />
-        </div>
-      ),
+            gap: titleLines.length > 1 ? 20 : 0,
+            paddingLeft: 80,
+            paddingRight: 80,
+          }
+        }, titleLines.map((line, index) =>
+          React.createElement('div', {
+            key: index,
+            style: {
+              color: '#ffffff',
+              fontSize: titleLines.length === 1 ? 72 : 64,
+              lineHeight: 1.1,
+              textShadow: `0 4px 8px ${theme.primary}40`,
+            }
+          }, line)
+        )),
+        
+        // 底部裝飾線
+        React.createElement('div', {
+          key: 'decoration',
+          style: {
+            position: 'absolute',
+            bottom: 80,
+            left: 80,
+            right: 80,
+            height: 6,
+            background: `linear-gradient(90deg, ${theme.primary} 0%, ${theme.accent} 100%)`,
+            borderRadius: 3,
+          }
+        })
+      ]),
       {
         width: 1200,
         height: 630,

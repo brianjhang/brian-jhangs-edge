@@ -2,12 +2,15 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import react from '@astrojs/react';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   vite: { resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } } },
   alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   site: 'https://brianjhang.com',
   integrations: [
+    react(),
     mdx(),
     sitemap({
       changefreq: 'weekly',
@@ -40,5 +43,6 @@ export default defineConfig({
       }
     })
   ],
-  output: 'static'
+  output: 'server',
+  adapter: vercel()
 });

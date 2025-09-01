@@ -1,0 +1,316 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '@/layouts/Layout.astro';
+
+const cryptoPosts = await getCollection('crypto');
+const sortedPosts = cryptoPosts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+
+<Layout 
+  title="幣圈筆記 - Brian Jhang's Edge" 
+  description="客觀中立的加密貨幣教育內容，從基礎知識到深度分析，理性看待區塊鏈世界"
+>
+  <div class="wrap">
+    <div class="breadcrumb">
+      <a href="/">首頁</a> / <span>幣圈筆記</span>
+    </div>
+  </div>
+  
+  <div class="series-header">
+    <div class="wrap">
+      <h1>📒 Brian's 幣圈筆記</h1>
+      <p class="series-description">客觀中立的加密貨幣教育內容，從基礎知識到深度分析。不追熱點、不販賣焦慮，只專注於幫你建立對區塊鏈世界的正確認知。</p>
+      
+      <div class="series-stats">
+        <div class="stat">
+          <span class="number">{cryptoPosts.length}</span>
+          <div class="label">篇文章</div>
+        </div>
+        <div class="stat">
+          <span class="number">{cryptoPosts.reduce((total, post) => total + (post.data.readingTime || 0), 0)}</span>
+          <div class="label">分鐘閱讀</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="posts-section">
+    <div class="wrap">
+      <div class="posts-grid">
+        {sortedPosts.map((post) => (
+          <article class="post-card" onclick={`location.href='/crypto/${post.slug}'`}>
+            <div class="post-meta">
+              <time>{post.data.date}</time>
+              <div class="meta-right">
+                {post.data.ticker && (
+                  <span class="ticker">{post.data.ticker}</span>
+                )}
+                <span class="difficulty" data-level={post.data.difficulty}>
+                  {post.data.difficulty === 'beginner' ? '入門' : 
+                   post.data.difficulty === 'intermediate' ? '進階' : '高級'}
+                </span>
+              </div>
+            </div>
+            
+            <h2><a href={`/crypto/${post.slug}`}>{post.data.title}</a></h2>
+            <p class="post-summary">{post.data.summary}</p>
+            
+            <div class="post-footer">
+              <div class="tags">
+                {post.data.tags?.slice(0, 3).map((tag) => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+              <div class="reading-time">{post.data.readingTime} 分鐘</div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div class="disclaimer">
+        ⚠️ <strong>風險聲明</strong>：加密貨幣投資存在極高風險，價格波動劇烈。本內容僅為教育目的，不構成投資建議。請只投資您能承受完全損失的資金，並在投資前進行獨立研究和風險評估。
+      </div>
+    </div>
+  </div>
+
+  <style>
+    :root { 
+      --crypto: #f59e0b;
+      --shadow-hover: 0 8px 25px rgba(0,0,0,0.25);
+    }
+    
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    
+    .breadcrumb {
+      padding: 20px 0 10px 0;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    
+    .breadcrumb a {
+      color: var(--crypto);
+      text-decoration: none;
+    }
+    
+    .breadcrumb a:hover { text-decoration: underline; }
+    
+    .series-header {
+      text-align: center;
+      padding: 40px 0 60px 0;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--bg) 0%, #111318 50%, var(--bg) 100%);
+    }
+    
+    .series-header h1 {
+      font-size: 48px;
+      font-weight: 800;
+      margin: 0 0 16px 0;
+      color: var(--brand);
+      line-height: 1.1;
+    }
+    
+    .series-description {
+      font-size: 18px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      max-width: 600px;
+      margin: 0 auto 32px auto;
+    }
+    
+    .series-stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+    }
+    
+    .stat {
+      text-align: center;
+    }
+    
+    .stat .number {
+      display: block;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--crypto);
+      line-height: 1;
+    }
+    
+    .stat .label {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    
+    .posts-section {
+      padding: 60px 0;
+    }
+    
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    
+    .post-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .post-card:hover {
+      transform: translateY(-4px);
+      background: var(--card-hover);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--crypto);
+    }
+    
+    .post-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    
+    .post-meta time {
+      color: var(--muted);
+    }
+    
+    .meta-right {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    
+    .ticker {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--crypto);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: monospace;
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+    
+    .difficulty {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .difficulty[data-level="beginner"] {
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+    
+    .difficulty[data-level="intermediate"] {
+      background: rgba(251, 191, 36, 0.1);
+      color: #fbbf24;
+      border: 1px solid rgba(251, 191, 36, 0.2);
+    }
+    
+    .difficulty[data-level="advanced"] {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    
+    .post-card h2 {
+      margin-bottom: 12px;
+      line-height: 1.3;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--brand);
+    }
+    
+    .post-card h2 a {
+      color: inherit;
+      text-decoration: none;
+    }
+    
+    .post-card:hover h2 {
+      color: var(--crypto);
+    }
+    
+    .post-summary {
+      color: #cbd5e1;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+    
+    .post-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+    }
+    
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    
+    .tag {
+      background: rgba(55, 65, 81, 0.5);
+      color: #cbd5e1;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+    }
+    
+    .reading-time {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    
+    .disclaimer {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 12px;
+      padding: 20px;
+      color: #fca5a5;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .disclaimer strong {
+      color: #f87171;
+    }
+    
+    @media (max-width: 768px) {
+      .posts-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .series-header h1 {
+        font-size: 32px;
+      }
+      
+      .series-stats {
+        gap: 24px;
+      }
+      
+      .post-card {
+        padding: 20px;
+      }
+      
+      .meta-right {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
+      }
+    }
+  </style>
+</Layout>

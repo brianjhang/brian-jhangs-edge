@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://brianjhang.com/sitemap-0.xml
+Sitemap: https://brianjhang.com/sitemap-index.xml
+
+# 允許重要頁面
+Allow: /ai/
+Allow: /crypto/
+Allow: /startup/
+Allow: /about/
+
+# 禁止抓取的目錄
+Disallow: /_astro/
+Disallow: /dist/
+Disallow: /node_modules/
+
+# SEO 優化
+Host: https://brianjhang.com
+
+# 爬蟲延遲（友善設定）
+Crawl-delay: 1

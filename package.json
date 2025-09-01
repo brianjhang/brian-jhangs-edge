@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "og:generate": "node scripts/simple-png-generator.js",
+    "og:generate-all": "node scripts/simple-png-generator.js --all",
+    "og:clean": "node cleanup-og-images.js"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.3.4",

@@ -5,7 +5,7 @@
  * 用途：清理重複、多餘的 PNG 檔案，只保留與 MDX 檔案對應的正確版本
  */
 
-import { readdir, unlink, stat } from 'fs/promises';
+import { readdir, unlink, stat, rename, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -91,15 +91,28 @@ async function main() {
   console.log(`  • 缺失檔案：${missingFiles.length} 個`);
   
   if (extraFiles.length > 0) {
-    console.log(`\n🗑️  要刪除的多餘檔案：`);
-    for (const file of extraFiles) {
-      console.log(`  - ${file}`);
-      try {
-        await unlink(file);
-        console.log(`    ✅ 已刪除`);
-      } catch (error) {
-        console.log(`    ❌ 刪除失敗: ${error.message}`);
+    // 建立備份目錄
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/[-:]/g, '').replace('T', '_');
+    const backupDir = join(__dirname, `public/images/og_cleanup_${timestamp}`);
+    
+    console.log(`\n📦 要歸檔的多餘檔案：`);
+    try {
+      await mkdir(backupDir, { recursive: true });
+      console.log(`📁 建立備份目錄: ${backupDir}`);
+      
+      for (const file of extraFiles) {
+        console.log(`  - ${file}`);
+        try {
+          const fileName = file.split('/').pop();
+          const backupPath = join(backupDir, fileName);
+          await rename(file, backupPath);
+          console.log(`    ✅ 已歸檔至: ${backupPath}`);
+        } catch (error) {
+          console.log(`    ❌ 歸檔失敗: ${error.message}`);
+        }
       }
+    } catch (error) {
+      console.log(`❌ 無法建立備份目錄: ${error.message}`);
     }
   }
   

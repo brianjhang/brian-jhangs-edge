@@ -1,6 +1,6 @@
 import { d as createAstro, c as createComponent, e as defineStyleVars, m as maybeRenderHead, b as addAttribute, r as renderComponent, F as Fragment, a as renderTemplate } from './astro/server_U-kaEscN.mjs';
 /* empty css                          */
-import { g as getCollection } from './_astro_content_Bg6XP5RA.mjs';
+import { g as getCollection } from './_astro_content_Dt_hqBGJ.mjs';
 import 'clsx';
 
 const $$Astro$1 = createAstro("https://brianjhang.com");

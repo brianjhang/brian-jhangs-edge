@@ -1,4 +1,6 @@
 ---
+export const prerender = true;
+
 import { getCollection } from "astro:content";
 import Layout from '../layouts/Layout.astro';
 
@@ -11,13 +13,13 @@ const cryptoPosts = await getCollection("crypto");
 const byDateDesc = (a, b) => new Date(b.data.date) - new Date(a.data.date);
 
 // 獲取每個主題的最新文章
-const latestAI = aiPosts.toSorted(byDateDesc)[0];
-const latestStartup = startupPosts.toSorted(byDateDesc)[0];
-const latestCrypto = cryptoPosts.toSorted(byDateDesc)[0];
+const latestAI = [...aiPosts].sort(byDateDesc)[0];
+const latestStartup = [...startupPosts].sort(byDateDesc)[0];
+const latestCrypto = [...cryptoPosts].sort(byDateDesc)[0];
 
 // 合併所有文章並按日期排序，用於顯示最新文章
 const allPosts = [...aiPosts, ...startupPosts, ...cryptoPosts];
-const recentPosts = allPosts.toSorted(byDateDesc).slice(0, 6);
+const recentPosts = allPosts.sort(byDateDesc).slice(0, 6);
 ---
 
 <Layout 

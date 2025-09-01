@@ -20,19 +20,7 @@
 			"dest": "_render"
 		},
 		{
-			"src": "^/ai(?:/(.*?))?/?$",
-			"dest": "_render"
-		},
-		{
 			"src": "^/api/og(?:/(.*?))?/?$",
-			"dest": "_render"
-		},
-		{
-			"src": "^/crypto(?:/(.*?))?/?$",
-			"dest": "_render"
-		},
-		{
-			"src": "^/startup(?:/(.*?))?/?$",
 			"dest": "_render"
 		}
 	]

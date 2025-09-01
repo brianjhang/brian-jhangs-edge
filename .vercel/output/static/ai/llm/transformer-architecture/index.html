@@ -1,0 +1,146 @@
+<!DOCTYPE html><html lang="zh-tw" data-astro-cid-sckkx6r4> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Transformer 完全解析：Google 革命性 AI 架構如何催生 ChatGPT｜Brian&#39;s AI小百科</title><meta name="description" content="深度解析 Transformer：2017年 Google 研究團隊的突破性發明，「注意力機制」如何改變 AI 世界，從原理到應用的完整小白指南。了解為什麼它是 ChatGPT、BERT 的核心技術。"><!-- Canonical URL --><link rel="canonical" href="https://brianjhang.com/ai/llm/transformer-architecture/"><!-- Open Graph --><meta property="og:title" content="Transformer 完全解析：Google 革命性 AI 架構如何催生 ChatGPT｜Brian's AI小百科"><meta property="og:description" content="深度解析 Transformer：2017年 Google 研究團隊的突破性發明，「注意力機制」如何改變 AI 世界，從原理到應用的完整小白指南。了解為什麼它是 ChatGPT、BERT 的核心技術。"><meta property="og:type" content="article"><meta property="og:url" content="https://brianjhang.com/ai/llm/transformer-architecture/"><meta property="og:image" content="https://brianjhang.com/images/og/ai/llm/transformer-architecture.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/png"><meta property="og:site_name" content="Brian Jhang's Edge"><meta property="og:locale" content="zh_TW"><!-- Twitter Cards --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@brianjhang"><meta name="twitter:creator" content="@brianjhang"><meta name="twitter:title" content="Transformer 完全解析：Google 革命性 AI 架構如何催生 ChatGPT｜Brian's AI小百科"><meta name="twitter:description" content="深度解析 Transformer：2017年 Google 研究團隊的突破性發明，「注意力機制」如何改變 AI 世界，從原理到應用的完整小白指南。了解為什麼它是 ChatGPT、BERT 的核心技術。"><meta name="twitter:image" content="https://brianjhang.com/images/og/ai/llm/transformer-architecture.png"><meta name="twitter:image:src" content="https://brianjhang.com/images/og/ai/llm/transformer-architecture.png"><meta name="twitter:image:width" content="1200"><meta name="twitter:image:height" content="630"><meta name="twitter:image:alt" content="Transformer 完全解析：Google 革命性 AI 架構如何催生 ChatGPT｜Brian's AI小百科 - Brian Jhang's Edge"><!-- Facebook specific --><meta property="article:author" content="Brian Jhang"><meta property="article:publisher" content="https://www.facebook.com/brianjhang"><!-- Additional OG tags for better compatibility --><meta property="og:image:secure_url" content="https://brianjhang.com/images/og/ai/llm/transformer-architecture.png"><meta property="og:image:alt" content="Transformer 完全解析：Google 革命性 AI 架構如何催生 ChatGPT｜Brian's AI小百科 - Brian Jhang's Edge"><!-- Additional SEO --><meta name="robots" content="index, follow"><meta name="author" content="Brian Jhang"><meta name="theme-color" content="#0b0b0c"><!-- Language alternatives --><link rel="alternate" hreflang="zh-tw" href="https://brianjhang.com/ai/llm/transformer-architecture/"><link rel="alternate" hreflang="x-default" href="https://brianjhang.com/ai/llm/transformer-architecture/"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-7F14DYS5K2"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-7F14DYS5K2");</script><link rel="stylesheet" href="/_astro/_slug_.B7cxKPWl.css">
+<style>header[data-astro-cid-3ef6ksr2]{position:sticky;top:0;background:#0b0b0cd9;backdrop-filter:blur(12px);border-bottom:1px solid var(--border, #1f2937);z-index:20;box-shadow:var(--shadow, 0 4px 12px rgba(0,0,0,.15))}.header-content[data-astro-cid-3ef6ksr2]{max-width:1200px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}.brand[data-astro-cid-3ef6ksr2]{font-weight:800;color:#fff;text-decoration:none;font-size:18px}nav[data-astro-cid-3ef6ksr2]{display:flex;gap:20px}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{color:#cbd5e1;font-weight:500;transition:color .2s ease;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]:hover{color:#fff}@media (max-width: 768px){nav[data-astro-cid-3ef6ksr2]{gap:12px}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{font-size:14px}}footer[data-astro-cid-sz7xmlte]{border-top:1px solid var(--border, #1f2937);padding:32px 0;color:var(--muted, #9ca3af);background:#0f111580}.wrap[data-astro-cid-sz7xmlte]{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.copyright[data-astro-cid-sz7xmlte]{margin:0;color:var(--muted, #9ca3af)}.social-links[data-astro-cid-sz7xmlte]{display:flex;gap:16px;align-items:center}.social-link[data-astro-cid-sz7xmlte]{color:var(--muted, #9ca3af);text-decoration:none;transition:color .2s ease}.social-link[data-astro-cid-sz7xmlte]:hover{color:#fff}@media (max-width: 768px){.wrap[data-astro-cid-sz7xmlte]{flex-direction:column;text-align:center;gap:16px}}:root{--bg: #0b0b0c;--muted: #9ca3af;--card: #0f1115;--border: #1f2937;--brand: #fafafa;--card-hover: #121218;--shadow: 0 4px 12px rgba(0,0,0,.15);--link: #60a5fa}[data-astro-cid-sckkx6r4]{margin:0;padding:0;box-sizing:border-box}body{font-family:SF Pro Display,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--brand);line-height:1.6;min-height:100vh}a[data-astro-cid-sckkx6r4]{color:var(--link);text-decoration:none}a[data-astro-cid-sckkx6r4]:hover{text-decoration:underline}.container[data-astro-cid-sckkx6r4]{max-width:1200px;margin:0 auto;padding:2rem 1rem}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.Bd_1YT-2.css"></head> <body data-astro-cid-sckkx6r4> <header data-astro-cid-3ef6ksr2> <div class="header-content" data-astro-cid-3ef6ksr2> <a href="/" class="brand" data-astro-cid-3ef6ksr2>Brian Jhang's Edge</a> <nav data-astro-cid-3ef6ksr2> <a href="/ai" data-astro-cid-3ef6ksr2>AI小百科</a> <a href="/startup" data-astro-cid-3ef6ksr2>創業筆記</a> <a href="/crypto" data-astro-cid-3ef6ksr2>幣圈筆記</a> <a href="/about" data-astro-cid-3ef6ksr2>關於</a> </nav> </div> </header>  <main data-astro-cid-sckkx6r4>   <div class="content-wrap" data-astro-cid-rw3iabhw> <nav class="breadcrumb" aria-label="麵包屑導航" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;"> <ol class="breadcrumb-list" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;"> <li class="breadcrumb-item" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;">  <a href="/" class="breadcrumb-link" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;"> 首頁 </a> <span class="breadcrumb-separator" aria-hidden="true" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;">/</span> </li><li class="breadcrumb-item" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;">  <a href="/ai" class="breadcrumb-link" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;"> AI小百科 </a> <span class="breadcrumb-separator" aria-hidden="true" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;">/</span> </li><li class="breadcrumb-item" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;"> <span class="breadcrumb-current" aria-current="page" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;"> Transformer 完全解析 </span> </li> </ol> </nav>  <h1 class="page-title" data-astro-cid-rw3iabhw>Transformer 完全解析：Google 革命性 AI 架構如何催生 ChatGPT｜Brian&#39;s AI小百科</h1> <div class="meta" data-astro-cid-rw3iabhw> <span data-astro-cid-rw3iabhw>📅 2025-08-19</span> <span class="difficulty" data-astro-cid-rw3iabhw>入門</span> <span class="category" data-astro-cid-rw3iabhw>人工智慧教育</span> <span data-astro-cid-rw3iabhw>⏱️ 6 分鐘閱讀</span> </div> <article data-astro-cid-rw3iabhw> <h1 id="transformer-完全解析google-革命性-ai-架構如何催生-chatgpt">Transformer 完全解析：Google 革命性 AI 架構如何催生 ChatGPT</h1>
+<p>🤖 <strong>Brian’s AI小百科 (AI Essentials)</strong><br/>
+第 1 篇｜什麼是 Transformer？</p>
+<blockquote>
+<p>「Attention is All You Need」<br/>
+——Google Research Team (2017)</p>
+</blockquote>
+<h2 id="-快速回答什麼是-transformer">🔍 快速回答：什麼是 Transformer？</h2>
+<p><strong>一句話回答</strong>：Transformer 是 Google 在 2017 年發明的 AI 架構，透過「注意力機制」讓 AI 能同時處理整個句子，成為 ChatGPT、GPT-4 等現代 AI 的核心技術。</p>
+<p><strong>核心數據</strong>：</p>
+<ul>
+<li>📅 <strong>發布時間</strong>：2017年6月12日</li>
+<li>🏢 <strong>發明者</strong>：Google Research（Ashish Vaswani 等8位研究者）</li>
+<li>📊 <strong>效能提升</strong>：比 RNN 快 10-100 倍</li>
+<li>🎯 <strong>應用範圍</strong>：翻譯、對話、程式碼生成、圖像理解</li>
+</ul>
+<p><strong>為什麼 Transformer 如此重要？</strong></p>
+<ul>
+<li>🚀 <strong>AI 革命催化劑</strong>：ChatGPT、BERT、GPT-4 的核心技術</li>
+<li>⚡ <strong>效能突破</strong>：比傳統 RNN 快數十倍</li>
+<li>🎯 <strong>理解能力</strong>：讓 AI 真正「理解」語言和上下文</li>
+<li>🌍 <strong>廣泛應用</strong>：翻譯、對話、摘要、程式碼生成等領域</li>
+</ul>
+<h2 id="-歷史背景google-的突破性發現">📚 歷史背景：Google 的突破性發現</h2>
+<p><strong>2017年6月</strong>，Google Research 的 Ashish Vaswani 等 8 位研究者發表了一篇震撼學術界的論文：《Attention is All You Need》。</p>
+<p><strong>這篇論文的革命性</strong>：</p>
+<ul>
+<li>拋棄了當時主流的 RNN（循環神經網路）和 CNN（卷積神經網路）</li>
+<li>提出完全基於「注意力機制」的新架構</li>
+<li>在翻譯任務上達到前所未有的效果，且訓練速度大幅提升</li>
+</ul>
+<p><strong>為什麼是 Google？</strong></p>
+<ul>
+<li>Google 擁有海量數據和強大運算資源</li>
+<li>翻譯服務 Google Translate 需要更好的技術</li>
+<li>研究團隊包括多位 NLP（自然語言處理）頂級專家</li>
+</ul>
+<h2 id="-用人話說transformer-是什麼">🤔 用人話說，Transformer 是什麼？</h2>
+<p>想像你在看一本小說，你的大腦會同時記住：</p>
+<ul>
+<li>前面劇情的重要線索</li>
+<li>角色之間的關係</li>
+<li>當下這句話和整個故事的關聯</li>
+</ul>
+<p><strong>Transformer 就像 AI 的「超級大腦」</strong>，能夠：</p>
+<ul>
+<li>🧠 <strong>同時關注所有資訊</strong>：不像人類會忘記，它記住整個對話</li>
+<li>🎯 <strong>知道什麼最重要</strong>：自動找出關鍵字和重要概念</li>
+<li>🔗 <strong>理解前後關係</strong>：明白「他」指的是誰，「這個」是什麼</li>
+</ul>
+<h2 id="-為什麼-transformer-這麼厲害">🏠 為什麼 Transformer 這麼厲害？</h2>
+<p><strong>以前的 AI（想像成單線思考）</strong>：</p>
+<ul>
+<li>😵‍💫 一個字一個字慢慢看，容易忘記前面說什麼</li>
+<li>🐌 處理長文章超慢，像用放大鏡看書</li>
+<li>🤷‍♂️ 很難理解複雜的語意關係</li>
+</ul>
+<p><strong>Transformer（想像成全景思考）</strong>：</p>
+<ul>
+<li>⚡ 一次看完整句話，甚至整篇文章</li>
+<li>🎯 自動標記重點，知道哪些詞彙最關鍵</li>
+<li>🧩 理解複雜關係，像聰明的人類一樣思考</li>
+</ul>
+<h2 id="-小白最常問的問題">😅 小白最常問的問題</h2>
+<p><strong>Q: Transformer 和 ChatGPT 有什麼關係？</strong>
+A: ChatGPT 就是用 Transformer 技術做出來的！就像汽車是用引擎技術做出來的。</p>
+<p><strong>Q: 為什麼叫「注意力機制」？</strong>
+A: 就像你在吵雜咖啡廳裡，能專注聽朋友講話而忽略其他聲音。AI 也學會了「專注」在重要資訊上。</p>
+<p><strong>Q: 這技術很難嗎？</strong>
+A: 對普通人來說不用懂技術細節，就像開車不用懂引擎原理。重點是知道它能做什麼！</p>
+<p><strong>Q: 除了 ChatGPT 還有什麼應用？</strong>
+A: 超多！Google翻譯、語音助理、自動摘要、程式碼生成…幾乎所有 AI 應用都在用。</p>
+<h2 id="-transformer-改變了什麼">🚀 Transformer 改變了什麼？</h2>
+<p><strong>2017 年之前</strong>：</p>
+<ul>
+<li>AI 翻譯常常怪怪的</li>
+<li>語音助理只能回答簡單問題</li>
+<li>寫作助手很陽春</li>
+</ul>
+<p><strong>2017 年之後</strong>：</p>
+<ul>
+<li>Google 翻譯品質大躍進</li>
+<li>出現了 ChatGPT、Claude 這種「聊天機器人」</li>
+<li>AI 可以寫詩、寫程式、甚至寫小說</li>
+</ul>
+<h2 id="-對你的生活有什麼影響">💡 對你的生活有什麼影響？</h2>
+<p><strong>現在已經在用</strong>：</p>
+<ul>
+<li>📱 手機的語音輸入法</li>
+<li>🌐 網頁自動翻譯</li>
+<li>📧 Gmail 的智慧回覆建議</li>
+<li>🎵 Spotify 的歌詞顯示</li>
+</ul>
+<p><strong>未來可能出現</strong>：</p>
+<ul>
+<li>🏥 AI 醫生助手幫你解讀健檢報告</li>
+<li>📚 AI 老師根據你的程度客製化教學</li>
+<li>💼 AI 助理幫你寫工作報告</li>
+<li>🎨 AI 幫你把想法變成藝術作品</li>
+</ul>
+<h2 id="-brian-的小結">🌟 Brian 的小結</h2>
+<p>Transformer 不是科幻電影裡的機器人，它是讓 AI 變聰明的「幕後英雄」。</p>
+<p>你不需要成為工程師，但了解這個技術，能幫你更好地使用 AI 工具，在工作和生活中更有效率！</p>
+<p><strong>記住一句話：AI 不會取代你，但會用 AI 的人會取代不會用的人 😉</strong></p>
+<h2 id="-深入學習資源">📖 深入學習資源</h2>
+<p><strong>經典論文</strong>：</p>
+<ul>
+<li>《Attention is All You Need》- 原始論文（技術向）</li>
+<li>《BERT》- Google 基於 Transformer 的突破</li>
+<li>《GPT》系列 - OpenAI 的語言模型演進</li>
+</ul>
+<p><strong>優質解釋文章</strong>：</p>
+<ul>
+<li>Jay Alammar 的《The Illustrated Transformer》（圖解版）</li>
+<li>Andrej Karpathy 的《Let’s build GPT》（實作導向）</li>
+<li>3Blue1Brown 的 YouTube 影片系列</li>
+</ul>
+<p><strong>實際應用學習</strong>：</p>
+<ul>
+<li>Hugging Face Transformers 庫（上手最快）</li>
+<li>OpenAI Playground（體驗不同模型）</li>
+<li>Google Colab 免費試玩各種模型</li>
+</ul>
+<p><strong>中文資源</strong>：</p>
+<ul>
+<li>李宏毅教授的機器學習課程</li>
+<li>《動手學深度學習》中文版</li>
+</ul>
+<hr/>
+<p><strong>🔮 下一篇預告</strong>：我們將介紹 <strong>BERT</strong>，看看 Google 如何把 Transformer 變成「AI 閱讀理解專家」！</p>
+<p><em>想了解更多 AI 知識？關注 Brian’s AI 小百科，我們用最白話的方式聊科技！</em></p> </article> <!-- 相關文章推薦 --> <section class="related-articles" aria-labelledby="related-heading" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><div class="related-header" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><h2 id="related-heading" class="related-title" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-icon" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">🤖</span>
+相關AI小百科</h2><p class="related-subtitle" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">延伸閱讀推薦</p></div><div class="related-grid" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><article class="related-card" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><a href="/ai/llm/chatgpt-complete-guide/" class="related-link" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><div class="related-content" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><h3 class="related-card-title" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">ChatGPT 完全解析：OpenAI 如何重新定義人機對話｜Brian&#39;s AI小百科</h3><p class="related-summary" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">OpenAI 開發的對話式 AI，讓人工智慧首次能夠進行自然、智能的對話交流。</p><div class="related-meta" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-date" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+📅 2025年8月20日</span><span class="related-difficulty" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">入門</span><span class="related-reading-time" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+⏱️ 8 分鐘
+</span></div><div class="related-tags" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#ChatGPT</span><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#OpenAI</span><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#GPT模型</span></div></div><div class="related-arrow" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"></path></svg></div></a></article><article class="related-card" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><a href="/ai/practical/fine-tuning-complete-guide/" class="related-link" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><div class="related-content" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><h3 class="related-card-title" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">微調完全解析：讓 AI 變成你的專屬助手｜從原理到實戰的完整指南｜Brian&#39;s AI 小百科</h3><p class="related-summary" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">微調是讓通用 AI 模型適應特定任務的核心技術，從全參數微調到高效的 LoRA 方法，掌握客製化 AI 的關鍵技術。</p><div class="related-meta" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-date" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+📅 2025年8月23日</span><span class="related-difficulty" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">中階</span><span class="related-reading-time" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+⏱️ 15 分鐘
+</span></div><div class="related-tags" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#微調</span><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#Fine-tuning</span><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#LoRA</span></div></div><div class="related-arrow" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"></path></svg></div></a></article><article class="related-card" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><a href="/ai/trends/ai-agent-technology/" class="related-link" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><div class="related-content" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><h3 class="related-card-title" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">AI Agent 技術完全解析：下一代智能助手如何重新定義人機協作｜Brian&#39;s AI 小百科</h3><p class="related-summary" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">AI Agent 是具備自主決策和工具調用能力的智能系統，已成為主流應用，79% 的企業正在使用這項技術。</p><div class="related-meta" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-date" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+📅 2025年8月22日</span><span class="related-difficulty" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">中階</span><span class="related-reading-time" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+⏱️ 13 分鐘
+</span></div><div class="related-tags" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#AI Agent</span><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#智能代理</span><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#LLM</span></div></div><div class="related-arrow" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"></path></svg></div></a></article></div><div class="related-footer" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><a href="/ai" class="view-all-link" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+查看所有AI小百科 →
+</a></div></section> </div>    </main> <footer data-astro-cid-sz7xmlte> <div class="wrap" data-astro-cid-sz7xmlte> <p class="copyright" data-astro-cid-sz7xmlte>© 2025 Brian Jhang's Edge ・ 教育內容，非投資建議</p> <div class="social-links" data-astro-cid-sz7xmlte> <a href="https://x.com/brianjhang" rel="noopener" target="_blank" class="social-link" data-astro-cid-sz7xmlte>X</a> <a href="https://threads.net/@brianjhang" rel="noopener" target="_blank" class="social-link" data-astro-cid-sz7xmlte>Threads</a> <a href="https://www.facebook.com/iambrianjhang" rel="noopener" target="_blank" class="social-link" data-astro-cid-sz7xmlte>Facebook</a> <a href="https://github.com/brianjhang" rel="noopener" target="_blank" class="social-link" data-astro-cid-sz7xmlte>GitHub</a> </div> </div> </footer>  </body></html>

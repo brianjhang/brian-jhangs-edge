@@ -1,0 +1,417 @@
+<!DOCTYPE html><html lang="zh-tw" data-astro-cid-sckkx6r4> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>提示工程完全解析：與 AI 對話的藝術｜Brian&#39;s AI 小百科</title><meta name="description" content="深入解析提示工程的核心原理與實戰技巧，了解如何與 AI 進行高效對話。從基礎概念到進階策略的完整指南。"><!-- Canonical URL --><link rel="canonical" href="https://brianjhang.com/ai/llm/prompt-engineering-complete-guide/"><!-- Open Graph --><meta property="og:title" content="提示工程完全解析：與 AI 對話的藝術｜Brian's AI 小百科"><meta property="og:description" content="深入解析提示工程的核心原理與實戰技巧，了解如何與 AI 進行高效對話。從基礎概念到進階策略的完整指南。"><meta property="og:type" content="article"><meta property="og:url" content="https://brianjhang.com/ai/llm/prompt-engineering-complete-guide/"><meta property="og:image" content="https://brianjhang.com/images/og/ai/llm/prompt-engineering-complete-guide.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:type" content="image/png"><meta property="og:site_name" content="Brian Jhang's Edge"><meta property="og:locale" content="zh_TW"><!-- Twitter Cards --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@brianjhang"><meta name="twitter:creator" content="@brianjhang"><meta name="twitter:title" content="提示工程完全解析：與 AI 對話的藝術｜Brian's AI 小百科"><meta name="twitter:description" content="深入解析提示工程的核心原理與實戰技巧，了解如何與 AI 進行高效對話。從基礎概念到進階策略的完整指南。"><meta name="twitter:image" content="https://brianjhang.com/images/og/ai/llm/prompt-engineering-complete-guide.png"><meta name="twitter:image:src" content="https://brianjhang.com/images/og/ai/llm/prompt-engineering-complete-guide.png"><meta name="twitter:image:width" content="1200"><meta name="twitter:image:height" content="630"><meta name="twitter:image:alt" content="提示工程完全解析：與 AI 對話的藝術｜Brian's AI 小百科 - Brian Jhang's Edge"><!-- Facebook specific --><meta property="article:author" content="Brian Jhang"><meta property="article:publisher" content="https://www.facebook.com/brianjhang"><!-- Additional OG tags for better compatibility --><meta property="og:image:secure_url" content="https://brianjhang.com/images/og/ai/llm/prompt-engineering-complete-guide.png"><meta property="og:image:alt" content="提示工程完全解析：與 AI 對話的藝術｜Brian's AI 小百科 - Brian Jhang's Edge"><!-- Additional SEO --><meta name="robots" content="index, follow"><meta name="author" content="Brian Jhang"><meta name="theme-color" content="#0b0b0c"><!-- Language alternatives --><link rel="alternate" hreflang="zh-tw" href="https://brianjhang.com/ai/llm/prompt-engineering-complete-guide/"><link rel="alternate" hreflang="x-default" href="https://brianjhang.com/ai/llm/prompt-engineering-complete-guide/"><!-- Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-7F14DYS5K2"></script><script type="module">window.dataLayer=window.dataLayer||[];function a(){dataLayer.push(arguments)}a("js",new Date);a("config","G-7F14DYS5K2");</script><link rel="stylesheet" href="/_astro/_slug_.B7cxKPWl.css">
+<style>header[data-astro-cid-3ef6ksr2]{position:sticky;top:0;background:#0b0b0cd9;backdrop-filter:blur(12px);border-bottom:1px solid var(--border, #1f2937);z-index:20;box-shadow:var(--shadow, 0 4px 12px rgba(0,0,0,.15))}.header-content[data-astro-cid-3ef6ksr2]{max-width:1200px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}.brand[data-astro-cid-3ef6ksr2]{font-weight:800;color:#fff;text-decoration:none;font-size:18px}nav[data-astro-cid-3ef6ksr2]{display:flex;gap:20px}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{color:#cbd5e1;font-weight:500;transition:color .2s ease;text-decoration:none}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]:hover{color:#fff}@media (max-width: 768px){nav[data-astro-cid-3ef6ksr2]{gap:12px}nav[data-astro-cid-3ef6ksr2] a[data-astro-cid-3ef6ksr2]{font-size:14px}}footer[data-astro-cid-sz7xmlte]{border-top:1px solid var(--border, #1f2937);padding:32px 0;color:var(--muted, #9ca3af);background:#0f111580}.wrap[data-astro-cid-sz7xmlte]{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.copyright[data-astro-cid-sz7xmlte]{margin:0;color:var(--muted, #9ca3af)}.social-links[data-astro-cid-sz7xmlte]{display:flex;gap:16px;align-items:center}.social-link[data-astro-cid-sz7xmlte]{color:var(--muted, #9ca3af);text-decoration:none;transition:color .2s ease}.social-link[data-astro-cid-sz7xmlte]:hover{color:#fff}@media (max-width: 768px){.wrap[data-astro-cid-sz7xmlte]{flex-direction:column;text-align:center;gap:16px}}:root{--bg: #0b0b0c;--muted: #9ca3af;--card: #0f1115;--border: #1f2937;--brand: #fafafa;--card-hover: #121218;--shadow: 0 4px 12px rgba(0,0,0,.15);--link: #60a5fa}[data-astro-cid-sckkx6r4]{margin:0;padding:0;box-sizing:border-box}body{font-family:SF Pro Display,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--brand);line-height:1.6;min-height:100vh}a[data-astro-cid-sckkx6r4]{color:var(--link);text-decoration:none}a[data-astro-cid-sckkx6r4]:hover{text-decoration:underline}.container[data-astro-cid-sckkx6r4]{max-width:1200px;margin:0 auto;padding:2rem 1rem}
+</style>
+<link rel="stylesheet" href="/_astro/_slug_.Bd_1YT-2.css"></head> <body data-astro-cid-sckkx6r4> <header data-astro-cid-3ef6ksr2> <div class="header-content" data-astro-cid-3ef6ksr2> <a href="/" class="brand" data-astro-cid-3ef6ksr2>Brian Jhang's Edge</a> <nav data-astro-cid-3ef6ksr2> <a href="/ai" data-astro-cid-3ef6ksr2>AI小百科</a> <a href="/startup" data-astro-cid-3ef6ksr2>創業筆記</a> <a href="/crypto" data-astro-cid-3ef6ksr2>幣圈筆記</a> <a href="/about" data-astro-cid-3ef6ksr2>關於</a> </nav> </div> </header>  <main data-astro-cid-sckkx6r4>   <div class="content-wrap" data-astro-cid-rw3iabhw> <nav class="breadcrumb" aria-label="麵包屑導航" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;"> <ol class="breadcrumb-list" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;"> <li class="breadcrumb-item" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;">  <a href="/" class="breadcrumb-link" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;"> 首頁 </a> <span class="breadcrumb-separator" aria-hidden="true" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;">/</span> </li><li class="breadcrumb-item" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;">  <a href="/ai" class="breadcrumb-link" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;"> AI小百科 </a> <span class="breadcrumb-separator" aria-hidden="true" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;">/</span> </li><li class="breadcrumb-item" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;"> <span class="breadcrumb-current" aria-current="page" data-astro-cid-qaanghzh style="--categoryColor: #3b82f6;--categoryHoverColor: #60a5fa;"> 提示工程完全解析 </span> </li> </ol> </nav>  <h1 class="page-title" data-astro-cid-rw3iabhw>提示工程完全解析：與 AI 對話的藝術｜Brian&#39;s AI 小百科</h1> <div class="meta" data-astro-cid-rw3iabhw> <span data-astro-cid-rw3iabhw>📅 2025-08-24</span> <span class="difficulty" data-astro-cid-rw3iabhw>中階</span> <span class="category" data-astro-cid-rw3iabhw>AI 技術教育</span> <span data-astro-cid-rw3iabhw>⏱️ 15 分鐘閱讀</span> </div> <article data-astro-cid-rw3iabhw> <h1 id="提示工程完全解析與-ai-對話的藝術">提示工程完全解析：與 AI 對話的藝術</h1>
+<p>📒 <strong>Brian’s AI 小百科</strong><br/>
+第 6 篇｜Prompt Engineering（提示工程）</p>
+<blockquote>
+<p>「The art of communicating with AI is not about speaking to machines, but about thinking clearly enough that machines can understand and amplify our intentions.」<br/>
+「與 AI 溝通的藝術不在於對機器說話，而在於清晰思考，讓機器能理解並放大我們的意圖。」<br/>
+——AI 研究社群共識</p>
+</blockquote>
+<h2 id="-快速回答什麼是提示工程">🔍 快速回答：什麼是提示工程？</h2>
+<p><strong>一句話回答</strong>：提示工程（Prompt Engineering）是設計和優化輸入提示詞的技術，讓 AI 模型產生更準確、更有用、更符合預期的輸出結果。</p>
+<p><strong>核心能力</strong>：</p>
+<ul>
+<li>🎯 <strong>精準控制</strong>：透過提示設計控制 AI 輸出的格式、風格和內容</li>
+<li>🧠 <strong>思維引導</strong>：引導 AI 進行邏輯推理和多步驟思考</li>
+<li>📚 <strong>知識注入</strong>：在提示中提供背景資訊和專業知識</li>
+<li>⚡ <strong>效率提升</strong>：一次設計好的提示可重複使用，提高工作效率</li>
+</ul>
+<p><strong>提示工程的技術突破</strong>：</p>
+<ul>
+<li>🔧 <strong>Chain-of-Thought</strong>：讓 AI 展現推理過程，提高準確性</li>
+<li>⚡ <strong>Few-shot Learning</strong>：透過範例教學，快速適應新任務</li>
+<li>💰 <strong>Zero-shot Prompting</strong>：不需範例，直接描述任務需求</li>
+<li>🛠️ <strong>Role-based Prompting</strong>：給 AI 設定專業角色，提升專業度</li>
+</ul>
+<p><strong>提示工程的獨特地位</strong>：</p>
+<ul>
+<li>🏎️ <strong>最實用技能</strong>：每個 AI 使用者都能立即應用的技術</li>
+<li>🌐 <strong>成本效益高</strong>：相比模型微調，提示優化成本極低</li>
+<li>💎 <strong>創意無限</strong>：結合人類創意與機器能力的完美媒介</li>
+<li>🚀 <strong>持續演進</strong>：隨著模型進步，提示技巧也不斷發展</li>
+</ul>
+<h2 id="-提示工程的發展歷程">📚 提示工程的發展歷程</h2>
+<h3 id="從簡單指令到複雜策略的演進">從簡單指令到複雜策略的演進</h3>
+<p><strong>2020-2021年</strong>：早期探索階段</p>
+<ul>
+<li><strong>GPT-3 時代開始</strong>：研究者發現調整提示可顯著改善輸出</li>
+<li><strong>基礎發現</strong>：簡單的措辭變化可以帶來截然不同的結果</li>
+<li><strong>社群萌芽</strong>：開發者開始分享有效的提示模板</li>
+</ul>
+<p><strong>2022年</strong>：技術框架建立</p>
+<ul>
+<li><strong>Chain-of-Thought 突破</strong>：Google 研究團隊提出 CoT 推理方法</li>
+<li><strong>Few-shot 範式確立</strong>：透過範例教學成為標準做法</li>
+<li><strong>商業應用興起</strong>：企業開始系統性應用提示工程</li>
+</ul>
+<p><strong>2023-2024年</strong>：成熟與標準化</p>
+<ul>
+<li><strong>最佳實踐形成</strong>：各大 AI 公司發布官方提示指南</li>
+<li><strong>工具生態完善</strong>：LangChain、PromptBase 等專業工具出現</li>
+<li><strong>專業化趨勢</strong>：提示工程師成為新興職業</li>
+</ul>
+<p><strong>2025年</strong>：智能化與自動化</p>
+<ul>
+<li><strong>自適應提示</strong>：AI 開始協助優化提示設計</li>
+<li><strong>多模態提示</strong>：文字、圖像、音訊的綜合提示策略</li>
+<li><strong>個人化定制</strong>：基於使用習慣的智能提示推薦</li>
+</ul>
+<h2 id="-提示工程到底是什麼">🤔 提示工程到底是什麼？</h2>
+<h3 id="從指令發送到思維建模">從指令發送到思維建模</h3>
+<p><strong>核心身份演進</strong>：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code><span class="line"><span>階段1：簡單指令發送者</span></span>
+<span class="line"><span>↓</span></span>
+<span class="line"><span>階段2：對話設計師  </span></span>
+<span class="line"><span>↓</span></span>
+<span class="line"><span>階段3：AI 思維建模師</span></span></code></pre>
+<p><strong>技術原理深度解析</strong>：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code><span class="line"><span>🧠 提示工程核心架構</span></span>
+<span class="line"><span>├── 📝 Prompt Design (提示設計)</span></span>
+<span class="line"><span>│   ├── Context Setting (背景設定)</span></span>
+<span class="line"><span>│   ├── Task Definition (任務定義)</span></span>
+<span class="line"><span>│   └── Output Format (輸出格式)</span></span>
+<span class="line"><span>├── 🎯 Strategy Selection (策略選擇)</span></span>
+<span class="line"><span>│   ├── Zero-shot (零樣本)</span></span>
+<span class="line"><span>│   ├── Few-shot (少樣本)</span></span>
+<span class="line"><span>│   └── Chain-of-Thought (思維鏈)</span></span>
+<span class="line"><span>├── 🔄 Iterative Optimization (迭代優化)</span></span>
+<span class="line"><span>│   ├── A/B Testing (對比測試)</span></span>
+<span class="line"><span>│   ├── Performance Metrics (效能指標)</span></span>
+<span class="line"><span>│   └── Refinement Loop (優化循環)</span></span>
+<span class="line"><span>└── 📊 Evaluation Framework (評估框架)</span></span>
+<span class="line"><span>    ├── Accuracy Assessment (準確性評估)</span></span>
+<span class="line"><span>    ├── Consistency Check (一致性檢查)</span></span>
+<span class="line"><span>    └── Efficiency Analysis (效率分析)</span></span></code></pre>
+<p><strong>工作原理</strong>：
+提示工程的本質是建立人機之間的有效溝通橋樑。當我們向 AI 發送提示時，實際上是在：</p>
+<ol>
+<li><strong>設定思維框架</strong>：告訴 AI 以什麼角度思考問題</li>
+<li><strong>提供背景資訊</strong>：讓 AI 理解任務的具體情境</li>
+<li><strong>定義輸出期望</strong>：明確我們希望得到什麼樣的回應</li>
+<li><strong>引導推理過程</strong>：指導 AI 如何一步步解決問題</li>
+</ol>
+<h2 id="️-chain-of-thought提示工程的技術核心">🏗️ Chain-of-Thought：提示工程的技術核心</h2>
+<h3 id="思維鏈推理深度解析">思維鏈推理深度解析</h3>
+<p><strong>技術特色</strong>：
+Chain-of-Thought (CoT) 是讓 AI 展現推理過程的革命性技術，不僅提高答案準確性，更讓我們能夠驗證 AI 的思考邏輯。</p>
+<p><strong>架構設計</strong>：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="plaintext"><code><span class="line"><span>💭 Chain-of-Thought 推理流程</span></span>
+<span class="line"><span>Input Prompt → Step 1 → Step 2 → Step 3 → Final Answer</span></span>
+<span class="line"><span>     ↓           ↓        ↓        ↓         ↓</span></span>
+<span class="line"><span>  問題描述    → 分析 → 推理 → 驗證 → 最終答案</span></span></code></pre>
+<p><strong>實作範例</strong>：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># 基礎 CoT 提示模板</span></span>
+<span class="line"><span style="color:#E1E4E8">basic_cot_prompt </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">請解決以下數學問題，並展示你的推理過程：</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">問題：一家商店有 3 打雞蛋，每打 12 個。如果賣出了 28 個雞蛋，還剩多少個？</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">請按以下格式回答：</span></span>
+<span class="line"><span style="color:#9ECBFF">1. 理解問題：[描述問題的關鍵資訊]</span></span>
+<span class="line"><span style="color:#9ECBFF">2. 計算步驟：[展示每個計算步驟]</span></span>
+<span class="line"><span style="color:#9ECBFF">3. 驗證答案：[檢查答案是否合理]</span></span>
+<span class="line"><span style="color:#9ECBFF">4. 最終答案：[提供最終結果]</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 進階 CoT：角色扮演 + 思維鏈</span></span>
+<span class="line"><span style="color:#E1E4E8">advanced_cot_prompt </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">你是一位經驗豐富的數學老師。請用教學的方式解決以下問題：</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">問題：</span><span style="color:#79B8FF">{user_question}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">教學步驟：</span></span>
+<span class="line"><span style="color:#9ECBFF">1. 🎯 問題分析：先理解題目要求什麼</span></span>
+<span class="line"><span style="color:#9ECBFF">2. 📊 資訊整理：列出已知條件和未知數</span></span>
+<span class="line"><span style="color:#9ECBFF">3. 🧮 解題策略：選擇適合的解題方法</span></span>
+<span class="line"><span style="color:#9ECBFF">4. ✅ 逐步計算：展示每個計算步驟的詳細過程</span></span>
+<span class="line"><span style="color:#9ECBFF">5. 🔍 答案檢驗：驗證答案的合理性</span></span>
+<span class="line"><span style="color:#9ECBFF">6. 💡 總結歸納：說明解題要點和注意事項</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">開始解題：</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span></code></pre>
+<p><strong>優勢對比</strong>：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>特性</th><th>一般提示</th><th>Chain-of-Thought</th></tr></thead><tbody><tr><td><strong>準確性</strong></td><td>65-70%</td><td>85-90%</td></tr><tr><td><strong>可解釋性</strong></td><td>低</td><td>高</td></tr><tr><td><strong>複雜推理</strong></td><td>困難</td><td>擅長</td></tr><tr><td><strong>錯誤檢測</strong></td><td>難以發現</td><td>容易識別</td></tr><tr><td><strong>學習價值</strong></td><td>僅看結果</td><td>理解過程</td></tr></tbody></table>
+<h2 id="️-提示工程的核心技術">⚙️ 提示工程的核心技術</h2>
+<h3 id="1-zero-shot-prompting零樣本提示">1. Zero-shot Prompting（零樣本提示）</h3>
+<p>不提供任何範例，直接描述任務需求。適合簡單、常見的任務。</p>
+<p><strong>實作範例</strong>：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">zero_shot_prompt </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">請將以下英文翻譯成繁體中文：</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">&quot;Artificial Intelligence is transforming how we work and live.&quot;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">翻譯：</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span></code></pre>
+<h3 id="2-few-shot-prompting少樣本提示">2. Few-shot Prompting（少樣本提示）</h3>
+<p>提供 2-5 個範例，讓 AI 學習模式和風格。</p>
+<p><strong>實作範例</strong>：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">few_shot_prompt </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">請根據以下範例，為產品寫出吸引人的行銷文案：</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">範例1：</span></span>
+<span class="line"><span style="color:#9ECBFF">產品：無線耳機</span></span>
+<span class="line"><span style="color:#9ECBFF">文案：解放雙耳，享受純淨音質！全新無線技術，讓音樂隨心而動。</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">範例2：</span></span>
+<span class="line"><span style="color:#9ECBFF">產品：智能手錶</span></span>
+<span class="line"><span style="color:#9ECBFF">文案：時間掌握在手腕上！健康監測、智能提醒，讓科技貼近生活。</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">範例3：</span></span>
+<span class="line"><span style="color:#9ECBFF">產品：咖啡機</span></span>
+<span class="line"><span style="color:#9ECBFF">文案：一鍵喚醒晨間美好！專業萃取技術，在家享受咖啡廳級品質。</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">現在請為以下產品創作文案：</span></span>
+<span class="line"><span style="color:#9ECBFF">產品：</span><span style="color:#79B8FF">{product_name}</span></span>
+<span class="line"><span style="color:#9ECBFF">文案：</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span></code></pre>
+<h3 id="3-role-based-prompting角色扮演提示">3. Role-based Prompting（角色扮演提示）</h3>
+<p>給 AI 設定特定的專業身份，提升回答的專業度和針對性。</p>
+<p><strong>實作範例</strong>：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">role_based_prompt </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">你是一位擁有 15 年經驗的資深軟體架構師，專精於大型系統設計。</span></span>
+<span class="line"><span style="color:#9ECBFF">請用專業角度分析以下技術選擇：</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">情境：我們正在開發一個預期有百萬用戶的電商平台</span></span>
+<span class="line"><span style="color:#9ECBFF">問題：在微服務架構中，應該選擇 REST API 還是 GraphQL？</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">請從以下角度分析：</span></span>
+<span class="line"><span style="color:#9ECBFF">1. 性能表現</span></span>
+<span class="line"><span style="color:#9ECBFF">2. 開發維護成本  </span></span>
+<span class="line"><span style="color:#9ECBFF">3. 團隊學習曲線</span></span>
+<span class="line"><span style="color:#9ECBFF">4. 長期擴展性</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">專業分析：</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span></code></pre>
+<h3 id="4-template-based-prompting模板化提示">4. Template-based Prompting（模板化提示）</h3>
+<p>使用結構化模板，確保輸出格式一致。</p>
+<p><strong>實作範例</strong>：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="python"><code><span class="line"><span style="color:#E1E4E8">template_prompt </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> &quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#9ECBFF">請分析以下公司，並按照模板格式回答：</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">公司：</span><span style="color:#79B8FF">{company_name}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">分析模板：</span></span>
+<span class="line"><span style="color:#9ECBFF">🏢 公司概況：</span></span>
+<span class="line"><span style="color:#9ECBFF">- 成立時間：</span></span>
+<span class="line"><span style="color:#9ECBFF">- 主要業務：</span></span>
+<span class="line"><span style="color:#9ECBFF">- 市場地位：</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">💼 商業模式：</span></span>
+<span class="line"><span style="color:#9ECBFF">- 收入來源：</span></span>
+<span class="line"><span style="color:#9ECBFF">- 目標客群：</span></span>
+<span class="line"><span style="color:#9ECBFF">- 競爭優勢：</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">📊 財務表現：</span></span>
+<span class="line"><span style="color:#9ECBFF">- 營收趨勢：</span></span>
+<span class="line"><span style="color:#9ECBFF">- 獲利能力：</span></span>
+<span class="line"><span style="color:#9ECBFF">- 成長潛力：</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">🔮 未來展望：</span></span>
+<span class="line"><span style="color:#9ECBFF">- 發展機會：</span></span>
+<span class="line"><span style="color:#9ECBFF">- 潛在風險：</span></span>
+<span class="line"><span style="color:#9ECBFF">- 投資建議：</span></span>
+<span class="line"><span style="color:#9ECBFF">&quot;&quot;&quot;</span></span></code></pre>
+<h2 id="-提示工程實戰應用場景">🔥 提示工程實戰應用場景</h2>
+<h3 id="1-內容創作優化">1. 內容創作優化</h3>
+<p><strong>應用場景</strong>：部落格寫作、社群媒體經營、行銷文案
+<strong>提示策略</strong>：結合目標受眾分析 + 品牌調性 + SEO 關鍵字</p>
+<h3 id="2-程式碼開發輔助">2. 程式碼開發輔助</h3>
+<p><strong>應用場景</strong>：代碼生成、Bug 修復、架構設計
+<strong>提示策略</strong>：明確需求規格 + 技術限制 + 最佳實踐引導</p>
+<h3 id="3-數據分析與洞察">3. 數據分析與洞察</h3>
+<p><strong>應用場景</strong>：報告生成、趨勢分析、決策支援
+<strong>提示策略</strong>：結構化輸出 + 多角度分析 + 可執行建議</p>
+<h3 id="4-教育與培訓">4. 教育與培訓</h3>
+<p><strong>應用場景</strong>：個人化學習、知識問答、技能評估
+<strong>提示策略</strong>：適應性教學 + 循序漸進 + 實例驗證</p>
+<h2 id="-提示工程開發框架">🎯 提示工程開發框架</h2>
+<h3 id="langchain-提示管理">LangChain 提示管理</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.prompts </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> PromptTemplate, FewShotPromptTemplate</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.prompts.example_selector </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> SemanticSimilarityExampleSelector</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.vectorstores </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> Chroma</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> langchain.embeddings </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> OpenAIEmbeddings</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 創建動態範例選擇器</span></span>
+<span class="line"><span style="color:#E1E4E8">examples </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span><span style="color:#9ECBFF">&quot;input&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;產品銷售&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;output&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;制定行銷策略，分析目標市場...&quot;</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span><span style="color:#9ECBFF">&quot;input&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;團隊管理&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;output&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;建立明確目標，促進團隊協作...&quot;</span><span style="color:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">example_selector </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> SemanticSimilarityExampleSelector.from_examples(</span></span>
+<span class="line"><span style="color:#E1E4E8">    examples,</span></span>
+<span class="line"><span style="color:#E1E4E8">    OpenAIEmbeddings(),</span></span>
+<span class="line"><span style="color:#E1E4E8">    Chroma,</span></span>
+<span class="line"><span style="color:#FFAB70">    k</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 動態 Few-shot 提示模板</span></span>
+<span class="line"><span style="color:#E1E4E8">dynamic_prompt </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> FewShotPromptTemplate(</span></span>
+<span class="line"><span style="color:#FFAB70">    example_selector</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">example_selector,</span></span>
+<span class="line"><span style="color:#FFAB70">    example_prompt</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">PromptTemplate(</span></span>
+<span class="line"><span style="color:#FFAB70">        input_variables</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;input&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;output&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#FFAB70">        template</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;問題：</span><span style="color:#79B8FF">{input}\n</span><span style="color:#9ECBFF">解答：</span><span style="color:#79B8FF">{output}</span><span style="color:#9ECBFF">&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">    ),</span></span>
+<span class="line"><span style="color:#FFAB70">    prefix</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;以下是一些商業諮詢的範例：&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    suffix</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;問題：</span><span style="color:#79B8FF">{input}\n</span><span style="color:#9ECBFF">解答：&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">    input_variables</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[</span><span style="color:#9ECBFF">&quot;input&quot;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#E1E4E8">)</span></span></code></pre>
+<h3 id="提示效果評估系統">提示效果評估系統</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8;overflow-x:auto" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> openai</span></span>
+<span class="line"><span style="color:#F97583">from</span><span style="color:#E1E4E8"> sklearn.metrics </span><span style="color:#F97583">import</span><span style="color:#E1E4E8"> accuracy_score</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">class</span><span style="color:#B392F0"> PromptEvaluator</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#79B8FF"> __init__</span><span style="color:#E1E4E8">(self, test_cases):</span></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.test_cases </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> test_cases</span></span>
+<span class="line"><span style="color:#E1E4E8">        </span></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> evaluate_prompt</span><span style="color:#E1E4E8">(self, prompt_template):</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;&quot;&quot;評估提示模板的效果&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#E1E4E8">        results </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#E1E4E8">        </span></span>
+<span class="line"><span style="color:#F97583">        for</span><span style="color:#E1E4E8"> case </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> self</span><span style="color:#E1E4E8">.test_cases:</span></span>
+<span class="line"><span style="color:#6A737D">            # 生成提示</span></span>
+<span class="line"><span style="color:#E1E4E8">            prompt </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> prompt_template.format(</span><span style="color:#F97583">**</span><span style="color:#E1E4E8">case[</span><span style="color:#9ECBFF">&#39;input&#39;</span><span style="color:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#E1E4E8">            </span></span>
+<span class="line"><span style="color:#6A737D">            # 獲取 AI 回應</span></span>
+<span class="line"><span style="color:#E1E4E8">            response </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> openai.ChatCompletion.create(</span></span>
+<span class="line"><span style="color:#FFAB70">                model</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">&quot;gpt-4&quot;</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">                messages</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">[{</span><span style="color:#9ECBFF">&quot;role&quot;</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">&quot;user&quot;</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">&quot;content&quot;</span><span style="color:#E1E4E8">: prompt}]</span></span>
+<span class="line"><span style="color:#E1E4E8">            )</span></span>
+<span class="line"><span style="color:#E1E4E8">            </span></span>
+<span class="line"><span style="color:#6A737D">            # 評估結果</span></span>
+<span class="line"><span style="color:#E1E4E8">            predicted </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> response.choices[</span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">].message.content</span></span>
+<span class="line"><span style="color:#E1E4E8">            expected </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> case[</span><span style="color:#9ECBFF">&#39;expected&#39;</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">            </span></span>
+<span class="line"><span style="color:#E1E4E8">            results.append({</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;input&#39;</span><span style="color:#E1E4E8">: case[</span><span style="color:#9ECBFF">&#39;input&#39;</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;predicted&#39;</span><span style="color:#E1E4E8">: predicted,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;expected&#39;</span><span style="color:#E1E4E8">: expected,</span></span>
+<span class="line"><span style="color:#9ECBFF">                &#39;score&#39;</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">self</span><span style="color:#E1E4E8">._calculate_score(predicted, expected)</span></span>
+<span class="line"><span style="color:#E1E4E8">            })</span></span>
+<span class="line"><span style="color:#E1E4E8">            </span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> results</span></span>
+<span class="line"><span style="color:#E1E4E8">    </span></span>
+<span class="line"><span style="color:#F97583">    def</span><span style="color:#B392F0"> _calculate_score</span><span style="color:#E1E4E8">(self, predicted, expected):</span></span>
+<span class="line"><span style="color:#9ECBFF">        &quot;&quot;&quot;計算預測結果的分數&quot;&quot;&quot;</span></span>
+<span class="line"><span style="color:#6A737D">        # 這裡可以使用 BLEU、ROUGE 等指標</span></span>
+<span class="line"><span style="color:#6A737D">        # 簡化範例使用字串相似度</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">set</span><span style="color:#E1E4E8">(predicted.split()) </span><span style="color:#F97583">&amp;</span><span style="color:#79B8FF"> set</span><span style="color:#E1E4E8">(expected.split())) </span><span style="color:#F97583">/</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">set</span><span style="color:#E1E4E8">(expected.split()))</span></span></code></pre>
+<h2 id="-新手最常問的問題">😅 新手最常問的問題</h2>
+<p><strong>Q: 為什麼我的提示總是得不到想要的結果？</strong>
+A: 常見原因有三：1) 指令不夠明確具體，2) 缺乏足夠的背景資訊，3) 沒有提供輸出格式範例。建議使用「任務+背景+格式+範例」的結構化提示。</p>
+<p><strong>Q: Chain-of-Thought 什麼時候使用最有效？</strong>
+A: CoT 在需要多步推理的任務中最有效，如數學計算、邏輯推理、複雜分析。對於簡單的事實查詢或創意寫作，CoT 可能會增加不必要的複雜度。</p>
+<p><strong>Q: Few-shot 提示需要多少個範例才夠？</strong>
+A: 一般來說 2-5 個範例最佳。太少（1個）可能不足以建立模式，太多（&gt;8個）可能超出模型的上下文窗口限制，也會增加 token 成本。</p>
+<p><strong>Q: 如何測試和優化提示的效果？</strong>
+A: 建立測試資料集，使用 A/B 測試比較不同提示版本，關注準確性、一致性、效率等指標。可以使用 LangSmith、Prompt Perfect 等工具輔助評估。</p>
+<p><strong>Q: 不同 AI 模型需要不同的提示策略嗎？</strong>
+A: 是的。GPT 系列偏好詳細指令，Claude 適合對話式提示，Gemini 在多模態提示上表現更好。需要針對特定模型調整提示風格。</p>
+<h2 id="-提示工程開發建議">💡 提示工程開發建議</h2>
+<h3 id="基本面分析框架">基本面分析框架</h3>
+<ol>
+<li><strong>明確目標</strong>：先定義成功的標準，再設計提示</li>
+<li><strong>理解模型</strong>：了解所使用 AI 模型的特性和限制</li>
+<li><strong>迭代優化</strong>：透過不斷測試和調整來改善效果</li>
+<li><strong>文檔管理</strong>：建立提示版本控制和效果追蹤系統</li>
+</ol>
+<h3 id="實用工具推薦">實用工具推薦</h3>
+<ul>
+<li><strong>LangChain</strong>：提示模板管理和鏈式操作</li>
+<li><strong>PromptBase</strong>：提示模板市場和靈感來源</li>
+<li><strong>LangSmith</strong>：提示效果監控和優化工具</li>
+<li><strong>OpenAI Playground</strong>：快速提示測試和原型開發</li>
+</ul>
+<h2 id="-提示工程的未來發展">🔮 提示工程的未來發展</h2>
+<h3 id="短期發展-2025-2026">短期發展 (2025-2026)</h3>
+<ul>
+<li><strong>自動化提示優化</strong>：AI 協助生成和改進提示</li>
+<li><strong>多模態提示標準化</strong>：整合文字、圖像、音訊的提示規範</li>
+<li><strong>行業特化模板</strong>：針對不同領域的專業提示庫</li>
+</ul>
+<h3 id="中期願景-2027-2030">中期願景 (2027-2030)</h3>
+<ul>
+<li><strong>自適應提示系統</strong>：根據用戶習慣自動調整提示策略</li>
+<li><strong>提示工程標準化</strong>：建立行業統一的提示設計規範</li>
+<li><strong>智能提示助手</strong>：專門協助提示設計的 AI 工具</li>
+</ul>
+<h3 id="長期影響-2030">長期影響 (2030+)</h3>
+<ul>
+<li><strong>人機協作新模式</strong>：提示工程成為數位素養的核心技能</li>
+<li><strong>AI 互操作性</strong>：跨模型的通用提示標準</li>
+<li><strong>認知增強工具</strong>：提示工程與腦科學結合的新應用</li>
+</ul>
+<h2 id="-深入學習資源">📖 深入學習資源</h2>
+<p><strong>官方資源</strong>：</p>
+<ul>
+<li><a href="https://platform.openai.com/docs/guides/prompt-engineering">OpenAI Prompt Engineering Guide</a></li>
+<li><a href="https://docs.anthropic.com/claude/docs/prompt-engineering">Anthropic Prompting Guide</a></li>
+<li><a href="https://ai.google.dev/docs/prompt_best_practices">Google AI Prompting Best Practices</a></li>
+</ul>
+<p><strong>開發框架</strong>：</p>
+<ul>
+<li><a href="https://python.langchain.com/docs/get_started/introduction">LangChain</a></li>
+<li><a href="https://smith.langchain.com/">LangSmith</a></li>
+<li><a href="https://promptperfect.jinaai.com/">Prompt Perfect</a></li>
+</ul>
+<p><strong>社群和新聞</strong>：</p>
+<ul>
+<li><a href="https://www.reddit.com/r/PromptEngineering/">r/PromptEngineering</a></li>
+<li><a href="https://discord.gg/promptengineering">Prompt Engineering Discord</a></li>
+<li><a href="https://www.theaipromptengineernewsletter.com/">AI Prompt Engineer Newsletter</a></li>
+</ul>
+<p><strong>學術研究</strong>：</p>
+<ul>
+<li><a href="https://paperswithcode.com/task/prompt-engineering">Papers With Code - Prompt Engineering</a></li>
+<li><a href="https://arxiv.org/list/cs.CL/recent">arXiv Prompt Engineering Papers</a></li>
+</ul>
+<hr/>
+<p><em>想了解更多 AI 技術深度分析？關注 Brian’s AI 小百科，我們一起探索人工智能的無限可能！</em></p> </article> <!-- 相關文章推薦 --> <section class="related-articles" aria-labelledby="related-heading" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><div class="related-header" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><h2 id="related-heading" class="related-title" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-icon" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">🤖</span>
+相關AI小百科</h2><p class="related-subtitle" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">延伸閱讀推薦</p></div><div class="related-grid" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><article class="related-card" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><a href="/ai/projects/claude-4-sonnet-complete-guide/" class="related-link" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><div class="related-content" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><h3 class="related-card-title" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">Claude 3.5 Sonnet 全面解析：Anthropic 最新旗艦模型深度評測｜Brian&#39;s AI 小百科</h3><p class="related-summary" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">Claude 3.5 Sonnet 是 Anthropic 最新旗艦模型，在推理能力、安全性和代碼編寫方面實現重大突破。</p><div class="related-meta" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-date" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+📅 2025年8月27日</span><span class="related-difficulty" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">中階</span><span class="related-reading-time" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+⏱️ 15 分鐘
+</span></div><div class="related-tags" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#Claude 3.5</span><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#Sonnet</span><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#Anthropic</span></div></div><div class="related-arrow" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"></path></svg></div></a></article><article class="related-card" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><a href="/ai/llm/claude-complete-guide/" class="related-link" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><div class="related-content" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><h3 class="related-card-title" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">Claude 深度解析：Anthropic 的 Constitutional AI 如何重新定義安全對話｜Brian&#39;s...</h3><p class="related-summary" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">Anthropic 開發的安全對話 AI，透過 Constitutional AI 原理追求有用、無害、誠實的人工智慧。</p><div class="related-meta" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-date" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+📅 2025年8月21日</span><span class="related-difficulty" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">入門</span><span class="related-reading-time" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+⏱️ 9 分鐘
+</span></div><div class="related-tags" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#Claude</span><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#Anthropic</span><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#Constitutional AI</span></div></div><div class="related-arrow" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"></path></svg></div></a></article><article class="related-card" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><a href="/ai/llm/chatgpt-complete-guide/" class="related-link" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><div class="related-content" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><h3 class="related-card-title" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">ChatGPT 完全解析：OpenAI 如何重新定義人機對話｜Brian&#39;s AI小百科</h3><p class="related-summary" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">OpenAI 開發的對話式 AI，讓人工智慧首次能夠進行自然、智能的對話交流。</p><div class="related-meta" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-date" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+📅 2025年8月20日</span><span class="related-difficulty" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">入門</span><span class="related-reading-time" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+⏱️ 8 分鐘
+</span></div><div class="related-tags" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#ChatGPT</span><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#OpenAI</span><span class="related-tag" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">#GPT模型</span></div></div><div class="related-arrow" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"></path></svg></div></a></article></div><div class="related-footer" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;"><a href="/ai" class="view-all-link" data-astro-cid-2zkmu4eg style="--categoryColor: #3b82f6;">
+查看所有AI小百科 →
+</a></div></section> </div>    </main> <footer data-astro-cid-sz7xmlte> <div class="wrap" data-astro-cid-sz7xmlte> <p class="copyright" data-astro-cid-sz7xmlte>© 2025 Brian Jhang's Edge ・ 教育內容，非投資建議</p> <div class="social-links" data-astro-cid-sz7xmlte> <a href="https://x.com/brianjhang" rel="noopener" target="_blank" class="social-link" data-astro-cid-sz7xmlte>X</a> <a href="https://threads.net/@brianjhang" rel="noopener" target="_blank" class="social-link" data-astro-cid-sz7xmlte>Threads</a> <a href="https://www.facebook.com/iambrianjhang" rel="noopener" target="_blank" class="social-link" data-astro-cid-sz7xmlte>Facebook</a> <a href="https://github.com/brianjhang" rel="noopener" target="_blank" class="social-link" data-astro-cid-sz7xmlte>GitHub</a> </div> </div> </footer>  </body></html>

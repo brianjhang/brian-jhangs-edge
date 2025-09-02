@@ -44,6 +44,10 @@ AI_INSTRUCTIONS.md
 scripts/generate-social-content*.js
 scripts/*.sh
 
+# Temporary files that should never be committed
+cleanup-og-images.js
+deployment-trigger.txt
+
 # OG Image generation scripts are needed for production
 # scripts/simple-png-generator.js - INCLUDED
 # scripts/sync-og-paths.js - INCLUDED

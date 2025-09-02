@@ -39,7 +39,10 @@ AI_INSTRUCTIONS.md
 .vscode/
 .anthropic/
 
-# Script tools (keep local only)
-scripts/*.js
+# Script tools (keep most local only, but include OG generation)
+scripts/generate-social-content*.js
 scripts/*.sh
-scripts/README.md
+
+# OG Image generation scripts are needed for production
+# scripts/simple-png-generator.js - INCLUDED
+# scripts/sync-og-paths.js - INCLUDED

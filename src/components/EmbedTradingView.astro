@@ -9,6 +9,8 @@ const {
 
 // 為不同交易所調整符號格式
 let formattedSymbol = symbol;
+
+// Binance 特殊符號處理
 if (symbol === "BINANCE:USDTUSD") {
   formattedSymbol = "BINANCEUS:USDTUSD";
 }
@@ -18,8 +20,28 @@ if (symbol === "BINANCE:USDCUSD") {
 if (symbol === "BINANCE:MATICUSDT") {
   formattedSymbol = "BINANCE:POLUSDT";
 }
-if (symbol === "BINANCE:POLUSDT") {
-  formattedSymbol = "BINANCE:POLUSDT";
+
+// ETF 符號處理 - 確保使用正確的交易所
+// 比特幣 ETF
+if (symbol === "BLACKROCK:IBIT") {
+  formattedSymbol = "NASDAQ:IBIT";
+}
+if (symbol === "FIDELITY:FBTC") {
+  formattedSymbol = "NASDAQ:FBTC";
+}
+if (symbol === "ARK:ARKB") {
+  formattedSymbol = "NASDAQ:ARKB";
+}
+if (symbol === "BITWISE:BITB") {
+  formattedSymbol = "NYSE:BITB";
+}
+
+// 以太坊 ETF
+if (symbol === "BLACKROCK:ETHA") {
+  formattedSymbol = "NASDAQ:ETHA";
+}
+if (symbol === "FIDELITY:FETH") {
+  formattedSymbol = "NASDAQ:FETH";
 }
 ---
 

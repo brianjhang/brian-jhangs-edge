@@ -12,7 +12,8 @@
     "og:clean": "node cleanup-og-images.js",
     "og:sync": "node scripts/sync-og-paths.js",
     "og:sync-full": "node scripts/sync-og-paths.js --full",
-    "og:sync-preview": "node scripts/sync-og-paths.js --dry-run"
+    "og:sync-preview": "node scripts/sync-og-paths.js --dry-run",
+    "publish:og-images": "npm run og:sync && npm run og:generate && git add public/images/og/ && echo '✅ OG 圖片已準備完成，請手動執行 git commit 和 git push'"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.3.4",

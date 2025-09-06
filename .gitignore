@@ -43,6 +43,7 @@ AI_INSTRUCTIONS.md
 # Script tools (keep most local only, but include OG generation)
 scripts/generate-social-content*.js
 scripts/*.sh
+scripts/README.md
 
 # Temporary files that should never be committed
 cleanup-og-images.js

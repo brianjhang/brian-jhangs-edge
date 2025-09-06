@@ -123,37 +123,78 @@ gemini -p "最終確認以下內容的完整性和準確性：
 
 ## 📝 內容創作標準參考
 
-### 專案文檔結構
-進行內容創作前，**必須先參考以下專案文檔**以理解完整的創作標準和流程：
+### 🚀 新版整合系統架構 (v2.0)
+**⭐ 重要更新**：專案已升級為整合 10 大品質維度的系統化內容生產架構
 
-#### 📋 必讀核心文檔
+#### 📋 核心文檔系統 (必讀優先順序)
 ```bash
-1. README.md                     # 專案完整概述與技術架構
-2. docs/topics-workflow.md       # 主要工作流程指導
-3. docs/internal/ARTICLE_FRAMEWORK.md  # 文章架構標準
-4. docs/topics/{series}-topics.md       # 系列風格指導
+1. docs/content-production/00-MASTER-WORKFLOW.md     # 總控工作流程 (⭐最高優先)
+2. docs/content-production/01-content-quality-framework.md  # 10大品質維度
+3. docs/content-production/02-writing-standards.md          # 整合寫作標準
+4. docs/content-production/04-gemini-collaboration-guide.md # Gemini協同指南
+5. docs/topics/{series}-topics.md                           # 系列專用規劃
+6. README.md                                                 # 專案技術架構
 ```
 
-### 內容創作提示模板
-
-#### 標準創作模板
+#### 🔧 工具與模板庫
 ```bash
-"你是專業的[領域]作家，請先仔細研讀以下專案文檔，然後按照既定標準創作文章：
+7. docs/templates/content-generation-templates.md     # 標準化生成模板
+8. docs/templates/quality-checklists.md              # 多階段檢查標準
+9. docs/templates/data-verification-templates.md     # 分類核實模板
+```
 
-**必讀參考文檔**：
-- README.md（專案概述、技術架構、內容策略）
-- docs/topics-workflow.md（工作流程和品質標準）
-- docs/internal/ARTICLE_FRAMEWORK.md（文章架構和寫作規範）
-- docs/topics/[ai|crypto|startup]-topics.md（對應系列的風格指導）
+### 🔥 v2.0 標準化創作流程
 
-**創作要求**：
-1. 遵循專案的「深入淺出知識科普」風格定位
-2. 嚴格按照 10段式文章架構
-3. 包含完整的 MDX frontmatter
-4. 字數：2000-3800字，繁體中文
-5. 必須包含該系列要求的特殊元素
+#### 📋 總控工作流程模板 (優先使用)
+**⭐ 必須按照新版 00-MASTER-WORKFLOW.md 執行**
+```bash
+"請按照以下系統化流程創作高品質文章：
 
-請完整寫出包括 frontmatter 和所有章節內容。"
+**🎯 階段一：規劃與準備** (5-8分鐘)
+1. 查閱 docs/content-production/00-MASTER-WORKFLOW.md 了解完整流程
+2. 參考 docs/topics/{series}-topics.md 確認主題風格要求
+3. 設定品質目標：內容結構95%+、數據準確95%+、Brian風格90%+
+
+**✏️ 階段二：內容創作** (20-30分鐘) - 分批執行策略
+1. 生成文章大綱 (H2/H3層級清晰)
+2. 創建Brian風格結構 (開場+Key Takeaways+表格+FAQ)
+3. 分章節生成主體內容 (每章400-500字)
+4. 完善frontmatter和結語
+
+**✅ 階段三：品質控制** (10-15分鐘)
+1. 執行數據檢核 (高風險數據必須核實)
+2. 十大品質維度評估
+3. Brian風格一致性檢查
+
+**📱 階段四：發布準備** (8-10分鐘)
+1. 技術格式確認 (MDX語法、路徑正確)
+2. OG圖片路徑設定
+3. 社交媒體內容準備
+
+請嚴格按照此流程，確保每個階段的品質標準。"
+```
+
+#### 🎨 Brian風格創作模板 (升級版)
+```bash
+"請參考 docs/content-production/02-writing-standards.md 的整合寫作標準：
+
+**Brian風格核心要素**：
+1. 結構化設計 - 文章如產品般精心設計
+2. 價值前置 - 一句話解答 + Key Takeaways
+3. 視覺化溝通 - 大量emoji、表格、代碼塊
+4. 深入淺出 - 生活化比喻保留技術深度
+5. 權威親和 - 專業自信但親近讀者
+
+**必須包含元素**：
+□ 引人入勝的開場情景
+□ 一句話直接回答核心問題
+□ 4個Key Takeaways (emoji+粗體)
+□ 對比表格和視覺化內容
+□ FAQ區塊預判讀者疑問
+□ 鼓勵性斜體結語
+□ 完整的風險聲明 (crypto系列)
+
+請確保風格一致性達到90%+標準。"
 ```
 
 ### 品質提升要點
@@ -216,24 +257,25 @@ gemini -p "驗證 [技術項目] 當前狀態：1) 確認實際發布狀態 2) �
 #### 1. Gemini CLI 超時問題 ✅ 已解決
 - **原因**：複雜查詢容易超過 2 分鐘限制
 - **解決方案**：分批執行策略（Divide and Conquer）
-- **詳細指導**：參考 `docs/work-logs/gemini-batch-execution-guide.md`
+- **詳細指導**：參考 `docs/content-production/04-gemini-collaboration-guide.md`
 
-**分批執行核心原則**：
+**🔥 v2.0 分批執行核心原則**：
 ```bash
 # ❌ 錯誤：一次性複雜查詢（會超時）
 gemini -p "請生成三篇完整文章..."
 
-# ✅ 正確：分批執行
-gemini -p "請生成文章大綱：[主題]。請簡潔回答。"
-gemini -p "請生成 frontmatter 和開頭段落。"
-gemini -p "請生成主要章節內容。"
+# ✅ 正確：按照 00-MASTER-WORKFLOW.md 分批執行
+gemini -p "階段1：為[主題]生成文章大綱。請簡潔回答。"
+gemini -p "階段2：生成frontmatter和開頭段落，包含一句話解答和Key Takeaways。"
+gemini -p "階段3：生成[具體章節]內容，每章節400-500字，包含實用細節。"
+gemini -p "階段4：生成FAQ區塊和結語，預判讀者疑問。"
 ```
 
-**標準執行流程**：
-1. **規劃階段**：生成大綱和結構
-2. **格式階段**：生成 frontmatter 和元數據  
-3. **內容階段**：分章節生成主要內容
-4. **完善階段**：生成結尾、FAQ、總結等
+**🎯 新版標準執行流程** (參考: 04-gemini-collaboration-guide.md)：
+1. **階段1**: 大綱生成 (5分鐘)
+2. **階段2**: 結構內容 (8分鐘) - frontmatter + 開場 + Key Takeaways
+3. **階段3**: 主體內容 (15分鐘) - 分章節，每章400-500字
+4. **階段4**: 完善內容 (5分鐘) - FAQ + 結語 + 最終潤色
 
 #### 2. 文章創建完整性問題 ✅ 已解決
 - **問題**：生成內容但未創建實體 MDX 檔案，導致文章無法顯示
@@ -285,27 +327,51 @@ difficulty: "intermediate"  # beginner/intermediate/advanced
 - 提示詞模板的適用性
 - 整體協同工作品質
 
-## 📂 相關工作日誌參考
+## 📂 v2.0 整合系統參考
 
-### 核心操作指南
-- **分批執行指南**：`docs/work-logs/gemini-batch-execution-guide.md` - Gemini CLI 超時問題的完整解決方案
-- **文章創建修復**：`docs/work-logs/article-display-issue-fix.md` - 文章顯示問題的分析與解決
-- **數據核實方法論**：`docs/work-logs/data-verification-methodology.md` - 高精準數據核實的標準流程
+### 🚀 核心系統架構
+**⭐ 新版架構已整合所有分散的工作日誌和指南**
+- **總控工作流程**：`docs/content-production/00-MASTER-WORKFLOW.md` - 一站式完整流程指導
+- **品質控制框架**：`docs/content-production/01-content-quality-framework.md` - 10大品質維度
+- **寫作標準手冊**：`docs/content-production/02-writing-standards.md` - 統一所有寫作規範
+- **數據檢核系統**：`docs/content-production/03-data-verification-system.md` - 高精度核實流程
+- **Gemini協同指南**：`docs/content-production/04-gemini-collaboration-guide.md` - 專業分批策略
 
-### 使用建議
-1. **遇到超時問題**：參考分批執行指南，使用標準模板進行分批查詢
-2. **文章無法顯示**：參考文章創建修復文檔，檢查 frontmatter 格式和文件路徑
-3. **數據核實需求**：使用數據核實方法論，確保所有關鍵數據達到 95%+ 準確度
-4. **持續改進**：基於工作日誌的經驗，不斷優化協同工作流程
+### 🔧 工具與模板庫
+- **生成模板庫**：`docs/templates/content-generation-templates.md` - 標準化生成模板
+- **品質檢查清單**：`docs/templates/quality-checklists.md` - 多階段檢查標準
+- **數據核實模板**：`docs/templates/data-verification-templates.md` - 分類核實模板
 
-### 文檔維護
-- 所有新發現的問題和解決方案都會記錄在 `docs/work-logs/` 目錄
-- GEMINI.md 會引用相關工作日誌，保持核心文檔的簡潔性
-- 定期檢查工作日誌，將成熟的解決方案整合到標準流程中
+### 📋 使用建議 (v2.0)
+1. **開始任何創作任務**：必須先查閱 `00-MASTER-WORKFLOW.md` 了解完整流程
+2. **遇到超時問題**：參考 `04-gemini-collaboration-guide.md` 的分批執行策略
+3. **品質控制需求**：使用 `01-content-quality-framework.md` 的10大品質維度
+4. **數據核實需求**：使用 `03-data-verification-system.md` 確保95%+準確度
+5. **寫作風格問題**：參考 `02-writing-standards.md` 的整合標準
+
+### 🔄 系統維護
+- v2.0 架構已整合過往所有工作日誌的經驗和解決方案
+- 所有新發現的問題優先更新到相應的核心文檔
+- 定期檢查和優化整合系統的完整性和一致性
 
 ---
 
-**📌 重要提醒**：
-- 本文檔會持續更新，反映最新的協同工作實踐
-- 所有使用 Gemini CLI 的工作都應遵循此指導原則
-- 當發現新問題時，應立即更新相關機制和模板
+**📌 v2.0 重要提醒**：
+- 🚀 **架構升級**：專案已升級為整合10大品質維度的系統化架構 (v2.0)
+- 📋 **優先使用**：所有創作任務必須先查閱 `docs/content-production/00-MASTER-WORKFLOW.md`
+- 🎯 **品質標準**：內容結構95%+、數據準確95%+、Brian風格90%+
+- 🔧 **工具整合**：Claude Code + Gemini 協同，各階段分工明確
+- 🔄 **持續改進**：基於10大品質維度的量化評估和系統優化
+
+**⚡ 快速上手**：
+1. 閱讀 `00-MASTER-WORKFLOW.md` (5分鐘)
+2. 按照4階段流程執行 (45-60分鐘)
+3. **必須**使用10大品質維度評估 (10-15分鐘)
+4. 使用檢查清單確保品質 (5-10分鐘)
+
+**🆕 2025-09-05 重要更新**：
+- **強制品質評估**：階段3必須執行10大維度系統化評估
+- **閱讀時間修正**：按中文字數準確計算（字數÷225）
+- **分類標籤規範**：穩定幣類文章使用"stablecoin"而非"concepts"
+- **發展歷程必填**：新項目須包含時間軸表格
+- **治理機制更新**：查詢最新的DAO提案和費用分享機制

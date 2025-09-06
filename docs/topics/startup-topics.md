@@ -50,7 +50,7 @@ lastUpdated: "2025-08-29"
 #### 📚 中優先級 (9月上旬)  
 | 序號 | 書籍 | 主題 | 預計發表 | 核心概念 | 狀態 |
 |------|------|------|----------|----------|------|
-| 18 | 貝佐斯致股東信 | Amazon 長期主義 | 2025-09-05 | Day 1 mindset philosophy | 📝 待寫 |
+| 18 | 貝佐斯致股東信 | Amazon 長期主義 | 2025-09-05 | Day 1 mindset philosophy | ✅ 已發表 |
 | 19 | 創新的兩難 | 破壞式創新 | 2025-09-06 | Disruptive innovation | 📝 待寫 |
 | 20 | 四步創業法 | 客戶開發 | 2025-09-07 | Customer development | 📝 待寫 |  
 | 21 | 影響力 | 6大說服原則 | 2025-09-08 | Six principles of persuasion | 📝 待寫 |

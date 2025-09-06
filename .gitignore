@@ -35,6 +35,7 @@ CLAUDE.md
 GEMINI.md
 COPILOT.md
 AI_INSTRUCTIONS.md
+.gemini-defaults.md
 .claude/
 .cursor/
 .vscode/

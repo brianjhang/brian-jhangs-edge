@@ -5,6 +5,7 @@ import { getCollection, getEntry } from 'astro:content';
 import Layout from '@/layouts/Layout.astro';
 import Breadcrumb from '@/components/Breadcrumb.astro';
 import RelatedArticles from '@/components/RelatedArticles.astro';
+import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime.js';
 
 export async function getStaticPaths() {
   const aiPosts = await getCollection('ai');
@@ -16,6 +17,9 @@ export async function getStaticPaths() {
 
 const post = Astro.props;
 const { Content } = await post.render();
+
+// 計算動態閱讀時間
+const dynamicReadingTime = calculateReadingTime(post.body);
 
 const title = post.data.title;
 const description = post.data.description || post.data.summary;
@@ -43,9 +47,8 @@ const ogImage = generateOgImagePath(post.slug, post.data.seo?.ogImage, 'ai');
 
 // 生成麵包屑
 const breadcrumbItems = [
-  { label: '首頁', href: '/' },
-  { label: 'AI小百科', href: '/ai' },
-  { label: post.data.title.split('：')[0] || post.data.title.split('|')[0] || post.data.title }
+  { title: 'AI小百科', url: '/ai' },
+  { title: post.data.title.split('：')[0] || post.data.title.split('|')[0] || post.data.title }
 ];
 ---
 
@@ -63,10 +66,18 @@ const breadcrumbItems = [
     
     <div class="meta">
       <span>📅 {post.data.date}</span>
-      {post.data.difficulty && <span class="difficulty">{post.data.difficulty === 'beginner' ? '入門' : post.data.difficulty === 'intermediate' ? '中階' : '進階'}</span>}
+      {post.data.difficulty && <span class="difficulty" data-level={post.data.difficulty}>{post.data.difficulty === 'beginner' ? '入門' : post.data.difficulty === 'intermediate' ? '中階' : '進階'}</span>}
       {post.data.category && <span class="category">{post.data.category}</span>}
-      <span>⏱️ {post.data.readingTime || 5} 分鐘閱讀</span>
+      <span>⏱️ {formatReadingTime(dynamicReadingTime)}閱讀</span>
     </div>
+    
+    {post.data.tags && (
+      <div class="tags">
+        {post.data.tags.slice(0, 5).map((tag) => (
+          <span class="tag">#{tag.toUpperCase()}</span>
+        ))}
+      </div>
+    )}
     
     <article>
       <Content />
@@ -114,12 +125,29 @@ const breadcrumbItems = [
     }
     
     .difficulty {
-      background: linear-gradient(135deg, var(--ai), #60a5fa);
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
       font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .difficulty[data-level="beginner"] {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    
+    .difficulty[data-level="intermediate"] {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+    
+    .difficulty[data-level="advanced"] {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
     }
     
     .category {
@@ -129,6 +157,25 @@ const breadcrumbItems = [
       border-radius: 20px;
       font-size: 0.75rem;
       border: 1px solid var(--ai);
+    }
+    
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .tag {
+      background: rgba(156, 163, 175, 0.1);
+      color: #9ca3af;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
     
     article {

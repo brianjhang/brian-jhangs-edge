@@ -3,6 +3,8 @@ export const prerender = true;
 
 import { getCollection } from "astro:content";
 import Layout from '../layouts/Layout.astro';
+import SocialShare from '../components/SocialShare.astro';
+import { calculateReadingTime, formatReadingTime } from '../utils/readingTime.js';
 
 // 獲取各個主題的文章
 const aiPosts = await getCollection("ai");
@@ -12,14 +14,72 @@ const cryptoPosts = await getCollection("crypto");
 // 按日期排序的函數
 const byDateDesc = (a, b) => new Date(b.data.date) - new Date(a.data.date);
 
-// 獲取每個主題的最新文章
-const latestAI = [...aiPosts].sort(byDateDesc)[0];
-const latestStartup = [...startupPosts].sort(byDateDesc)[0];
-const latestCrypto = [...cryptoPosts].sort(byDateDesc)[0];
+// 手動指定精選文章的 slug（可以指定多個，會自動選最新的）
+const featuredSlugs = {
+  ai: [
+    'trends/o1-reasoning-revolution',
+    'trends/ai-agent-technology',
+    'tools/cursor-programming-revolution'
+  ],
+  startup: [
+    'book/naval-leverage-thinking-complete-guide',
+    'book/naval-wealth-principles',
+    'thiel/monopoly-business-truth'
+  ],
+  crypto: [
+    'concepts/stablecoin-complete-analysis',
+    'rwa/rwa-tokenization-complete-guide',
+    'concepts/etf-impact'
+  ]
+};
+
+// 獲取指定的精選文章，如果找不到則使用最新文章
+const getFeaturedPost = (posts, slugs) => {
+  // 如果是字符串，轉換為數組
+  const slugArray = Array.isArray(slugs) ? slugs : [slugs];
+  
+  // 找到所有匹配的精選文章
+  const featuredPosts = posts.filter(post => slugArray.includes(post.slug));
+  
+  if (featuredPosts.length > 0) {
+    // 按 slug 在數組中的順序排序（保持指定順序）
+    const orderedPosts = slugArray
+      .map(slug => featuredPosts.find(post => post.slug === slug))
+      .filter(post => post !== undefined);
+    
+    if (orderedPosts.length > 1) {
+      // 使用當前日期計算輪播索引（每天更換一次）
+      const today = new Date();
+      const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+      const rotationIndex = dayOfYear % orderedPosts.length;
+      return orderedPosts[rotationIndex];
+    } else {
+      // 只有一篇文章時直接返回
+      return orderedPosts[0];
+    }
+  }
+  
+  // 如果找不到指定文章，回退到最新文章
+  return [...posts].sort(byDateDesc)[0];
+};
+
+const latestAI = getFeaturedPost(aiPosts, featuredSlugs.ai);
+const latestStartup = getFeaturedPost(startupPosts, featuredSlugs.startup);
+const latestCrypto = getFeaturedPost(cryptoPosts, featuredSlugs.crypto);
 
 // 合併所有文章並按日期排序，用於顯示最新文章
 const allPosts = [...aiPosts, ...startupPosts, ...cryptoPosts];
 const recentPosts = allPosts.sort(byDateDesc).slice(0, 6);
+
+// 為文章添加閱讀時間
+const postsWithReadingTime = recentPosts.map(post => ({
+  ...post,
+  readingTime: calculateReadingTime(post.body)
+}));
+
+const latestAIWithTime = latestAI ? { ...latestAI, readingTime: calculateReadingTime(latestAI.body) } : null;
+const latestStartupWithTime = latestStartup ? { ...latestStartup, readingTime: calculateReadingTime(latestStartup.body) } : null;
+const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calculateReadingTime(latestCrypto.body) } : null;
 ---
 
 <Layout 
@@ -29,6 +89,46 @@ const recentPosts = allPosts.sort(byDateDesc).slice(0, 6);
   ogDescription="Deep Insights for Builders ・ 創業 × AI × Crypto 的可執行知識庫"
   ogType="website"
 >
+  <!-- 結構化數據 -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "Brian Jhang's Edge",
+    "description": "創業 × AI × Crypto 的可執行知識庫",
+    "url": "https://brianjhang.com",
+    "author": {
+      "@type": "Person",
+      "name": "Brian Jhang",
+      "url": "https://brianjhang.com"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Brian Jhang"
+    },
+    "inLanguage": "zh-TW",
+    "blogPost": allPosts.slice(0, 10).map(post => ({
+      "@type": "BlogPosting",
+      "headline": post.data.title,
+      "description": post.data.summary,
+      "url": `https://brianjhang.com/${post.collection}/${post.slug}`,
+      "datePublished": post.data.publishedDate || `${post.data.date}T00:00:00+08:00`,
+      "dateModified": post.data.modifiedDate || `${post.data.date}T00:00:00+08:00`,
+      "author": {
+        "@type": "Person",
+        "name": "Brian Jhang"
+      },
+      "publisher": {
+        "@type": "Person", 
+        "name": "Brian Jhang"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": `https://brianjhang.com/${post.collection}/${post.slug}`
+      },
+      "keywords": post.data.keywords ? post.data.keywords.join(", ") : "",
+      "articleSection": post.collection === 'ai' ? 'AI小百科' : post.collection === 'startup' ? '創業筆記' : '幣圈筆記'
+    }))
+  })}></script>
   <section class="hero">
     <div class="wrap">
       <h1>Startups × AI × Crypto</h1>
@@ -40,25 +140,40 @@ const recentPosts = allPosts.sort(byDateDesc).slice(0, 6);
     <section id="featured" class="section">
       <h2 class="title">知識精選</h2>
       <div class="grid grid-3">
-        {latestAI && (
-          <a class="card" href={`/ai/${latestAI.slug}`}>
-            <div class="muted">{latestAI.data.date} · <span class="tag tag-ai">AI小百科</span></div>
-            <h3 style="margin:6px 0 8px 0;color:#fff">{latestAI.data.title}</h3>
-            <p class="muted">{latestAI.data.summary}</p>
+        {latestAIWithTime && (
+          <a class="card" href={`/ai/${latestAIWithTime.slug}`}>
+            <div class="muted">{latestAIWithTime.data.date} · <span class="tag tag-ai">AI小百科</span> · {formatReadingTime(latestAIWithTime.readingTime)}</div>
+            <h3 style="margin:6px 0 8px 0;color:#fff">{latestAIWithTime.data.title}</h3>
+            <p class="muted">{latestAIWithTime.data.summary}</p>
+            {latestAIWithTime.data.tags && (
+              <div class="tags">
+                {latestAIWithTime.data.tags.slice(0, 3).map(tag => <span class="tag tag-small">{tag}</span>)}
+              </div>
+            )}
           </a>
         )}
-        {latestStartup && (
-          <a class="card" href={`/startup/${latestStartup.slug}`}>
-            <div class="muted">{latestStartup.data.date} · <span class="tag tag-startup">創業筆記</span></div>
-            <h3 style="margin:6px 0 8px 0;color:#fff">{latestStartup.data.title}</h3>
-            <p class="muted">{latestStartup.data.summary}</p>
+        {latestStartupWithTime && (
+          <a class="card" href={`/startup/${latestStartupWithTime.slug}`}>
+            <div class="muted">{latestStartupWithTime.data.date} · <span class="tag tag-startup">創業筆記</span> · {formatReadingTime(latestStartupWithTime.readingTime)}</div>
+            <h3 style="margin:6px 0 8px 0;color:#fff">{latestStartupWithTime.data.title}</h3>
+            <p class="muted">{latestStartupWithTime.data.summary}</p>
+            {latestStartupWithTime.data.tags && (
+              <div class="tags">
+                {latestStartupWithTime.data.tags.slice(0, 3).map(tag => <span class="tag tag-small">{tag}</span>)}
+              </div>
+            )}
           </a>
         )}
-        {latestCrypto && (
-          <a class="card" href={`/crypto/${latestCrypto.slug}`}>
-            <div class="muted">{latestCrypto.data.date} · <span class="tag tag-crypto">幣圈筆記</span></div>
-            <h3 style="margin:6px 0 8px 0;color:#fff">{latestCrypto.data.title}</h3>
-            <p class="muted">{latestCrypto.data.summary}</p>
+        {latestCryptoWithTime && (
+          <a class="card" href={`/crypto/${latestCryptoWithTime.slug}`}>
+            <div class="muted">{latestCryptoWithTime.data.date} · <span class="tag tag-crypto">幣圈筆記</span> · {formatReadingTime(latestCryptoWithTime.readingTime)}</div>
+            <h3 style="margin:6px 0 8px 0;color:#fff">{latestCryptoWithTime.data.title}</h3>
+            <p class="muted">{latestCryptoWithTime.data.summary}</p>
+            {latestCryptoWithTime.data.tags && (
+              <div class="tags">
+                {latestCryptoWithTime.data.tags.slice(0, 3).map(tag => <span class="tag tag-small">{tag}</span>)}
+              </div>
+            )}
           </a>
         )}
       </div>
@@ -67,16 +182,21 @@ const recentPosts = allPosts.sort(byDateDesc).slice(0, 6);
     <section class="section">
       <h2 class="title">最新文章</h2>
       <div class="grid grid-2">
-        {recentPosts.map((post) => {
+        {postsWithReadingTime.map((post) => {
           const category = post.collection === 'ai' ? 'AI小百科' : 
                           post.collection === 'startup' ? '創業筆記' : '幣圈筆記';
           const categoryPath = post.collection;
           const tagClass = `tag tag-${post.collection}`;
           return (
             <a class="card" href={`/${categoryPath}/${post.slug}`}>
-              <div class="muted">{post.data.date} · <span class={tagClass}>{category}</span></div>
+              <div class="muted">{post.data.date} · <span class={tagClass}>{category}</span> · {formatReadingTime(post.readingTime)}</div>
               <h3 style="margin:6px 0 8px 0;color:#fff">{post.data.title}</h3>
               <p class="muted">{post.data.summary}</p>
+              {post.data.tags && (
+                <div class="tags">
+                  {post.data.tags.slice(0, 3).map(tag => <span class="tag tag-small">{tag}</span>)}
+                </div>
+              )}
             </a>
           );
         })}
@@ -247,6 +367,21 @@ const recentPosts = allPosts.sort(byDateDesc).slice(0, 6);
   .tag-crypto {
     background: rgba(245, 158, 11, 0.1);
     color: #fbbf24;
+  }
+
+  .tag-small {
+    background: rgba(156, 163, 175, 0.1);
+    color: #9ca3af;
+    font-size: 10px;
+    padding: 2px 6px;
+    margin-right: 4px;
+  }
+
+  .tags {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
   }
 
   .muted {

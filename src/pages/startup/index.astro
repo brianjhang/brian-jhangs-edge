@@ -3,9 +3,15 @@ export const prerender = true;
 
 import { getCollection } from 'astro:content';
 import Layout from '@/layouts/Layout.astro';
+import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime.js';
 
 const startupPosts = await getCollection('startup');
-const sortedPosts = startupPosts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+// 為每篇文章計算閱讀時間
+const postsWithReadingTime = startupPosts.map(post => ({
+  ...post,
+  dynamicReadingTime: calculateReadingTime(post.body)
+}));
+const sortedPosts = postsWithReadingTime.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
 ---
 
 <Layout 
@@ -29,7 +35,7 @@ const sortedPosts = startupPosts.sort((a, b) => new Date(b.data.date).getTime() 
           <div class="label">篇文章</div>
         </div>
         <div class="stat">
-          <span class="number">{startupPosts.reduce((total, post) => total + (post.data.readingTime || 0), 0)}</span>
+          <span class="number">{postsWithReadingTime.reduce((total, post) => total + post.dynamicReadingTime, 0)}</span>
           <div class="label">分鐘閱讀</div>
         </div>
       </div>
@@ -43,12 +49,11 @@ const sortedPosts = startupPosts.sort((a, b) => new Date(b.data.date).getTime() 
           <article class="post-card" onclick={`location.href='/startup/${post.slug}'`}>
             <div class="post-meta">
               <time>{post.data.date}</time>
-              <div class="meta-right">
-                <span class="difficulty" data-level={post.data.difficulty}>
-                  {post.data.difficulty === 'beginner' ? '入門' : 
-                   post.data.difficulty === 'intermediate' ? '進階' : '高級'}
-                </span>
-              </div>
+              <span class="difficulty" data-level={post.data.difficulty}>
+                {post.data.difficulty === 'beginner' ? '入門' : 
+                 post.data.difficulty === 'intermediate' ? '中階' : '進階'}
+              </span>
+              <span class="reading-time">·{formatReadingTime(post.dynamicReadingTime)}</span>
             </div>
             
             <h2><a href={`/startup/${post.slug}`}>{post.data.title}</a></h2>
@@ -61,14 +66,13 @@ const sortedPosts = startupPosts.sort((a, b) => new Date(b.data.date).getTime() 
               </div>
             )}
             
-            <div class="post-footer">
+            {post.data.tags && (
               <div class="tags">
-                {post.data.tags?.slice(0, 3).map((tag) => (
+                {post.data.tags.slice(0, 3).map((tag) => (
                   <span class="tag">{tag}</span>
                 ))}
               </div>
-              <div class="reading-time">{post.data.readingTime} 分鐘</div>
-            </div>
+            )}
           </article>
         ))}
       </div>
@@ -172,8 +176,8 @@ const sortedPosts = startupPosts.sort((a, b) => new Date(b.data.date).getTime() 
     
     .post-meta {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 8px;
       margin-bottom: 16px;
       font-size: 14px;
     }
@@ -203,9 +207,9 @@ const sortedPosts = startupPosts.sort((a, b) => new Date(b.data.date).getTime() 
     }
     
     .difficulty[data-level="intermediate"] {
-      background: rgba(251, 191, 36, 0.1);
-      color: #fbbf24;
-      border: 1px solid rgba(251, 191, 36, 0.2);
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.2);
     }
     
     .difficulty[data-level="advanced"] {
@@ -265,12 +269,18 @@ const sortedPosts = startupPosts.sort((a, b) => new Date(b.data.date).getTime() 
     }
     
     .tag {
-      background: rgba(55, 65, 81, 0.5);
-      color: #cbd5e1;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 12px;
-      border: 1px solid var(--border);
+      background: rgba(156, 163, 175, 0.1);
+      color: #9ca3af;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .tags {
+      margin-top: 8px;
     }
     
     .reading-time {

@@ -1,118 +1,101 @@
 ---
-export interface Props {
-  items: Array<{
-    label: string;
-    href?: string;
-  }>;
-  category?: 'ai' | 'crypto' | 'startup';
+interface BreadcrumbItem {
+  title: string;
+  url?: string;
 }
 
-const { items, category = 'ai' } = Astro.props;
+interface Props {
+  items: BreadcrumbItem[];
+}
 
-// 根據分類設定顏色主題
-const categoryThemes = {
-  ai: { color: '#3b82f6', hoverColor: '#60a5fa' },
-  crypto: { color: '#f59e0b', hoverColor: '#fbbf24' },
-  startup: { color: '#10b981', hoverColor: '#34d399' }
-};
-
-const theme = categoryThemes[category];
+const { items } = Astro.props;
 ---
 
-<nav class="breadcrumb" aria-label="麵包屑導航">
+<nav class="breadcrumb" aria-label="breadcrumb">
   <ol class="breadcrumb-list">
+    <li class="breadcrumb-item">
+      <a href="/" class="breadcrumb-link">首頁</a>
+    </li>
     {items.map((item, index) => (
       <li class="breadcrumb-item">
-        {item.href ? (
-          <>
-            <a href={item.href} class="breadcrumb-link">
-              {item.label}
-            </a>
-            {index < items.length - 1 && (
-              <span class="breadcrumb-separator" aria-hidden="true">/</span>
-            )}
-          </>
+        <span class="breadcrumb-separator">/</span>
+        {item.url ? (
+          <a href={item.url} class="breadcrumb-link">{item.title}</a>
         ) : (
-          <span class="breadcrumb-current" aria-current="page">
-            {item.label}
-          </span>
+          <span class="breadcrumb-current">{item.title}</span>
         )}
       </li>
     ))}
   </ol>
 </nav>
 
-<style define:vars={{ 
-  categoryColor: theme.color, 
-  categoryHoverColor: theme.hoverColor 
-}}>
+<!-- 結構化數據 -->
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "首頁",
+      "item": "https://brianjhang.com"
+    },
+    ...items.map((item, index) => ({
+      "@type": "ListItem", 
+      "position": index + 2,
+      "name": item.title,
+      "item": item.url ? `https://brianjhang.com${item.url}` : undefined
+    }))
+  ]
+})}></script>
+
+<style>
   .breadcrumb {
-    margin-bottom: 24px;
+    margin: 16px 0;
+    font-size: 14px;
   }
-  
+
   .breadcrumb-list {
     display: flex;
     align-items: center;
-    gap: 8px;
+    flex-wrap: wrap;
     list-style: none;
     margin: 0;
     padding: 0;
-    font-size: 0.875rem;
-    color: var(--muted);
-    flex-wrap: wrap;
+    gap: 4px;
   }
-  
+
   .breadcrumb-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
   }
-  
+
   .breadcrumb-link {
-    color: var(--categoryColor);
+    color: var(--brand);
     text-decoration: none;
-    transition: color 0.2s ease;
-    padding: 4px 0;
-    border-radius: 4px;
+    transition: opacity 0.2s ease;
   }
-  
+
   .breadcrumb-link:hover {
-    color: var(--categoryHoverColor);
+    opacity: 0.8;
     text-decoration: underline;
   }
-  
-  .breadcrumb-link:focus {
-    outline: 2px solid var(--categoryColor);
-    outline-offset: 2px;
-  }
-  
+
   .breadcrumb-separator {
     color: var(--muted);
-    margin: 0 4px;
-    font-weight: 300;
+    margin: 0 2px;
   }
-  
+
   .breadcrumb-current {
-    color: var(--brand);
+    color: var(--text);
     font-weight: 500;
-    max-width: 300px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
-  
+
   @media (max-width: 768px) {
-    .breadcrumb-list {
-      font-size: 0.8rem;
-      gap: 6px;
-    }
-    
-    .breadcrumb-current {
-      max-width: 200px;
-    }
-    
-    .breadcrumb-separator {
-      margin: 0 2px;
+    .breadcrumb {
+      font-size: 12px;
+      margin: 12px 0;
     }
   }
 </style>

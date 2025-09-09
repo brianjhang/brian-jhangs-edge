@@ -1,0 +1,142 @@
+/* 全域共用樣式 - 避免重複定義 */
+
+/* 主題色彩變數 */
+:root {
+  --bg: #0b0b0c;
+  --muted: #9ca3af;
+  --card: #0f1115;
+  --border: #1f2937;
+  --brand: #fafafa;
+  --card-hover: #121218;
+  --shadow: 0 4px 12px rgba(0,0,0,0.15);
+  --shadow-hover: 0 8px 25px rgba(0,0,0,0.25);
+  --link: #60a5fa;
+  
+  /* 主題專用色彩 */
+  --ai: #3b82f6;        /* AI 小百科 - 藍色 */
+  --startup: #10b981;   /* 創業筆記 - 綠色 */
+  --crypto: #f59e0b;    /* 幣圈筆記 - 黃色 */
+}
+
+/* 通用文章標籤樣式 */
+.tag {
+  background: rgba(156, 163, 175, 0.1);
+  color: #9ca3af;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* 通用難度標籤樣式 */
+.difficulty {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* AI 主題難度標籤 */
+.difficulty[data-level="beginner"] {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.difficulty[data-level="intermediate"] {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.difficulty[data-level="advanced"] {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* 創業主題難度標籤覆蓋 */
+.startup-theme .difficulty[data-level="beginner"] {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.startup-theme .difficulty[data-level="intermediate"] {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* 幣圈主題難度標籤覆蓋 */
+.crypto-theme .difficulty[data-level="beginner"] {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.crypto-theme .difficulty[data-level="intermediate"] {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* 通用分類標籤 */
+.category {
+  background: var(--card);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+.ai-theme .category {
+  color: var(--ai);
+  border: 1px solid var(--ai);
+}
+
+.startup-theme .category {
+  color: var(--startup);
+  border: 1px solid var(--startup);
+}
+
+.crypto-theme .category {
+  color: var(--crypto);
+  border: 1px solid var(--crypto);
+}
+
+/* 通用閱讀時間樣式 */
+.reading-time {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+/* 通用麵包屑樣式 */
+.breadcrumb {
+  padding: 20px 0 10px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.breadcrumb a {
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.ai-theme .breadcrumb a {
+  color: var(--ai);
+}
+
+.startup-theme .breadcrumb a {
+  color: var(--startup);
+}
+
+.crypto-theme .breadcrumb a {
+  color: var(--crypto);
+}

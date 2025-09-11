@@ -16,6 +16,8 @@ const baseSchema = z.object({
   type: z.string().optional(),
   tags: z.array(z.string()).optional(),
   summary: z.string().optional(),
+  image: z.string().optional(),
+  image_alt: z.string().optional(),
   keywords: z.array(z.string()).optional(),
   canonicalUrl: z.string().optional(),
   author: z.string().optional(),

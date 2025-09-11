@@ -24,8 +24,13 @@ const dynamicReadingTime = calculateReadingTime(post.body);
 const title = post.data.title;
 const description = post.data.description || post.data.summary;
 // 動態生成 ogImage 路徑
-function generateOgImagePath(slug, seoOgImage) {
-  // 如果 SEO 中有設定，優先使用
+function generateOgImagePath(slug, image, seoOgImage) {
+  // 如果 frontmatter 中有設定 image，優先使用
+  if (image) {
+    return image;
+  }
+  
+  // 如果 SEO 中有設定，次優先使用
   if (seoOgImage) {
     return seoOgImage;
   }
@@ -60,7 +65,7 @@ function generateOgImagePath(slug, seoOgImage) {
   return `/images/og/crypto/${fileName}`;
 }
 
-const ogImage = generateOgImagePath(post.slug, post.data.seo?.ogImage);
+const ogImage = generateOgImagePath(post.slug, post.data.image, post.data.seo?.ogImage);
 
 // 生成麵包屑
 const breadcrumbItems = [

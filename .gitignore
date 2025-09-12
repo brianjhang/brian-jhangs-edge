@@ -40,6 +40,7 @@ AI_INSTRUCTIONS.md
 .cursor/
 .vscode/
 .anthropic/
+.gemini/
 
 # Script tools (keep most local only, but include OG generation)
 scripts/generate-social-content*.js

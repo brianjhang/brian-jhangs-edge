@@ -46,7 +46,7 @@ const sortedPosts = postsWithReadingTime.sort((a, b) => new Date(b.data.date).ge
     <div class="wrap">
       <div class="posts-grid">
         {sortedPosts.map((post) => (
-          <article class="post-card" onclick={`location.href='/startup/${post.slug}'`}>
+          <article class="post-card" onclick={`location.href='/startup/${post.id.replace('.mdx', '')}'`}>
             <div class="post-meta">
               <time>{post.data.date}</time>
               <span class="difficulty" data-level={post.data.difficulty}>
@@ -56,7 +56,7 @@ const sortedPosts = postsWithReadingTime.sort((a, b) => new Date(b.data.date).ge
               <span class="reading-time">·{formatReadingTime(post.dynamicReadingTime)}</span>
             </div>
             
-            <h2><a href={`/startup/${post.slug}`}>{post.data.title}</a></h2>
+            <h2><a href={`/startup/${post.id.replace('.mdx', '')}`}>{post.data.title}</a></h2>
             <p class="post-summary">{post.data.summary}</p>
             
             {post.data.bookReference && (

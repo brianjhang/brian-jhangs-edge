@@ -9,10 +9,15 @@ import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime
 
 export async function getStaticPaths() {
   const startupPosts = await getCollection('startup');
-  return startupPosts.map((post) => ({
-    params: { slug: post.slug }, 
-    props: post,
-  }));
+  return startupPosts.map((post) => {
+    // 從 post.id 獲取完整路徑，包含子目錄
+    // 例如: "book/ceo-loneliness-hard-things.mdx" -> "book/ceo-loneliness-hard-things"
+    const fullPath = post.id.replace('.mdx', '');
+    return {
+      params: { slug: fullPath },
+      props: post,
+    };
+  });
 }
 
 const post = Astro.props;

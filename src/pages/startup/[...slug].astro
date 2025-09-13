@@ -54,7 +54,7 @@ function generateOgImagePath(slug, image, seoOgImage, series) {
   }
 }
 
-const ogImage = generateOgImagePath(post.slug, post.data.image, post.data.seo?.ogImage, 'startup');
+const ogImage = generateOgImagePath(post.id.replace('.mdx', ''), post.data.image, post.data.seo?.ogImage, 'startup');
 
 
 // 生成麵包屑

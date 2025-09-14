@@ -26,6 +26,7 @@ pnpm-debug.log*
 debug-*.js
 
 # Private documentation and planning files (not for public)
+AGENTS.md
 docs/
 README-dev.md
 *_PLANNING.md

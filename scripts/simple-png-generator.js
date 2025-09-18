@@ -145,38 +145,85 @@ function generateSVG(title, series = 'ai') {
 }
 
 async function convertSVGToPNG(svgContent, outputPath) {
-  // 寫入臨時 SVG 檔案
+  try {
+    const { execSync } = await import('child_process');
+
+    // 從 SVG 內容中提取文字內容
+    const titleMatches = svgContent.match(/<text[^>]*class="title"[^>]*>([^<]+)<\/text>/g);
+    const subtitleMatch = svgContent.match(/<text[^>]*class="subtitle"[^>]*>([^<]+)<\/text>/);
+
+    if (!titleMatches || !subtitleMatch) {
+      // 回退到原始 SVG 轉換方法
+      return await fallbackSVGConversion(svgContent, outputPath);
+    }
+
+    // 提取標題行
+    const titleLines = titleMatches.map(match => {
+      const textMatch = match.match(/>([^<]+)</);
+      return textMatch ? textMatch[1] : '';
+    }).filter(line => line.length > 0);
+
+    const subtitle = subtitleMatch[1];
+
+    // 獲取主題色彩
+    const bgColor = svgContent.includes('#1e293b') ? '#1e293b' : '#0c0a09';
+    const primaryColor = svgContent.includes('#60a5fa') ? '#60a5fa' : '#fbbf24';
+
+    // 使用直接 ImageMagick 文字渲染
+    let command = `magick -size 1200x630 xc:"${bgColor}" -font "PingFang-TC-Regular" -pointsize 40 -fill white -gravity center`;
+
+    // 添加標題行
+    if (titleLines.length === 1) {
+      command += ` -annotate +0-20 "${titleLines[0]}"`;
+    } else if (titleLines.length === 2) {
+      command += ` -annotate +0-60 "${titleLines[0]}" -annotate +0-10 "${titleLines[1]}"`;
+    }
+
+    // 添加副標題
+    command += ` -pointsize 28 -fill "${primaryColor}" -annotate +0+80 "${subtitle}"`;
+
+    // 添加底部裝飾線
+    command += ` -fill "${primaryColor}" -draw "rectangle 0,622 1200,630"`;
+
+    // 添加輸出路徑
+    command += ` "${outputPath}"`;
+
+    try {
+      execSync(command, { stdio: 'pipe' });
+      return true;
+    } catch (fontError) {
+      // 嘗試使用回退字體
+      console.log('嘗試替代字體...');
+      const fallbackCommand = command.replace('PingFang-TC-Regular', 'Arial-Unicode-MS');
+      try {
+        execSync(fallbackCommand, { stdio: 'pipe' });
+        return true;
+      } catch (fallbackError) {
+        // 回退到 SVG 轉換
+        return await fallbackSVGConversion(svgContent, outputPath);
+      }
+    }
+  } catch (error) {
+    console.error(`直接渲染失敗: ${error.message}`);
+    return await fallbackSVGConversion(svgContent, outputPath);
+  }
+}
+
+async function fallbackSVGConversion(svgContent, outputPath) {
+  // 原始 SVG 轉換方法作為回退
   const tempSvgPath = outputPath.replace('.png', '.temp.svg');
   await writeFile(tempSvgPath, svgContent);
 
   try {
-    // 使用改進的 ImageMagick 命令，明確指定中文字體支援
     const { execSync } = await import('child_process');
-
-    // 使用多個字體回退選項，確保中文渲染正確
-    const command = `magick "${tempSvgPath}" -density 300 -background transparent -resize 1200x630 -quality 95 -font "PingFang-TC-Regular" "${outputPath}"`;
-
-    try {
-      execSync(command, { stdio: 'pipe' });
-    } catch (fontError) {
-      // 如果 PingFang TC 失敗，嘗試其他中文字體
-      console.log('嘗試替代字體...');
-      const fallbackCommand = `magick "${tempSvgPath}" -density 300 -background transparent -resize 1200x630 -quality 95 -font "Arial-Unicode-MS" "${outputPath}"`;
-      try {
-        execSync(fallbackCommand, { stdio: 'pipe' });
-      } catch (fallbackError) {
-        // 最後的回退選項
-        const finalCommand = `magick "${tempSvgPath}" -density 300 -background transparent -resize 1200x630 -quality 95 "${outputPath}"`;
-        execSync(finalCommand, { stdio: 'pipe' });
-      }
-    }
+    const command = `magick "${tempSvgPath}" -density 300 -background transparent -resize 1200x630 -quality 95 "${outputPath}"`;
+    execSync(command, { stdio: 'pipe' });
 
     // 清理臨時檔案
     await import('fs').then(fs => fs.unlinkSync(tempSvgPath));
-
     return true;
   } catch (error) {
-    console.error(`轉換失敗: ${error.message}`);
+    console.error(`SVG 轉換失敗: ${error.message}`);
     return false;
   }
 }

@@ -148,17 +148,32 @@ async function convertSVGToPNG(svgContent, outputPath) {
   // 寫入臨時 SVG 檔案
   const tempSvgPath = outputPath.replace('.png', '.temp.svg');
   await writeFile(tempSvgPath, svgContent);
-  
+
   try {
-    // 使用改進的 ImageMagick 命令
+    // 使用改進的 ImageMagick 命令，明確指定中文字體支援
     const { execSync } = await import('child_process');
-    
-    const command = `magick "${tempSvgPath}" -density 300 -background transparent -resize 1200x630 -quality 95 "${outputPath}"`;
-    execSync(command, { stdio: 'pipe' });
-    
+
+    // 使用多個字體回退選項，確保中文渲染正確
+    const command = `magick "${tempSvgPath}" -density 300 -background transparent -resize 1200x630 -quality 95 -font "PingFang-TC-Regular" "${outputPath}"`;
+
+    try {
+      execSync(command, { stdio: 'pipe' });
+    } catch (fontError) {
+      // 如果 PingFang TC 失敗，嘗試其他中文字體
+      console.log('嘗試替代字體...');
+      const fallbackCommand = `magick "${tempSvgPath}" -density 300 -background transparent -resize 1200x630 -quality 95 -font "Arial-Unicode-MS" "${outputPath}"`;
+      try {
+        execSync(fallbackCommand, { stdio: 'pipe' });
+      } catch (fallbackError) {
+        // 最後的回退選項
+        const finalCommand = `magick "${tempSvgPath}" -density 300 -background transparent -resize 1200x630 -quality 95 "${outputPath}"`;
+        execSync(finalCommand, { stdio: 'pipe' });
+      }
+    }
+
     // 清理臨時檔案
     await import('fs').then(fs => fs.unlinkSync(tempSvgPath));
-    
+
     return true;
   } catch (error) {
     console.error(`轉換失敗: ${error.message}`);

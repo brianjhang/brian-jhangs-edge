@@ -12,7 +12,7 @@ keywords: ["提示工程是什麼", "Prompt Engineering", "AI對話技巧", "LLM
 canonicalUrl: "https://brianjhang.com/ai/llm/prompt-engineering-complete-guide"
 author: "Brian Jhang"
 publishedDate: "2025-08-24T10:00:00+08:00"
-modifiedDate: "2025-08-24T10:00:00+08:00"
+modifiedDate: "2025-09-19T16:30:00+08:00"
 category: "AI 技術教育"
 subcategory: "LLM應用"
 featured: true
@@ -30,7 +30,7 @@ entities: ["提示工程", "Prompt Engineering", "Chain-of-Thought", "少樣本�
 related_topics: ["大語言模型", "ChatGPT", "Claude", "AI應用開發", "自然語言處理"]
 content_type: "technical_guide"
 expertise_level: "intermediate"
-last_fact_check: "2025-08-24"
+last_fact_check: "2025-09-19"
 primary_sources: ["OpenAI研究", "Anthropic論文", "學術研究", "實戰經驗"]
 seo:
   metaTitle: "提示工程完全解析 2025：AI對話技巧深度指南｜實戰策略大全"
@@ -190,11 +190,13 @@ advanced_cot_prompt = """
 
 | 特性 | 一般提示 | Chain-of-Thought |
 |------|----------|------------------|
-| **準確性** | 65-70% | 85-90% |
+| **準確性** | 較低 (例如在 GSM8K 上為 17.7%) | **顯著提升 (例如在 GSM8K 上達到 78.7%)** |
 | **可解釋性** | 低 | 高 |
 | **複雜推理** | 困難 | 擅長 |
 | **錯誤檢測** | 難以發現 | 容易識別 |
 | **學習價值** | 僅看結果 | 理解過程 |
+
+註：準確性數據引用自 Google AI 團隊在 GSM8K 基準測試上的研究結果，展示了 CoT 在複雜推理任務上的巨大潛力。
 
 ## ⚙️ 提示工程的核心技術
 
@@ -314,6 +316,7 @@ template_prompt = """
 ## 🎯 提示工程開發框架
 
 ### LangChain 提示管理
+到 2025 年，LangChain 已不僅是提示管理工具，更是構建複雜 AI 代理 (Agent) 和 RAG 系統的核心框架，並發展出 LangSmith、LangGraph 等生態系工具。
 ```python
 from langchain.prompts import PromptTemplate, FewShotPromptTemplate
 from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
@@ -457,6 +460,10 @@ A: 是的。GPT 系列偏好詳細指令，Claude 適合對話式提示，Gemini
 **學術研究**：
 - [Papers With Code - Prompt Engineering](https://paperswithcode.com/task/prompt-engineering)
 - [arXiv Prompt Engineering Papers](https://arxiv.org/list/cs.CL/recent)
+
+---
+
+**最後更新時間**: 2025-09-19
 
 ---
 

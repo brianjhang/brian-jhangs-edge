@@ -2,6 +2,7 @@
 export const prerender = true;
 
 import Layout from '@/layouts/Layout.astro';
+import Comments from '@/components/Comments.astro';
 ---
 
 <Layout 
@@ -74,6 +75,12 @@ import Layout from '@/layouts/Layout.astro';
       <div class="highlight">
         <p><strong>💡 重要聲明</strong>：本網站所有內容均為教育用途，特別是 Crypto 相關內容並非投資建議。請謹慎評估個人財務狀況，為自己的決定負責。</p>
       </div>
+
+      <!-- 評論系統 -->
+      <Comments
+        title="關於 Brian Jhang's Edge"
+        category="about"
+      />
     </div>
   </div>
 

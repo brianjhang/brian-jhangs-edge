@@ -1,0 +1,123 @@
+---
+interface Props {
+  title?: string;
+  category?: string;
+}
+
+const { title = '', category = '' } = Astro.props;
+
+// 根據文章類別設定不同的 category 標識
+const giscusCategory = category ? `${category}-comments` : 'general';
+---
+
+<div class="comments-section">
+  <h3 class="comments-title">💬 討論與回饋</h3>
+  <p class="comments-description">歡迎在下方留言討論，分享你的想法或提出問題！</p>
+
+  <div id="comments-container">
+    <!-- Giscus 評論系統將在這裡載入 -->
+  </div>
+</div>
+
+<script>
+  // 動態載入 Giscus 評論系統
+  function loadGiscus() {
+    // 檢查是否已經載入過
+    if (document.querySelector('#comments-container script')) {
+      return;
+    }
+
+    // 創建 Giscus script 元素
+    const script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.setAttribute('data-repo', 'brianjhang/brian-jhangs-edge');
+    script.setAttribute('data-repo-id', 'R_kgDOPfo3Qg');
+    script.setAttribute('data-category', 'Comments');
+    script.setAttribute('data-category-id', 'DIC_kwDOPfo3Qs4CvtGO');
+    script.setAttribute('data-mapping', 'pathname');
+    script.setAttribute('data-strict', '0');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-emit-metadata', '0');
+    script.setAttribute('data-input-position', 'top');
+    script.setAttribute('data-theme', 'preferred_color_scheme');
+    script.setAttribute('data-lang', 'zh-TW');
+    script.setAttribute('data-loading', 'lazy');
+    script.crossOrigin = 'anonymous';
+    script.async = true;
+
+    // 將 script 插入容器
+    const container = document.getElementById('comments-container');
+    if (container) {
+      container.appendChild(script);
+    }
+  }
+
+  // 頁面載入後初始化
+  document.addEventListener('DOMContentLoaded', loadGiscus);
+
+  // 支援 Astro 的客戶端路由
+  document.addEventListener('astro:page-load', loadGiscus);
+</script>
+
+<style>
+  .comments-section {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .comments-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--brand);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .comments-description {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  #comments-container {
+    min-height: 200px;
+    position: relative;
+  }
+
+  /* Loading 狀態 */
+  #comments-container:empty::after {
+    content: '載入評論系統中...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  /* 響應式設計 */
+  @media (max-width: 768px) {
+    .comments-section {
+      margin-top: 32px;
+      padding-top: 24px;
+    }
+
+    .comments-title {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* Giscus 樣式客製化 */
+  :global(.giscus) {
+    margin-top: 16px;
+  }
+
+  :global(.giscus-frame) {
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+</style>

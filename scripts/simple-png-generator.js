@@ -172,8 +172,25 @@ async function convertSVGToPNG(svgContent, outputPath) {
     const subtitle = subtitleMatch[1];
 
     // 獲取主題色彩
-    const bgColor = svgContent.includes('#1e293b') ? '#1e293b' : '#0c0a09';
-    const primaryColor = svgContent.includes('#60a5fa') ? '#60a5fa' : '#fbbf24';
+    let bgColor, primaryColor;
+
+    if (svgContent.includes('#1e1b4b')) {
+      // Build 主題
+      bgColor = '#1e1b4b';
+      primaryColor = '#8b5cf6';
+    } else if (svgContent.includes('#1e293b')) {
+      // AI 主題
+      bgColor = '#1e293b';
+      primaryColor = '#60a5fa';
+    } else if (svgContent.includes('#0a0a0a')) {
+      // Startup 主題
+      bgColor = '#0a0a0a';
+      primaryColor = '#10b981';
+    } else {
+      // Crypto 主題（預設）
+      bgColor = '#0c0a09';
+      primaryColor = '#fbbf24';
+    }
 
     // 使用直接 ImageMagick 文字渲染
     let command = `magick -size 1200x630 xc:"${bgColor}" -font "PingFang-TC-Regular" -pointsize 40 -fill white -gravity center`;

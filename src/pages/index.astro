@@ -8,8 +8,9 @@ import { calculateReadingTime, formatReadingTime } from '../utils/readingTime.js
 
 // 獲取各個主題的文章
 const aiPosts = await getCollection("ai");
-const startupPosts = await getCollection("startup");  
+const startupPosts = await getCollection("startup");
 const cryptoPosts = await getCollection("crypto");
+const buildPosts = await getCollection("build");
 
 // 按日期排序的函數
 const byDateDesc = (a, b) => new Date(b.data.date) - new Date(a.data.date);
@@ -69,7 +70,7 @@ const latestStartup = getFeaturedPost(startupPosts, featuredSlugs.startup);
 const latestCrypto = getFeaturedPost(cryptoPosts, featuredSlugs.crypto);
 
 // 合併所有文章並按日期排序，用於顯示最新文章
-const allPosts = [...aiPosts, ...startupPosts, ...cryptoPosts];
+const allPosts = [...aiPosts, ...startupPosts, ...cryptoPosts, ...buildPosts];
 const recentPosts = allPosts.sort(byDateDesc).slice(0, 6);
 
 // 為文章添加閱讀時間
@@ -127,7 +128,7 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
         "@id": `https://brianjhang.com/${post.collection}/${post.slug}`
       },
       "keywords": post.data.keywords ? post.data.keywords.join(", ") : "",
-      "articleSection": post.collection === 'ai' ? 'AI小百科' : post.collection === 'startup' ? '創業筆記' : '幣圈筆記'
+      "articleSection": post.collection === 'ai' ? 'AI小百科' : post.collection === 'startup' ? '創業筆記' : post.collection === 'build' ? '建設日誌' : '幣圈筆記'
     }))
   })}></script>
   <section class="hero">
@@ -184,8 +185,9 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
       <h2 class="title">最新文章</h2>
       <div class="grid grid-2">
         {postsWithReadingTime.map((post) => {
-          const category = post.collection === 'ai' ? 'AI小百科' : 
-                          post.collection === 'startup' ? '創業筆記' : '幣圈筆記';
+          const category = post.collection === 'ai' ? 'AI小百科' :
+                          post.collection === 'startup' ? '創業筆記' :
+                          post.collection === 'build' ? '建設日誌' : '幣圈筆記';
           const categoryPath = post.collection;
           const tagClass = `tag tag-${post.collection}`;
           return (
@@ -360,6 +362,11 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
   .tag-crypto {
     background: rgba(245, 158, 11, 0.1);
     color: #fbbf24;
+  }
+
+  .tag-build {
+    background: rgba(139, 92, 246, 0.1);
+    color: #c4b5fd;
   }
 
   .tag-small {

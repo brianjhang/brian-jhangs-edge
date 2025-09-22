@@ -75,8 +75,14 @@ const startupCollection = defineCollection({
   schema: baseSchema,
 });
 
+const buildCollection = defineCollection({
+  type: 'content',
+  schema: baseSchema,
+});
+
 export const collections = {
   crypto: cryptoCollection,
   ai: aiCollection,
   startup: startupCollection,
+  build: buildCollection,
 };

@@ -1,9 +1,9 @@
 # Brian Jhang's Edge
 
-> **Startups × AI × Crypto — Deep Insights for Builders**  
-> **創業 × AI × Crypto 的可執行知識庫**
+> **AI × Startups × Crypto — Deep Insights for Builders**  
+> **AI × Startups × Crypto：一人公司的實踐藍圖**
 
-Brian Jhang's Edge 是一個 **AI 驅動的知識庫型網站**，專注於 **創業、AI 與 Crypto** 三大領域，提供深度、實用的長青內容，幫助下一代建設者獲得可執行的洞見。
+Brian Jhang's Edge 是一個 **AI 驅動的知識庫型網站**，專注於 **AI、創業與 Crypto** 三大領域，提供深度、實用的長青內容，幫助下一代建設者獲得可執行的洞見。
 
 ---
 
@@ -56,8 +56,9 @@ npm run dev
 
 ### 核心領域與新架構
 - **🤖 AI** (`/ai/llm/`, `/ai/tools/`)：技術解析、工具應用、實戰指南
-- **🚀 創業** (`/startup/book/`, `/startup/strategy/`)：創業框架、商業智慧  
+- **🚀 創業** (`/startup/book/`, `/startup/strategy/`)：創業框架、商業智慧
 - **💎 Crypto** (`/crypto/btc/`, `/crypto/usdt/`)：基本面分析、項目研究
+- **🚧 建設日誌** (`/build/`)：網站建設過程、技術實踐、社群互動記錄
 
 ---
 
@@ -74,6 +75,7 @@ npm run dev
   - `ai/` - AI 技術主題分類（如 llm/, tools/）
   - `startup/` - 創業主題分類（如 book/, strategy/）
   - `crypto/` - 加密貨幣主題分類（如 btc/, usdt/）
+  - `build/` - 建設日誌（網站開發過程記錄）
   - `planning/` - 主題管理和狀態追蹤
 - **AI 生成**: LLM 輔助內容創作
 - **SEO 優化**: 完整的 meta 標籤與結構化數據
@@ -82,7 +84,7 @@ npm run dev
 
 ---
 
-## 📁 專案結構（2025-08-23 更新）
+## 📁 專案結構（2025-09-22 更新）
 
 ```
 src/
@@ -97,6 +99,7 @@ src/
 │   │   ├── eth/         # 以太坊主題
 │   │   ├── usdt/        # 穩定幣主題
 │   │   └── bnb/         # 幣安生態系統
+│   └── build/           # 建設日誌（網站開發記錄、社群互動）
 ├── docs/               # 私人文檔（工作流程、規劃）
 │   ├── planning/        # 主題管理與狀態追蹤
 │   │   ├── ai-topics.md      # AI 小百科主題規劃

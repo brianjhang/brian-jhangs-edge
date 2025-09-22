@@ -1,0 +1,454 @@
+---
+export const prerender = true;
+
+import { getCollection, getEntry } from 'astro:content';
+import Layout from '@/layouts/Layout.astro';
+import Breadcrumb from '@/components/Breadcrumb.astro';
+import RelatedArticles from '@/components/RelatedArticles.astro';
+import Comments from '@/components/Comments.astro';
+import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime.js';
+
+export async function getStaticPaths() {
+  const buildPosts = await getCollection('build');
+  return buildPosts.map((post) => ({
+    params: { slug: post.slug },
+    props: post,
+  }));
+}
+
+const post = Astro.props;
+const { Content } = await post.render();
+
+// 計算動態閱讀時間
+const dynamicReadingTime = calculateReadingTime(post.body);
+
+const title = post.data.title;
+const description = post.data.description || post.data.summary;
+
+// 動態生成 ogImage 路徑
+function generateOgImagePath(slug, image, seoOgImage, series) {
+  // 如果 frontmatter 中有設定 image，優先使用
+  if (image) {
+    return `/images/og/${image}`;
+  }
+
+  // 如果 SEO 設定中有 ogImage，使用它
+  if (seoOgImage) {
+    return `/images/og/${seoOgImage}`;
+  }
+
+  // 預設規則：用 slug 生成檔名
+  const fileName = slug + '.png';
+  return `/images/og/${series}/${fileName}`;
+}
+
+const ogImage = generateOgImagePath(post.slug, post.data.image, post.data.seo?.ogImage, 'build');
+
+// 生成麵包屑
+const breadcrumbItems = [
+  { title: '建設日誌', url: '/build' },
+  { title: post.data.title.split('：')[0] || post.data.title.split('|')[0] || post.data.title }
+];
+---
+
+<Layout
+  title={title}
+  description={description}
+  image={ogImage}
+  series="build"
+>
+  <!-- 文章內容 -->
+  <div class="content-wrap">
+    <Breadcrumb items={breadcrumbItems} category="build" />
+
+    <h1 class="page-title">{post.data.title}</h1>
+
+    <div class="meta">
+      <span>📅 {post.data.date}</span>
+      {post.data.difficulty && <span class="difficulty" data-level={post.data.difficulty}>{post.data.difficulty === 'beginner' ? '入門' : post.data.difficulty === 'intermediate' ? '中階' : '進階'}</span>}
+      {post.data.category && <span class="category">{post.data.category}</span>}
+      <span>⏱️ {formatReadingTime(dynamicReadingTime)}閱讀</span>
+    </div>
+
+    {post.data.tags && (
+      <div class="tags">
+        {post.data.tags.slice(0, 5).map((tag) => (
+          <span class="tag">#{tag.toUpperCase()}</span>
+        ))}
+      </div>
+    )}
+
+    {post.data.summary && (
+      <div class="article-intro">
+        {post.data.summary}
+      </div>
+    )}
+
+    <article>
+      <Content />
+    </article>
+
+    <!-- 相關文章推薦 -->
+    <RelatedArticles
+      currentSlug={post.slug}
+      currentCategory="build"
+      currentTags={post.data.tags}
+    />
+
+    <!-- 留言系統 -->
+    <Comments
+      title={post.data.title}
+      category="build"
+    />
+  </div>
+</Layout>
+
+<style>
+  :root {
+    --build: #8b5cf6;
+  }
+
+  .content-wrap {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .page-title {
+    font-size: 36px;
+    font-weight: 800;
+    margin: 32px 0 24px 0;
+    color: var(--brand);
+    line-height: 1.2;
+  }
+
+  .meta {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  /* 難度標籤樣式 - 使用 global.css 標準 */
+  .difficulty {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .difficulty[data-level="beginner"] {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--build);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+  }
+
+  .difficulty[data-level="intermediate"] {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--build);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+  }
+
+  .difficulty[data-level="advanced"] {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+  }
+
+  /* 分類標籤樣式 - 使用 global.css 標準 */
+  .category {
+    background: var(--card);
+    color: var(--build);
+    border: 1px solid var(--build);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+  }
+
+  .tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+    margin-bottom: 24px;
+  }
+
+  /* 標籤樣式 - 使用 global.css 標準但針對建設日誌主題調整 */
+  .tag {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--build);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    transition: all 0.2s ease;
+  }
+
+  .tag:hover {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.3);
+  }
+
+  /* 文章引言樣式 */
+  .article-intro {
+    background: rgba(139, 92, 246, 0.05);
+    border-left: 4px solid var(--build);
+    padding: 16px 20px;
+    margin: 24px 0 32px 0;
+    border-radius: 0 8px 8px 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #cbd5e1;
+    font-style: italic;
+  }
+
+  article {
+    color: var(--text);
+    line-height: 1.8;
+    font-size: 16px;
+  }
+
+  /* 標題樣式 */
+  article :global(h1) {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--brand);
+    margin: 40px 0 20px 0;
+    line-height: 1.3;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 12px;
+  }
+
+  article :global(h2) {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--brand);
+    margin: 32px 0 16px 0;
+    line-height: 1.3;
+    position: relative;
+  }
+
+  article :global(h2)::before {
+    content: '';
+    position: absolute;
+    left: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 20px;
+    background: var(--build);
+    border-radius: 2px;
+  }
+
+  article :global(h3) {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--brand);
+    margin: 24px 0 12px 0;
+    line-height: 1.4;
+  }
+
+  article :global(h4) {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--brand);
+    margin: 20px 0 10px 0;
+  }
+
+  /* 段落和列表 */
+  article :global(p) {
+    margin: 16px 0;
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  article :global(ul),
+  article :global(ol) {
+    margin: 20px 0;
+    padding-left: 24px;
+    color: var(--text);
+  }
+
+  article :global(li) {
+    margin: 8px 0;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  article :global(ul li) {
+    position: relative;
+    list-style: none;
+  }
+
+  article :global(ul li)::before {
+    content: '•';
+    color: var(--build);
+    position: absolute;
+    left: -16px;
+    font-weight: bold;
+  }
+
+  /* 引用和代碼 */
+  article :global(blockquote) {
+    border-left: 4px solid var(--build);
+    background: rgba(139, 92, 246, 0.05);
+    padding: 20px 24px;
+    margin: 32px 0;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    position: relative;
+  }
+
+  article :global(blockquote)::before {
+    content: '"';
+    font-size: 48px;
+    color: var(--build);
+    position: absolute;
+    top: -8px;
+    left: 8px;
+    opacity: 0.3;
+    font-family: serif;
+  }
+
+  article :global(blockquote p) {
+    margin: 8px 0;
+    color: var(--text);
+    position: relative;
+    z-index: 1;
+  }
+
+  article :global(code) {
+    background: var(--code-bg, #1e293b);
+    color: var(--code-text, #e2e8f0);
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.85em;
+    border: 1px solid var(--border, #374151);
+  }
+
+  article :global(pre) {
+    background: var(--code-bg, #1e293b);
+    color: var(--code-text, #e2e8f0);
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 24px 0;
+    border: 1px solid var(--border, #374151);
+    line-height: 1.5;
+  }
+
+  article :global(pre code) {
+    background: none;
+    padding: 0;
+    border: none;
+    font-size: 14px;
+    color: inherit;
+  }
+
+  /* 連結 */
+  article :global(a) {
+    color: var(--build);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+
+  article :global(a:hover) {
+    border-bottom-color: var(--build);
+    color: var(--brand);
+  }
+
+  /* 強調樣式 */
+  article :global(strong) {
+    font-weight: 700;
+    color: var(--brand);
+  }
+
+  article :global(em) {
+    font-style: italic;
+    color: var(--build);
+  }
+
+  /* 表格樣式 */
+  article :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  article :global(th),
+  article :global(td) {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  article :global(th) {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--brand);
+    font-weight: 600;
+  }
+
+  article :global(tr:hover) {
+    background: rgba(139, 92, 246, 0.05);
+  }
+
+  /* 響應式設計 */
+  @media (max-width: 768px) {
+    .content-wrap {
+      padding: 16px;
+    }
+
+    .page-title {
+      font-size: 28px;
+    }
+
+    .meta {
+      font-size: 13px;
+      gap: 12px;
+    }
+
+    .tags {
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 12px;
+      padding: 4px 8px;
+    }
+
+    .page-summary {
+      font-size: 16px;
+      margin: 20px 0 32px 0;
+      padding: 16px;
+    }
+
+    article {
+      font-size: 15px;
+    }
+
+    article :global(h1) {
+      font-size: 26px;
+    }
+
+    article :global(h2) {
+      font-size: 22px;
+    }
+
+    article :global(h3) {
+      font-size: 20px;
+    }
+  }
+</style>

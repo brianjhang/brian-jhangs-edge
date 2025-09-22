@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 
 export interface Props {
   currentSlug: string;
-  currentCategory: 'ai' | 'crypto' | 'startup';
+  currentCategory: 'ai' | 'crypto' | 'startup' | 'build';
   currentTags?: string[];
   maxItems?: number;
 }
@@ -65,23 +65,29 @@ if (recommendedPosts.length < maxItems) {
 
 // 分類主題配置
 const categoryConfig = {
-  ai: { 
-    title: 'AI小百科', 
+  ai: {
+    title: 'AI小百科',
     color: '#3b82f6',
     icon: '🤖',
     prefix: '/ai'
   },
-  crypto: { 
-    title: '幣圈筆記', 
+  crypto: {
+    title: '幣圈筆記',
     color: '#f59e0b',
     icon: '💎',
     prefix: '/crypto'
   },
-  startup: { 
-    title: '創業筆記', 
+  startup: {
+    title: '創業筆記',
     color: '#10b981',
     icon: '🚀',
     prefix: '/startup'
+  },
+  build: {
+    title: '建設日誌',
+    color: '#8b5cf6',
+    icon: '🚧',
+    prefix: '/build'
   }
 };
 

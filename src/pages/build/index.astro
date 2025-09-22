@@ -1,0 +1,265 @@
+---
+export const prerender = true;
+
+import Layout from '@/layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime.js';
+
+const buildPosts = await getCollection('build');
+// 為每篇文章計算閱讀時間
+const postsWithReadingTime = buildPosts.map(post => ({
+  ...post,
+  dynamicReadingTime: calculateReadingTime(post.body)
+}));
+const sortedPosts = postsWithReadingTime.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+
+<Layout
+  title="建設日誌 - Brian Jhang's Edge"
+  description="AI獨行俠的產品建設實踐記錄，分享網站開發、功能迭代、社群建設的真實過程與思考"
+>
+  <div class="wrap">
+    <div class="breadcrumb">
+      <a href="/">首頁</a> / <span>建設日誌</span>
+    </div>
+  </div>
+
+  <div class="series-header">
+    <div class="wrap">
+      <h1>🚧 Brian's 建設日誌</h1>
+      <p class="series-description">這是我的建設日誌，也是你的實戰地圖。記錄打造「一人AI超級個體公司」的失敗與突破，讓你少走彎路。</p>
+
+      <div class="series-stats">
+        <div class="stat">
+          <span class="number">{buildPosts.length}</span>
+          <div class="label">篇日誌</div>
+        </div>
+        <div class="stat">
+          <span class="number">{postsWithReadingTime.reduce((total, post) => total + post.dynamicReadingTime, 0)}</span>
+          <div class="label">分鐘閱讀</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="posts-section">
+    <div class="wrap">
+      <div class="posts-grid">
+        {sortedPosts.map((post) => (
+          <article class="post-card" onclick={`location.href='/build/${post.slug}'`}>
+            <div class="post-meta">
+              <time datetime={post.data.date}>{post.data.date}</time>
+              <span class="reading-time">{formatReadingTime(post.dynamicReadingTime)} 分鐘閱讀</span>
+            </div>
+
+            <h2 class="post-title">{post.data.title}</h2>
+
+            {post.data.summary && (
+              <p class="post-summary">{post.data.summary}</p>
+            )}
+
+            {post.data.tags && (
+              <div class="tags">
+                {post.data.tags.slice(0, 3).map(tag => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+
+      {sortedPosts.length === 0 && (
+        <div class="empty-state">
+          <div class="empty-icon">🚧</div>
+          <h3>建設進行中...</h3>
+          <p>第一篇建設日誌即將發布，記錄我打造「一人AI超級個體公司」的真實旅程。</p>
+        </div>
+      )}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  :root {
+    --build: #8b5cf6;
+    --shadow-hover: 0 8px 25px rgba(0,0,0,0.25);
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* .breadcrumb 樣式已在 global.css 中定義 */
+
+  .breadcrumb a {
+    color: var(--build);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .series-header {
+    text-align: center;
+    padding: 40px 0 60px 0;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, var(--bg) 0%, #111318 50%, var(--bg) 100%);
+  }
+
+  .series-header h1 {
+    font-size: 48px;
+    font-weight: 800;
+    margin: 0 0 16px 0;
+    color: var(--brand);
+    line-height: 1.1;
+  }
+
+  .series-description {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #cbd5e1;
+    max-width: 600px;
+    margin: 0 auto 32px auto;
+  }
+
+  .series-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat .number {
+    display: block;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--build);
+    line-height: 1;
+  }
+
+  .stat .label {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .posts-section {
+    padding: 60px 0;
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 32px;
+  }
+
+  .post-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+  }
+
+  .post-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--build);
+  }
+
+  .post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .post-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--brand);
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+  }
+
+  .post-summary {
+    color: #cbd5e1;
+    line-height: 1.6;
+    margin: 0 0 16px 0;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--build);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+  }
+
+  .empty-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+  }
+
+  .empty-state h3 {
+    font-size: 24px;
+    color: var(--brand);
+    margin: 0 0 12px 0;
+  }
+
+  .empty-state p {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 768px) {
+    .series-header h1 {
+      font-size: 32px;
+    }
+
+    .series-description {
+      font-size: 16px;
+    }
+
+    .series-stats {
+      gap: 24px;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .post-card {
+      padding: 20px;
+    }
+  }
+</style>

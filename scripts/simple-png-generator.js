@@ -24,13 +24,13 @@ const forceRegenerate = process.argv.includes('--all') || process.argv.includes(
 // 主題配置（參考比特幣成功案例的風格）
 const themes = {
   ai: {
-    bg: '#1e293b',
+    bg: '#0a0a0a',
     primary: '#60a5fa',
     name: 'AI小百科',
     seriesColor: '#60a5fa'
   },
   crypto: {
-    bg: '#0c0a09',
+    bg: '#0a0a0a',
     primary: '#fbbf24',
     name: '幣圈筆記',
     seriesColor: '#fbbf24'
@@ -42,7 +42,7 @@ const themes = {
     seriesColor: '#10b981'
   },
   build: {
-    bg: '#1e1b4b',
+    bg: '#0a0a0a',
     primary: '#8b5cf6',
     name: '建設日誌',
     seriesColor: '#8b5cf6'
@@ -174,21 +174,20 @@ async function convertSVGToPNG(svgContent, outputPath) {
     // 獲取主題色彩
     let bgColor, primaryColor;
 
-    if (svgContent.includes('#1e1b4b')) {
-      // Build 主題
-      bgColor = '#1e1b4b';
-      primaryColor = '#8b5cf6';
-    } else if (svgContent.includes('#1e293b')) {
+    // 統一使用深黑色背景，根據系列名稱判斷主題色
+    bgColor = '#0a0a0a';
+
+    if (svgContent.includes('AI小百科')) {
       // AI 主題
-      bgColor = '#1e293b';
       primaryColor = '#60a5fa';
-    } else if (svgContent.includes('#0a0a0a')) {
+    } else if (svgContent.includes('建設日誌')) {
+      // Build 主題
+      primaryColor = '#8b5cf6';
+    } else if (svgContent.includes('創業筆記')) {
       // Startup 主題
-      bgColor = '#0a0a0a';
       primaryColor = '#10b981';
     } else {
       // Crypto 主題（預設）
-      bgColor = '#0c0a09';
       primaryColor = '#fbbf24';
     }
 

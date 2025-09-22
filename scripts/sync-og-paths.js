@@ -29,7 +29,7 @@ const isVerbose = args.includes('--verbose') || args.includes('-v');
 const CONFIG = {
   contentDir: join(rootDir, 'src/content'),
   ogDir: join(rootDir, 'public/images/og'),
-  series: ['ai', 'crypto', 'startup'],
+  series: ['ai', 'crypto', 'startup', 'build'],
   supportedExtensions: ['.mdx'],
   ogExtension: '.png'
 };

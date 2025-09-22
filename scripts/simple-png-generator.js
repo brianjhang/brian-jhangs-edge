@@ -23,29 +23,35 @@ const forceRegenerate = process.argv.includes('--all') || process.argv.includes(
 
 // 主題配置（參考比特幣成功案例的風格）
 const themes = {
-  ai: { 
-    bg: '#1e293b', 
-    primary: '#60a5fa', 
+  ai: {
+    bg: '#1e293b',
+    primary: '#60a5fa',
     name: 'AI小百科',
     seriesColor: '#60a5fa'
   },
-  crypto: { 
-    bg: '#0c0a09', 
-    primary: '#fbbf24', 
+  crypto: {
+    bg: '#0c0a09',
+    primary: '#fbbf24',
     name: '幣圈筆記',
     seriesColor: '#fbbf24'
   },
-  startup: { 
-    bg: '#0a0a0a', 
-    primary: '#10b981', 
+  startup: {
+    bg: '#0a0a0a',
+    primary: '#10b981',
     name: '創業筆記',
     seriesColor: '#10b981'
+  },
+  build: {
+    bg: '#1e1b4b',
+    primary: '#8b5cf6',
+    name: '建設日誌',
+    seriesColor: '#8b5cf6'
   }
 };
 
 function processTitle(title) {
   // 移除系列標記，提取主標題
-  const cleanTitle = title.replace(/｜Brian's (AI小百科|幣圈筆記|創業筆記)$/, '');
+  const cleanTitle = title.replace(/｜Brian's (AI小百科|幣圈筆記|創業筆記|建設日誌)$/, '');
   
   // 智慧分行處理（參考比特幣的成功模式）
   if (cleanTitle.length <= 25) {
@@ -265,7 +271,7 @@ async function processAllContent() {
   await mkdir(join(outputDir, 'startup/book'), { recursive: true });
   await mkdir(join(outputDir, 'startup/thiel'), { recursive: true });
   
-  const series = ['ai', 'crypto', 'startup'];
+  const series = ['ai', 'crypto', 'startup', 'build'];
   let totalProcessed = 0;
   let totalGenerated = 0;
   let totalSuccess = 0;

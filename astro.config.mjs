@@ -15,31 +15,76 @@ export default defineConfig({
     sitemap({
       changefreq: 'weekly',
       priority: 0.7,
-      lastmod: new Date(),
       entryLimit: 10000,
+      // 移除重複的 about 頁面 URL，避免重複收錄
       customPages: [
         'https://brianjhang.com/ai',
-        'https://brianjhang.com/crypto', 
-        'https://brianjhang.com/startup',
-        'https://brianjhang.com/about'
+        'https://brianjhang.com/crypto',
+        'https://brianjhang.com/startup'
       ],
       serialize(item) {
-        // 優化不同頁面的 SEO 優先級
-        if (item.url.includes('/ai/llm/') || item.url.includes('/crypto/') || item.url.includes('/startup/book/')) {
+        // 動態生成 lastmod 時間
+        const now = new Date();
+
+        // 首頁優先級提升至最高，每日更新
+        if (item.url === 'https://brianjhang.com/') {
+          return {
+            ...item,
+            priority: 1.0,
+            changefreq: 'daily',
+            lastmod: now
+          };
+        }
+
+        // 主要分類頁面統一高優先級
+        if (item.url.includes('/ai/') || item.url.includes('/crypto/') || item.url.includes('/startup/')) {
           return {
             ...item,
             priority: 0.9,
-            changefreq: 'monthly'
+            changefreq: 'weekly',
+            lastmod: now
           };
         }
-        if (item.url.includes('/ai/') || item.url.includes('/startup/') || item.url.includes('/crypto/')) {
+
+        // 高品質核心文章（LLM、主要幣種、創業經典）
+        if (item.url.includes('/ai/llm/') ||
+            item.url.includes('/crypto/btc/') ||
+            item.url.includes('/crypto/eth/') ||
+            item.url.includes('/startup/book/') ||
+            item.url.includes('/ai/tools/midjourney-complete-guide/')) {
+          return {
+            ...item,
+            priority: 0.9,
+            changefreq: 'monthly',
+            lastmod: now
+          };
+        }
+
+        // 工具和趨勢類文章
+        if (item.url.includes('/ai/tools/') || item.url.includes('/ai/trends/')) {
           return {
             ...item,
             priority: 0.8,
-            changefreq: 'weekly'
+            changefreq: 'weekly',
+            lastmod: now
           };
         }
-        return item;
+
+        // 建設日誌和關於頁面
+        if (item.url.includes('/build/') || item.url.includes('/about')) {
+          return {
+            ...item,
+            priority: 0.7,
+            changefreq: 'monthly',
+            lastmod: now
+          };
+        }
+
+        // 預設設定
+        return {
+          ...item,
+          lastmod: now
+        };
       }
     })
   ],

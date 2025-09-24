@@ -14,7 +14,9 @@
     "og:sync": "node scripts/sync-og-paths.js",
     "og:sync-full": "node scripts/sync-og-paths.js --full",
     "og:sync-preview": "node scripts/sync-og-paths.js --dry-run",
-    "publish:og-images": "npm run og:sync && npm run og:generate && git add public/images/og/ && echo '✅ OG 圖片已準備完成，請手動執行 git commit 和 git push'"
+    "publish:og-images": "npm run og:sync && npm run og:generate && git add public/images/og/ && echo '✅ OG 圖片已準備完成，請手動執行 git commit 和 git push'",
+    "check": "npm run build && echo '✅ 格式檢查通過'",
+    "publish:complete": "npm run check && npm run og:generate && echo '✅ 文章發布準備完成'"
   },
   "devDependencies": {
     "@astrojs/mdx": "^4.3.4",

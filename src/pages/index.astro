@@ -112,7 +112,7 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
       "@type": "BlogPosting",
       "headline": post.data.title,
       "description": post.data.summary,
-      "url": `https://brianjhang.com/${post.collection}/${post.slug}`,
+      "url": `https://brianjhang.com/${post.collection}/${post.id.replace('.mdx', '')}`,
       "datePublished": post.data.publishedDate || `${post.data.date}T00:00:00+08:00`,
       "dateModified": post.data.modifiedDate || `${post.data.date}T00:00:00+08:00`,
       "author": {
@@ -125,7 +125,7 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": `https://brianjhang.com/${post.collection}/${post.slug}`
+        "@id": `https://brianjhang.com/${post.collection}/${post.id.replace('.mdx', '')}`
       },
       "keywords": post.data.keywords ? post.data.keywords.join(", ") : "",
       "articleSection": post.collection === 'ai' ? 'AI小百科' : post.collection === 'startup' ? '創業筆記' : post.collection === 'build' ? '建設日誌' : '幣圈筆記'
@@ -143,7 +143,7 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
       <h2 class="title">知識精選</h2>
       <div class="grid grid-3">
         {latestAIWithTime && (
-          <a class="card" href={`/ai/${latestAIWithTime.slug}`}>
+          <a class="card" href={`/ai/${latestAIWithTime.id.replace('.mdx', '')}`}>
             <div class="muted">{latestAIWithTime.data.date} · <span class="tag tag-ai">AI小百科</span> · {formatReadingTime(latestAIWithTime.readingTime)}</div>
             <h3 style="margin:6px 0 8px 0;color:#fff">{latestAIWithTime.data.title}</h3>
             <p class="muted">{latestAIWithTime.data.summary}</p>
@@ -191,7 +191,7 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
           const categoryPath = post.collection;
           const tagClass = `tag tag-${post.collection}`;
           return (
-            <a class="card" href={`/${categoryPath}/${post.slug}`}>
+            <a class="card" href={`/${categoryPath}/${post.id.replace('.mdx', '')}`}>
               <div class="muted">{post.data.date} · <span class={tagClass}>{category}</span> · {formatReadingTime(post.readingTime)}</div>
               <h3 style="margin:6px 0 8px 0;color:#fff">{post.data.title}</h3>
               <p class="muted">{post.data.summary}</p>

@@ -46,7 +46,7 @@ const sortedPosts = postsWithReadingTime.sort((a, b) => new Date(b.data.date).ge
     <div class="wrap">
       <div class="posts-grid">
         {sortedPosts.map((post) => (
-          <article class="post-card" onclick={`location.href='/build/${post.slug}'`}>
+          <article class="post-card" onclick={`location.href='/build/${post.id.replace('.mdx', '')}'`}>
             <div class="post-meta">
               <time datetime={post.data.date}>{post.data.date}</time>
               <span class="reading-time">{formatReadingTime(post.dynamicReadingTime)} 分鐘閱讀</span>

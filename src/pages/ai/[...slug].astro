@@ -5,6 +5,7 @@ import { getCollection, getEntry } from 'astro:content';
 import Layout from '@/layouts/Layout.astro';
 import Breadcrumb from '@/components/Breadcrumb.astro';
 import RelatedArticles from '@/components/RelatedArticles.astro';
+import SocialShare from '@/components/SocialShare.astro';
 import Comments from '@/components/Comments.astro';
 import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime.js';
 import { extractEntityLinks, getEntityLinks } from '../../utils/entityMapping.js';
@@ -178,7 +179,14 @@ const breadcrumbItems = [
     <article>
       <Content />
     </article>
-    
+
+    <!-- 社交分享 -->
+    <SocialShare
+      title={post.data.title}
+      url={post.data.canonicalUrl || `https://brianjhang.com/ai/${post.id.replace('.mdx', '')}`}
+      description={post.data.description || post.data.summary}
+    />
+
     <!-- 相關文章推薦 -->
     <RelatedArticles
       currentSlug={post.slug}

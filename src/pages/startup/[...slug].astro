@@ -46,7 +46,7 @@ function generateOgImagePath(slug, image, seoOgImage, series) {
   }
   
   // 根據 slug 生成完整路徑，保持目錄結構一致
-  // 例如: concepts/ai-native-lean-startup-pgv -> /images/og/startup/concepts/ai-native-lean-startup-pgv.png
+  // 例如: concepts/ai-native-lean-startup-pgv -> /images/og/startup/concepts/ai-native-lean-startup-pgv.webp
   const pathParts = slug.split('/');
   const fileName = pathParts[pathParts.length - 1] + '.png'; // 取最後一部分作為檔名
   const dirPath = pathParts.slice(0, -1).join('/'); // 取除了最後一部分的路徑

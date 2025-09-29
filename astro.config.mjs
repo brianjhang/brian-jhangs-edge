@@ -4,12 +4,31 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import vercel from '@astrojs/vercel';
+import astroEdge from 'astro-edge';
 
 export default defineConfig({
   vite: { resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } } },
   alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   site: 'https://brianjhang.com',
+  i18n: {
+    defaultLocale: "zh",
+    locales: ["zh", "en"],
+    routing: {
+      prefixDefaultLocale: false
+    }
+  },
   integrations: [
+    astroEdge({
+      optimization: {
+        images: { format: 'webp', quality: 80 },
+        static: true,
+        compression: true
+      },
+      monitoring: {
+        lighthouse: true,
+        thresholds: { performance: 95 }
+      }
+    }),
     react(),
     mdx(),
     sitemap({

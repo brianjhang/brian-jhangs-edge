@@ -1,20 +1,30 @@
 ---
+import { getLangFromUrl, useTranslations } from '../i18n';
+
 interface Props {
   title?: string;
   category?: string;
 }
 
 const { title = '', category = '' } = Astro.props;
+const currentLang = getLangFromUrl(Astro.url);
+const t = useTranslations(currentLang);
 
 // 根據文章類別設定不同的 category 標識
 const giscusCategory = category ? `${category}-comments` : 'general';
+
+// 多語言文案
+const commentsTitle = currentLang === 'en' ? '💬 Discussion & Feedback' : '💬 討論與回饋';
+const commentsDescription = currentLang === 'en'
+  ? 'Welcome to share your thoughts or ask questions! This is a unified comment area where both Chinese and English comments are welcome.'
+  : '歡迎在下方留言討論，分享你的想法或提出問題！這是中英文統一的留言區域，歡迎使用任何語言交流。';
 ---
 
 <div class="comments-section">
-  <h3 class="comments-title">💬 討論與回饋</h3>
-  <p class="comments-description">歡迎在下方留言討論，分享你的想法或提出問題！</p>
+  <h3 class="comments-title">{commentsTitle}</h3>
+  <p class="comments-description">{commentsDescription}</p>
 
-  <div id="comments-container">
+  <div id="comments-container" data-lang={currentLang}>
     <!-- Giscus 評論系統將在這裡載入 -->
   </div>
 </div>
@@ -27,6 +37,23 @@ const giscusCategory = category ? `${category}-comments` : 'general';
       return;
     }
 
+    // 獲取當前語言設定
+    const container = document.getElementById('comments-container');
+    if (!container) return;
+
+    const currentLang = container.getAttribute('data-lang') || 'zh';
+    const giscusLang = currentLang === 'en' ? 'en' : 'zh-TW';
+    const loadingText = currentLang === 'en' ? 'Loading comments...' : '載入評論系統中...';
+
+    // 統一路徑映射：中英文版使用相同的留言區域
+    let mappingPath = window.location.pathname;
+    // 如果是英文版，移除 /en 前綴，映射到對應的中文版路徑
+    if (mappingPath.startsWith('/en/')) {
+      mappingPath = mappingPath.replace('/en/', '/');
+    } else if (mappingPath === '/en') {
+      mappingPath = '/';
+    }
+
     // 創建 Giscus script 元素
     const script = document.createElement('script');
     script.src = 'https://giscus.app/client.js';
@@ -34,22 +61,29 @@ const giscusCategory = category ? `${category}-comments` : 'general';
     script.setAttribute('data-repo-id', 'R_kgDOPfo3Qg');
     script.setAttribute('data-category', 'Comments');
     script.setAttribute('data-category-id', 'DIC_kwDOPfo3Qs4CvtGO');
-    script.setAttribute('data-mapping', 'pathname');
+    script.setAttribute('data-mapping', 'specific');
+    script.setAttribute('data-term', mappingPath);
     script.setAttribute('data-strict', '0');
     script.setAttribute('data-reactions-enabled', '1');
     script.setAttribute('data-emit-metadata', '0');
     script.setAttribute('data-input-position', 'top');
     script.setAttribute('data-theme', 'preferred_color_scheme');
-    script.setAttribute('data-lang', 'zh-TW');
+    script.setAttribute('data-lang', giscusLang);
     script.setAttribute('data-loading', 'lazy');
     script.crossOrigin = 'anonymous';
     script.async = true;
 
+    // 更新 loading 文字
+    const style = document.createElement('style');
+    style.textContent = `
+      #comments-container:empty::after {
+        content: '${loadingText}';
+      }
+    `;
+    document.head.appendChild(style);
+
     // 將 script 插入容器
-    const container = document.getElementById('comments-container');
-    if (container) {
-      container.appendChild(script);
-    }
+    container.appendChild(script);
   }
 
   // 頁面載入後初始化

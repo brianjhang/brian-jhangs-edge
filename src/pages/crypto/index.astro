@@ -5,7 +5,7 @@ import { getCollection } from 'astro:content';
 import Layout from '@/layouts/Layout.astro';
 import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime.js';
 
-const cryptoPosts = await getCollection('crypto');
+const cryptoPosts = await getCollection('crypto', (entry) => !entry.data.lang || entry.data.lang === 'zh-TW' || entry.data.lang === 'zh');
 // 為每篇文章計算閱讀時間
 const postsWithReadingTime = cryptoPosts.map(post => ({
   ...post,

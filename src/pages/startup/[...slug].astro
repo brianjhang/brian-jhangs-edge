@@ -13,7 +13,14 @@ import { parseFAQ } from '../../utils/faqParser.js';
 
 export async function getStaticPaths() {
   const startupPosts = await getCollection('startup');
-  return startupPosts.map((post) => {
+
+  // 只為中文文章生成中文路由，嚴格排除英文文章
+  const chinesePosts = startupPosts.filter(post => {
+    const isEnglish = post.data.lang === 'en' || post.slug.includes('-en');
+    return !isEnglish;
+  });
+
+  return chinesePosts.map((post) => {
     // 從 post.id 獲取完整路徑，包含子目錄
     // 例如: "book/ceo-loneliness-hard-things.mdx" -> "book/ceo-loneliness-hard-things"
     const fullPath = post.id.replace('.mdx', '');

@@ -1,6 +1,7 @@
 ---
 import Header from '@/components/Header.astro';
 import Footer from '@/components/Footer.astro';
+import { getLangFromUrl } from '../i18n';
 
 export interface Props {
   title: string;
@@ -8,11 +9,15 @@ export interface Props {
   image?: string;
   type?: string;
   series?: string;
+  lang?: string;
 }
 
-const { title, description, image, type, series } = Astro.props;
+const { title, description, image, type, series, lang } = Astro.props;
+const currentLang = lang || getLangFromUrl(Astro.url);
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const defaultDescription = "AI × Startups × Crypto：一人公司的實踐藍圖";
+const defaultDescription = currentLang === 'en'
+  ? "Exploring infinite possibilities at the intersection of AI, entrepreneurship, and cryptocurrency"
+  : "AI × Startups × Crypto：一人公司的實踐藍圖";
 
 // 處理 OG 圖片 URL
 let finalImage = `${Astro.site}favicon.svg`; // 預設
@@ -27,7 +32,7 @@ if (image) {
 }
 ---
 
-<html lang="zh-tw">
+<html lang={currentLang === 'en' ? 'en' : 'zh-tw'}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -47,7 +52,7 @@ if (image) {
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:site_name" content="Brian Jhang's Edge" />
-    <meta property="og:locale" content="zh_TW" />
+    <meta property="og:locale" content={currentLang === 'en' ? 'en_US' : 'zh_TW'} />
     
     <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -122,12 +127,12 @@ if (image) {
     </style>
   </head>
   <body>
-    <Header />
-    
+    <Header currentLang={currentLang} />
+
     <main>
       <slot />
     </main>
-    
-    <Footer />
+
+    <Footer currentLang={currentLang} />
   </body>
 </html>

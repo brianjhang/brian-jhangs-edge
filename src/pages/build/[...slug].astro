@@ -12,7 +12,13 @@ import { extractEntityLinks, getEntityLinks } from '../../utils/entityMapping.js
 
 export async function getStaticPaths() {
   const buildPosts = await getCollection('build');
-  return buildPosts.map((post) => ({
+
+  // 只為中文文章生成中文路由
+  const chinesePosts = buildPosts.filter(post =>
+    post.data.lang !== 'en' && !post.slug.includes('-en')
+  );
+
+  return chinesePosts.map((post) => ({
     params: { slug: post.id.replace('.mdx', '') }, // 使用 id 來保留目錄結構
     props: post,
   }));

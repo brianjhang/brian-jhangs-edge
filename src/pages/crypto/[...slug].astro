@@ -13,7 +13,14 @@ import { parseFAQ } from '../../utils/faqParser.js';
 
 export async function getStaticPaths() {
   const cryptoPosts = await getCollection('crypto');
-  return cryptoPosts.map((post) => ({
+
+  // 只為中文文章生成中文路由，嚴格排除英文文章
+  const chinesePosts = cryptoPosts.filter(post => {
+    const isEnglish = post.data.lang === 'en' || post.slug.includes('-en');
+    return !isEnglish;
+  });
+
+  return chinesePosts.map((post) => ({
     params: { slug: post.id.replace('.mdx', '') }, // 使用 id 來保留目錄結構
     props: post,
   }));

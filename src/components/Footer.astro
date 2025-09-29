@@ -1,12 +1,19 @@
 ---
-// Footer 組件 - 統一所有頁面的頁尾
+import { useTranslations } from '../i18n';
+
+export interface Props {
+  currentLang?: string;
+}
+
+const { currentLang = 'zh' } = Astro.props;
+const t = useTranslations(currentLang);
 ---
 
 <footer>
   <div class="wrap">
-    <p class="copyright">© {new Date().getFullYear()} Brian Jhang's Edge ・ 教育內容，非投資建議</p>
+    <p class="copyright">{t('footer.copyright')} ・ {currentLang === 'en' ? 'Educational content, not investment advice' : '教育內容，非投資建議'}</p>
     <div class="social-links">
-      <a href="/about" class="social-link">關於</a>
+      <a href={currentLang === 'en' ? '/en/about' : '/about'} class="social-link">{t('nav.about')}</a>
       <a href="https://x.com/brianjhang" rel="noopener" target="_blank" class="social-link">X</a>
       <a href="https://threads.net/@brianjhang" rel="noopener" target="_blank" class="social-link">Threads</a>
       <a href="https://www.facebook.com/iambrianjhang" rel="noopener" target="_blank" class="social-link">Facebook</a>

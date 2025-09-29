@@ -22,7 +22,7 @@ const getSmartPostSelection = (posts) => {
 
     const isCurrentChinese = !hasLanguagePrefix &&
                             post.data.lang !== 'en' &&
-                            !post.slug.includes('-en');
+                            !post.slug.endsWith('-en');
 
     if (isCurrentChinese) {
       chinesePosts.push(post);

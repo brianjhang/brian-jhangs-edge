@@ -38,7 +38,7 @@ const getSmartPostSelection = (posts) => {
       // 如果已存在，檢查是否應該替換
       const existing = postMap.get(baseSlug);
       // 如果當前文章是英文版，優先使用英文版
-      if (post.data.lang === 'en' || post.slug.includes('-en') || hasLanguagePrefix) {
+      if (post.data.lang === 'en' || post.slug.endsWith('-en') || hasLanguagePrefix) {
         postMap.set(baseSlug, post);
       }
     }

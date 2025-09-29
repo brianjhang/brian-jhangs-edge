@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 
   // 只為英文文章生成英文路由（支援統一格式）
   const englishPosts = allAIPosts.filter(post =>
-    post.data.lang === 'en' || post.slug.includes('-en') || post.slug.startsWith('en/')
+    post.data.lang === 'en' || post.slug.endsWith('-en') || post.slug.startsWith('en/')
   );
 
   return englishPosts.map(post => {

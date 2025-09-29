@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 
   // 只為中文文章生成中文路由
   const chinesePosts = buildPosts.filter(post =>
-    post.data.lang !== 'en' && !post.slug.includes('-en')
+    post.data.lang !== 'en' && !post.slug.endsWith('-en')
   );
 
   return chinesePosts.map((post) => ({

@@ -20,7 +20,7 @@ const getSmartPostSelection = (posts) => {
     if (!postMap.has(baseSlug)) {
       postMap.set(baseSlug, post);
     } else {
-      if (post.data.lang === 'en' || post.slug.includes('-en')) {
+      if (post.data.lang === 'en' || post.slug.endsWith('-en')) {
         postMap.set(baseSlug, post);
       }
     }

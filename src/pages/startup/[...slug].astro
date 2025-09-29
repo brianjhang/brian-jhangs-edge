@@ -16,7 +16,7 @@ export async function getStaticPaths() {
 
   // 只為中文文章生成中文路由，嚴格排除英文文章
   const chinesePosts = startupPosts.filter(post => {
-    const isEnglish = post.data.lang === 'en' || post.slug.includes('-en');
+    const isEnglish = post.data.lang === 'en' || post.slug.endsWith('-en');
     return !isEnglish;
   });
 

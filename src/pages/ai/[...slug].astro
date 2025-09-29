@@ -13,10 +13,30 @@ import { parseFAQ } from '../../utils/faqParser.js';
 
 export async function getStaticPaths() {
   const aiPosts = await getCollection('ai');
-  return aiPosts.map((post) => ({
-    params: { slug: post.id.replace('.mdx', '') }, // 使用 id 來保留目錄結構
-    props: post,
-  }));
+
+  // 只為中文文章生成中文路由，嚴格排除英文文章
+  const chinesePosts = aiPosts.filter(post => {
+    const isEnglish = post.data.lang === 'en' || post.slug.includes('-en') || post.slug.startsWith('en/');
+    return !isEnglish;
+  });
+
+  return chinesePosts.map((post) => {
+    // 處理完整路徑格式的 slug
+    let slugParam = post.slug;
+
+    // 如果 slug 以 ai/ 開頭，移除它
+    if (slugParam.startsWith('ai/')) {
+      slugParam = slugParam.replace('ai/', '');
+    } else {
+      // 舊格式：使用 id 來保留目錄結構
+      slugParam = post.id.replace('.mdx', '');
+    }
+
+    return {
+      params: { slug: slugParam },
+      props: post,
+    };
+  });
 }
 
 const post = Astro.props;

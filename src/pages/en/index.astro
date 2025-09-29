@@ -2,81 +2,60 @@
 export const prerender = true;
 
 import { getCollection } from "astro:content";
-import Layout from '../layouts/Layout.astro';
-import SocialShare from '../components/SocialShare.astro';
-import LanguageSwitcher from '../components/LanguageSwitcher.astro';
-import { calculateReadingTime, formatReadingTime } from '../utils/readingTime.js';
+import Layout from '../../layouts/Layout.astro';
+import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime.js';
+import { useTranslations } from '../../i18n';
 
-// 獲取各個主題的文章並應用智能選擇
-const allAIPosts = await getCollection("ai");
-const allStartupPosts = await getCollection("startup");
-const allCryptoPosts = await getCollection("crypto");
-const allBuildPosts = await getCollection("build");
+const t = useTranslations('en');
 
-// 智能文章選擇：中文介面優先中文版，避免重複
+// 獲取各個主題的文章（英文版優先，但也顯示中文文章）
+const aiPosts = await getCollection("ai");
+const startupPosts = await getCollection("startup");
+const cryptoPosts = await getCollection("crypto");
+const buildPosts = await getCollection("build");
+
+// 按日期排序的函數
+const byDateDesc = (a, b) => new Date(b.data.date) - new Date(a.data.date);
+
+// 智能文章選擇：優先英文版，無英文版則顯示中文版，避免重複
 const getSmartPostSelection = (posts) => {
   const postMap = new Map();
 
-  // 先分離中文和非中文文章
-  const chinesePosts = [];
-  const nonChinesePosts = [];
-
+  // 遍歷所有文章，建立文章映射
   posts.forEach(post => {
+    // 統一語言識別邏輯
     const slugParts = post.slug.split('/');
     const languageCodes = ['en', 'zh-cn', 'ja-jp', 'ko-kr'];
     const hasLanguagePrefix = languageCodes.includes(slugParts[0]);
 
-    const isCurrentChinese = !hasLanguagePrefix &&
-                            post.data.lang !== 'en' &&
-                            !post.slug.includes('-en');
+    // 取得基礎 slug（移除語言前綴或舊格式後綴）
+    let baseSlug = hasLanguagePrefix ? slugParts.slice(1).join('/') : post.slug.replace('-en', '');
 
-    if (isCurrentChinese) {
-      chinesePosts.push(post);
+    if (!postMap.has(baseSlug)) {
+      // 如果是新文章，直接添加
+      postMap.set(baseSlug, post);
     } else {
-      nonChinesePosts.push(post);
+      // 如果已存在，檢查是否應該替換
+      const existing = postMap.get(baseSlug);
+      // 如果當前文章是英文版，優先使用英文版
+      if (post.data.lang === 'en' || post.slug.includes('-en') || hasLanguagePrefix) {
+        postMap.set(baseSlug, post);
+      }
     }
-  });
-
-  // 先處理非中文文章
-  nonChinesePosts.forEach(post => {
-    const slugParts = post.slug.split('/');
-    const languageCodes = ['en', 'zh-cn', 'ja-jp', 'ko-kr'];
-    const hasLanguagePrefix = languageCodes.includes(slugParts[0]);
-
-    let baseSlug;
-    if (hasLanguagePrefix) {
-      // 新格式：en/ai/tools/example -> ai/tools/example
-      baseSlug = slugParts.slice(1).join('/');
-    } else {
-      // 舊格式：tools/example-en -> tools/example
-      baseSlug = post.slug.replace('-en', '');
-    }
-
-    postMap.set(baseSlug, post);
-  });
-
-  // 再處理中文文章，直接覆蓋
-  chinesePosts.forEach(post => {
-    // 中文文章可能是新格式 ai/tools/example 或舊格式 tools/example
-    let baseSlug = post.slug.replace('-en', '');
-    postMap.set(baseSlug, post);
   });
 
   return Array.from(postMap.values());
 };
 
-const aiPosts = getSmartPostSelection(allAIPosts);
-const startupPosts = getSmartPostSelection(allStartupPosts);
-const cryptoPosts = getSmartPostSelection(allCryptoPosts);
-const buildPosts = getSmartPostSelection(allBuildPosts);
-
-// 按日期排序的函數
-const byDateDesc = (a, b) => new Date(b.data.date) - new Date(a.data.date);
+// 應用智能選擇到各主題文章
+const smartAIPosts = getSmartPostSelection(aiPosts);
+const smartStartupPosts = getSmartPostSelection(startupPosts);
+const smartCryptoPosts = getSmartPostSelection(cryptoPosts);
+const smartBuildPosts = getSmartPostSelection(buildPosts);
 
 // 手動指定精選文章的 slug（可以指定多個，會自動選最新的）
 const featuredSlugs = {
   ai: [
-    'tools/astroedge-complete-guide',
     'trends/openai-economic-report-2025',
     'trends/o1-reasoning-revolution',
     'trends/ai-agent-technology',
@@ -98,16 +77,16 @@ const featuredSlugs = {
 const getFeaturedPost = (posts, slugs) => {
   // 如果是字符串，轉換為數組
   const slugArray = Array.isArray(slugs) ? slugs : [slugs];
-  
+
   // 找到所有匹配的精選文章
   const featuredPosts = posts.filter(post => slugArray.includes(post.slug));
-  
+
   if (featuredPosts.length > 0) {
     // 按 slug 在數組中的順序排序（保持指定順序）
     const orderedPosts = slugArray
       .map(slug => featuredPosts.find(post => post.slug === slug))
       .filter(post => post !== undefined);
-    
+
     if (orderedPosts.length > 1) {
       // 使用當前日期計算輪播索引（每天更換一次）
       const today = new Date();
@@ -119,17 +98,17 @@ const getFeaturedPost = (posts, slugs) => {
       return orderedPosts[0];
     }
   }
-  
+
   // 如果找不到指定文章，回退到最新文章
   return [...posts].sort(byDateDesc)[0];
 };
 
-const latestAI = getFeaturedPost(aiPosts, featuredSlugs.ai);
-const latestStartup = getFeaturedPost(startupPosts, featuredSlugs.startup);
-const latestCrypto = getFeaturedPost(cryptoPosts, featuredSlugs.crypto);
+const latestAI = getFeaturedPost(smartAIPosts, featuredSlugs.ai);
+const latestStartup = getFeaturedPost(smartStartupPosts, featuredSlugs.startup);
+const latestCrypto = getFeaturedPost(smartCryptoPosts, featuredSlugs.crypto);
 
 // 合併所有文章並按日期排序，用於顯示最新文章
-const allPosts = [...aiPosts, ...startupPosts, ...cryptoPosts, ...buildPosts];
+const allPosts = [...smartAIPosts, ...smartStartupPosts, ...smartCryptoPosts, ...smartBuildPosts];
 const recentPosts = allPosts.sort(byDateDesc).slice(0, 6);
 
 // 為文章添加閱讀時間
@@ -141,37 +120,38 @@ const postsWithReadingTime = recentPosts.map(post => ({
 const latestAIWithTime = latestAI ? { ...latestAI, readingTime: calculateReadingTime(latestAI.body) } : null;
 const latestStartupWithTime = latestStartup ? { ...latestStartup, readingTime: calculateReadingTime(latestStartup.body) } : null;
 const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calculateReadingTime(latestCrypto.body) } : null;
+
+const title = "Brian Jhang's Edge — AI × Startups × Crypto";
+const description = "Exploring infinite possibilities at the intersection of AI, entrepreneurship, and cryptocurrency. Featured insights and cutting-edge analysis.";
 ---
 
-<Layout 
-  title="Brian Jhang's Edge — AI × Startups × Crypto"
-  description="AI × Startups × Crypto：一人公司的實踐藍圖"
-  ogTitle="Brian Jhang's Edge"
-  ogDescription="Deep Insights for Builders ・ AI × Startups × Crypto：一人公司的實踐藍圖"
-  ogType="website"
+<Layout
+  title={title}
+  description={description}
+  lang="en"
 >
   <!-- 結構化數據 -->
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "Blog",
     "name": "Brian Jhang's Edge",
-    "description": "AI × Startups × Crypto：一人公司的實踐藍圖",
-    "url": "https://brianjhang.com",
+    "description": "Exploring infinite possibilities at the intersection of AI, entrepreneurship, and cryptocurrency",
+    "url": "https://brianjhang.com/en",
     "author": {
       "@type": "Person",
       "name": "Brian Jhang",
-      "url": "https://brianjhang.com"
+      "url": "https://brianjhang.com/en"
     },
     "publisher": {
       "@type": "Person",
       "name": "Brian Jhang"
     },
-    "inLanguage": "zh-TW",
+    "inLanguage": "en-US",
     "blogPost": allPosts.slice(0, 10).map(post => ({
       "@type": "BlogPosting",
       "headline": post.data.title,
       "description": post.data.summary,
-      "url": `https://brianjhang.com/${post.collection}/${post.id.replace('.mdx', '')}`,
+      "url": `https://brianjhang.com/en/${post.collection}/${post.id.replace('.mdx', '')}`,
       "datePublished": post.data.publishedDate || `${post.data.date}T00:00:00+08:00`,
       "dateModified": post.data.modifiedDate || `${post.data.date}T00:00:00+08:00`,
       "author": {
@@ -179,39 +159,32 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
         "name": "Brian Jhang"
       },
       "publisher": {
-        "@type": "Person", 
+        "@type": "Person",
         "name": "Brian Jhang"
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": `https://brianjhang.com/${post.collection}/${post.id.replace('.mdx', '')}`
+        "@id": `https://brianjhang.com/en/${post.collection}/${post.id.replace('.mdx', '')}`
       },
       "keywords": post.data.keywords ? post.data.keywords.join(", ") : "",
-      "articleSection": post.collection === 'ai' ? 'AI小百科' : post.collection === 'startup' ? '創業筆記' : post.collection === 'build' ? '建設日誌' : '幣圈筆記'
+      "articleSection": post.collection === 'ai' ? 'AI Encyclopedia' : post.collection === 'startup' ? 'Startup Notes' : post.collection === 'build' ? 'Build Log' : 'Crypto Notes'
     }))
   })}></script>
+
   <section class="hero">
     <div class="wrap">
-      <h1>AI × Startups × Crypto</h1>
-      <p>Deep Insights for Builders ・ AI × Startups × Crypto：一人公司的實踐藍圖</p>
+      <h1>{t('hero.title')}</h1>
+      <p>{t('hero.subtitle')}</p>
     </div>
   </section>
 
   <main class="wrap">
     <section id="featured" class="section">
-      <h2 class="title">知識精選</h2>
+      <h2 class="title">{t('featured.title')}</h2>
       <div class="grid grid-3">
         {latestAIWithTime && (
-          <a class="card" href={`/ai/${(() => {
-            // 處理 slug 邏輯：如果是新格式（以 ai/ 開頭），移除前綴；否則使用 id
-            let slug = latestAIWithTime.slug;
-            if (slug.startsWith('ai/')) {
-              return slug.replace('ai/', '');
-            } else {
-              return latestAIWithTime.id.replace('.mdx', '');
-            }
-          })()}`}>
-            <div class="muted">{latestAIWithTime.data.date} · <span class="tag tag-ai">AI小百科</span> · {formatReadingTime(latestAIWithTime.readingTime)}</div>
+          <a class="card" href={`/en/ai/${latestAIWithTime.id.replace('.mdx', '')}`}>
+            <div class="muted">{latestAIWithTime.data.date} · <span class="tag tag-ai">{t('nav.ai')}</span> · {formatReadingTime(latestAIWithTime.readingTime)}</div>
             <h3 style="margin:6px 0 8px 0;color:#fff">{latestAIWithTime.data.title}</h3>
             <p class="muted">{latestAIWithTime.data.summary}</p>
             {latestAIWithTime.data.tags && (
@@ -222,8 +195,8 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
           </a>
         )}
         {latestStartupWithTime && (
-          <a class="card" href={`/startup/${latestStartupWithTime.slug}`}>
-            <div class="muted">{latestStartupWithTime.data.date} · <span class="tag tag-startup">創業筆記</span> · {formatReadingTime(latestStartupWithTime.readingTime)}</div>
+          <a class="card" href={`/en/startup/${latestStartupWithTime.slug}`}>
+            <div class="muted">{latestStartupWithTime.data.date} · <span class="tag tag-startup">{t('nav.startup')}</span> · {formatReadingTime(latestStartupWithTime.readingTime)}</div>
             <h3 style="margin:6px 0 8px 0;color:#fff">{latestStartupWithTime.data.title}</h3>
             <p class="muted">{latestStartupWithTime.data.summary}</p>
             {latestStartupWithTime.data.tags && (
@@ -234,8 +207,8 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
           </a>
         )}
         {latestCryptoWithTime && (
-          <a class="card" href={`/crypto/${latestCryptoWithTime.slug}`}>
-            <div class="muted">{latestCryptoWithTime.data.date} · <span class="tag tag-crypto">幣圈筆記</span> · {formatReadingTime(latestCryptoWithTime.readingTime)}</div>
+          <a class="card" href={`/en/crypto/${latestCryptoWithTime.slug}`}>
+            <div class="muted">{latestCryptoWithTime.data.date} · <span class="tag tag-crypto">{t('nav.crypto')}</span> · {formatReadingTime(latestCryptoWithTime.readingTime)}</div>
             <h3 style="margin:6px 0 8px 0;color:#fff">{latestCryptoWithTime.data.title}</h3>
             <p class="muted">{latestCryptoWithTime.data.summary}</p>
             {latestCryptoWithTime.data.tags && (
@@ -249,16 +222,16 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
     </section>
 
     <section class="section">
-      <h2 class="title">最新文章</h2>
+      <h2 class="title">{t('latest.title')}</h2>
       <div class="grid grid-2">
         {postsWithReadingTime.map((post) => {
-          const category = post.collection === 'ai' ? 'AI小百科' :
-                          post.collection === 'startup' ? '創業筆記' :
-                          post.collection === 'build' ? '建設日誌' : '幣圈筆記';
+          const category = post.collection === 'ai' ? t('nav.ai') :
+                          post.collection === 'startup' ? t('nav.startup') :
+                          post.collection === 'build' ? t('nav.build') : t('nav.crypto');
           const categoryPath = post.collection;
           const tagClass = `tag tag-${post.collection}`;
           return (
-            <a class="card" href={`/${categoryPath}/${post.id.replace('.mdx', '')}`}>
+            <a class="card" href={`/en/${categoryPath}/${post.id.replace('.mdx', '')}`}>
               <div class="muted">{post.data.date} · <span class={tagClass}>{category}</span> · {formatReadingTime(post.readingTime)}</div>
               <h3 style="margin:6px 0 8px 0;color:#fff">{post.data.title}</h3>
               <p class="muted">{post.data.summary}</p>
@@ -274,22 +247,22 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
     </section>
 
     <section class="section">
-      <h2 class="title">探索主題</h2>
+      <h2 class="title">{t('explore.title')}</h2>
       <div class="grid grid-3">
-        <a class="card" href="/ai">
-          <div class="tag tag-ai">AI 教育內容</div>
-          <h3 style="margin:8px 0 8px;color:#fff">AI 知識與應用</h3>
-          <p class="muted">從基礎概念到實際應用，深入淺出的 AI 知識分享，幫助你理解人工智慧的發展與影響。</p>
+        <a class="card" href="/en/ai">
+          <div class="tag tag-ai">AI Educational Content</div>
+          <h3 style="margin:8px 0 8px;color:#fff">AI Knowledge & Applications</h3>
+          <p class="muted">{t('ai.description')}</p>
         </a>
-        <a class="card" href="/startup">
-          <div class="tag tag-startup">創業教育內容</div>
-          <h3 style="margin:8px 0 8px;color:#fff">創業實戰指南</h3>
-          <p class="muted">經典商業理論的現代應用，市場驗證、產品開發、團隊建設的實戰框架。</p>
+        <a class="card" href="/en/startup">
+          <div class="tag tag-startup">Startup Educational Content</div>
+          <h3 style="margin:8px 0 8px;color:#fff">Startup Strategy Guide</h3>
+          <p class="muted">{t('startup.description')}</p>
         </a>
-        <a class="card" href="/crypto">
-          <div class="tag tag-crypto">Crypto 教育內容</div>
-          <h3 style="margin:8px 0 8px;color:#fff">理性看待區塊鏈世界</h3>
-          <p class="muted">客觀中立的加密貨幣分析，從基礎概念到深度研究，建立正確認知。</p>
+        <a class="card" href="/en/crypto">
+          <div class="tag tag-crypto">Crypto Educational Content</div>
+          <h3 style="margin:8px 0 8px;color:#fff">Rational View of Blockchain World</h3>
+          <p class="muted">{t('crypto.description')}</p>
         </a>
       </div>
     </section>
@@ -308,19 +281,19 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
     // 標記已檢查過
     sessionStorage.setItem('languageRedirectChecked', 'true');
 
-    // 檢查當前是否在根路徑
-    if (window.location.pathname !== '/') {
+    // 檢查當前是否在英文首頁
+    if (window.location.pathname !== '/en') {
       return;
     }
 
     // 檢查是否有用戶偏好（之前手動選擇過語言）
     const userPreference = localStorage.getItem('userLanguagePreference');
     if (userPreference) {
-      if (userPreference === 'en' && !window.location.pathname.startsWith('/en')) {
-        window.location.href = '/en';
-        return;
-      } else if (userPreference === 'zh' && window.location.pathname.startsWith('/en')) {
+      if (userPreference === 'zh' && window.location.pathname.startsWith('/en')) {
         window.location.href = '/';
+        return;
+      } else if (userPreference === 'en' && !window.location.pathname.startsWith('/en')) {
+        window.location.href = '/en';
         return;
       }
       return;
@@ -347,13 +320,12 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
       langCode.startsWith(variant)
     );
 
-    // 如果是中文瀏覽器且在根路徑，保持中文版（無需跳轉）
-    // 如果不是中文瀏覽器且在根路徑，跳轉到英文版
-    if (!isChinese) {
-      console.log('Detected non-Chinese browser language:', browserLang, '- Redirecting to English version');
-      window.location.href = '/en';
+    // 如果是中文瀏覽器且在英文版，跳轉到中文版
+    if (isChinese) {
+      console.log('Detected Chinese browser language:', browserLang, '- Redirecting to Chinese version');
+      window.location.href = '/';
     } else {
-      console.log('Detected Chinese browser language:', browserLang, '- Staying on Chinese version');
+      console.log('Detected non-Chinese browser language:', browserLang, '- Staying on English version');
     }
   }
 
@@ -399,7 +371,6 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
     border-bottom: 1px solid var(--border);
   }
 
-
   .hero h1 {
     font-size: 48px;
     font-weight: 700;
@@ -418,41 +389,6 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
     margin-left: auto;
     margin-right: auto;
   }
-
-  /* 移除以下 CSS 區塊：
-  .cta {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .btn {
-    display: inline-block;
-    padding: 12px 24px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    border: 1px solid var(--border);
-    color: var(--brand);
-  }
-
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
-  }
-
-  .btn.primary {
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    border-color: #3b82f6;
-    color: white;
-  }
-
-  .btn.primary:hover {
-    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-  }
-  */
 
   .wrap {
     max-width: 1200px;
@@ -501,8 +437,6 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
     box-shadow: var(--shadow-hover);
   }
 
-  /* .tag 樣式已在 global.css 中定義 */
-
   .tag-ai {
     background: rgba(59, 130, 246, 0.1);
     color: #60a5fa;
@@ -548,51 +482,183 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
     .hero {
       padding: 60px 0 40px;
     }
-    
+
     .hero h1 {
       font-size: 36px;
     }
-    
+
     .hero p {
       font-size: 16px;
     }
-    
-    /* 移除以下 mobile CSS：
-    .cta {
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    .btn {
-      width: 200px;
-      text-align: center;
-    }
-    */
-    
+
     .section {
       padding: 32px 0;
     }
-    
+
     .title {
       font-size: 24px;
     }
-    
+
     .grid {
       gap: 16px;
     }
-    
+
     .card {
       padding: 16px;
     }
-    
-    .cta {
-      flex-direction: column;
-      align-items: center;
+  }
+    margin-bottom: 3rem;
+  }
+
+  .language-selector {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .text-gradient {
+    background-image: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 400%;
+    background-position: 0%;
+  }
+
+  .intro {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+
+  .highlight-project {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+    text-align: left;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .highlight-project h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .project-stats {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .project-stats span {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .cta-button {
+    display: inline-block;
+    background: white;
+    color: #667eea;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 1rem;
+    transition: transform 0.2s ease;
+  }
+
+  .cta-button:hover {
+    transform: translateY(-2px);
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+  }
+
+  .content-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .content-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .content-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .content-card h3 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .content-card p {
+    margin: 0;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  .about-section {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  .about-section h2 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+  .about-section p {
+    color: #666;
+    line-height: 1.7;
+    max-width: 700px;
+    margin: 0 auto 1rem;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2rem;
     }
-    
-    .btn {
-      width: 200px;
-      text-align: center;
+
+    .project-stats {
+      justify-content: center;
+    }
+
+    .highlight-project {
+      margin: 1rem;
+      padding: 1.5rem;
     }
   }
 </style>

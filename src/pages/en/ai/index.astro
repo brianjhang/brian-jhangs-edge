@@ -1,0 +1,274 @@
+---
+export const prerender = true;
+
+import { getCollection } from "astro:content";
+import Layout from '../../../layouts/Layout.astro';
+import { calculateReadingTime, formatReadingTime } from '../../../utils/readingTime.js';
+import { useTranslations } from '../../../i18n';
+
+const t = useTranslations('en');
+
+const allAIPosts = await getCollection("ai");
+
+// 智能文章選擇：優先英文版，無英文版則顯示中文版，避免重複
+const getSmartPostSelection = (posts) => {
+  const postMap = new Map();
+
+  // 遍歷所有文章，建立文章映射
+  posts.forEach(post => {
+    // 統一語言識別邏輯
+    const slugParts = post.slug.split('/');
+    const languageCodes = ['en', 'zh-cn', 'ja-jp', 'ko-kr'];
+    const hasLanguagePrefix = languageCodes.includes(slugParts[0]);
+
+    // 取得基礎 slug（移除語言前綴或舊格式後綴）
+    let baseSlug = hasLanguagePrefix ? slugParts.slice(1).join('/') : post.slug.replace('-en', '');
+
+    if (!postMap.has(baseSlug)) {
+      // 如果是新文章，直接添加
+      postMap.set(baseSlug, post);
+    } else {
+      // 如果已存在，檢查是否應該替換
+      const existing = postMap.get(baseSlug);
+      // 如果當前文章是英文版，優先使用英文版
+      if (post.data.lang === 'en' || post.slug.includes('-en') || hasLanguagePrefix) {
+        postMap.set(baseSlug, post);
+      }
+    }
+  });
+
+  return Array.from(postMap.values());
+};
+
+const smartAIPosts = getSmartPostSelection(allAIPosts);
+
+// 按日期排序
+const sortedAIPosts = smartAIPosts.sort((a, b) => new Date(b.data.date) - new Date(a.data.date));
+
+// 為文章添加閱讀時間
+const postsWithReadingTime = sortedAIPosts.map(post => ({
+  ...post,
+  readingTime: calculateReadingTime(post.body)
+}));
+
+// 計算總閱讀時間
+const totalReadingTime = postsWithReadingTime.reduce((total, post) => total + post.readingTime, 0);
+
+// 按分類組織文章
+const postsByCategory = postsWithReadingTime.reduce((acc, post) => {
+  const category = post.data.category || 'others';
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(post);
+  return acc;
+}, {});
+
+const title = "AI Encyclopedia - Brian Jhang's Edge";
+const description = "From basic concepts to practical applications, in-depth AI knowledge sharing to help you understand the development and impact of artificial intelligence.";
+---
+
+<Layout title={title} description={description} lang="en">
+  <div class="container">
+    <section class="hero">
+      <h1>{t('nav.ai')}</h1>
+      <p>{t('ai.description')}</p>
+      <div class="stats">
+        <span class="stat">{postsWithReadingTime.length} Articles</span>
+        <span class="stat">{totalReadingTime} Minutes Reading</span>
+      </div>
+    </section>
+
+    <main class="main-content">
+      {Object.entries(postsByCategory).map(([category, posts]) => (
+        <section class="category-section">
+          <h2 class="category-title">{category.charAt(0).toUpperCase() + category.slice(1)}</h2>
+          <div class="posts-grid">
+            {posts.map((post) => (
+              <a class="post-card" href={`/en/ai/${(() => {
+                // 處理 slug 邏輯：如果是新格式（以 en/ai/ 開頭），移除前綴；否則移除 -en 後綴
+                let slug = post.slug;
+                if (slug.startsWith('en/ai/')) {
+                  return slug.replace('en/ai/', '');
+                } else if (slug.startsWith('en/')) {
+                  return slug.replace('en/', '');
+                } else {
+                  return post.id.replace('.mdx', '').replace('-en', '');
+                }
+              })()}`}>
+                <div class="post-meta">
+                  {post.data.date} · <span class="tag tag-ai">{t('nav.ai')}</span> · {formatReadingTime(post.readingTime)}
+                </div>
+                <h3 class="post-title">{post.data.title}</h3>
+                <p class="post-summary">{post.data.summary}</p>
+                {post.data.tags && (
+                  <div class="post-tags">
+                    {post.data.tags.slice(0, 3).map(tag => <span class="tag tag-small">{tag}</span>)}
+                  </div>
+                )}
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 18px;
+    color: var(--muted);
+    margin: 0 0 24px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .stats {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .main-content {
+    padding: 48px 0;
+  }
+
+  .category-section {
+    margin-bottom: 48px;
+  }
+
+  .category-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 24px;
+    color: var(--brand);
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+  }
+
+  .post-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: block;
+  }
+
+  .post-card:hover {
+    background: var(--card-hover, #121218);
+    border-color: #374151;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  }
+
+  .post-meta {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .post-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: #fff;
+    line-height: 1.3;
+  }
+
+  .post-summary {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0 0 16px;
+  }
+
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag-ai {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .tag-small {
+    background: rgba(156, 163, 175, 0.1);
+    color: #9ca3af;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 36px;
+    }
+
+    .hero p {
+      font-size: 16px;
+    }
+
+    .stats {
+      gap: 12px;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .post-card {
+      padding: 20px;
+    }
+
+    .category-title {
+      font-size: 24px;
+    }
+  }
+</style>

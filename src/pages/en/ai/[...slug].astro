@@ -1,0 +1,322 @@
+---
+export const prerender = true;
+
+import { getCollection } from "astro:content";
+import Layout from '../../../layouts/Layout.astro';
+import SocialShare from '../../../components/SocialShare.astro';
+import { calculateReadingTime, formatReadingTime } from '../../../utils/readingTime.js';
+import { useTranslations } from '../../../i18n';
+
+const t = useTranslations('en');
+
+export async function getStaticPaths() {
+  const allAIPosts = await getCollection("ai");
+
+  // 只為英文文章生成英文路由（支援統一格式）
+  const englishPosts = allAIPosts.filter(post =>
+    post.data.lang === 'en' || post.slug.includes('-en') || post.slug.startsWith('en/')
+  );
+
+  return englishPosts.map(post => {
+    // 統一處理語言前綴 slug
+    let slugParam = post.slug;
+    if (slugParam.startsWith('en/ai/')) {
+      slugParam = slugParam.replace('en/ai/', '');
+    } else if (slugParam.startsWith('en/')) {
+      slugParam = slugParam.replace('en/', '');
+    }
+
+    return {
+      params: { slug: slugParam },
+      props: { post }
+    };
+  });
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+// 計算閱讀時間
+const readingTime = calculateReadingTime(post.body);
+
+// 構建完整的 URL
+const fullUrl = `https://brianjhang.com/en/ai/${post.slug}`;
+
+// 處理 OG 圖片
+const ogImage = post.data.image
+  ? `https://brianjhang.com${post.data.image}`
+  : `https://brianjhang.com/og-ai.png`;
+
+const title = `${post.data.title} - ${t('nav.ai')} - Brian Jhang's Edge`;
+---
+
+<Layout
+  title={title}
+  description={post.data.summary}
+  image={ogImage}
+  type="article"
+  lang="en"
+>
+  <!-- 結構化數據 -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.data.title,
+    "description": post.data.summary,
+    "image": ogImage,
+    "url": fullUrl,
+    "datePublished": post.data.publishedDate || `${post.data.date}T00:00:00+08:00`,
+    "dateModified": post.data.modifiedDate || `${post.data.date}T00:00:00+08:00`,
+    "author": {
+      "@type": "Person",
+      "name": "Brian Jhang",
+      "url": "https://brianjhang.com/en"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Brian Jhang"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": fullUrl
+    },
+    "articleSection": t('nav.ai'),
+    "keywords": post.data.keywords ? post.data.keywords.join(", ") : "",
+    "wordCount": post.body.split(' ').length,
+    "inLanguage": "en-US"
+  })}></script>
+
+  <article class="article-container">
+    <header class="article-header">
+      <nav class="breadcrumb">
+        <a href="/en">{t('nav.home')}</a>
+        <span>/</span>
+        <a href="/en/ai">{t('nav.ai')}</a>
+        <span>/</span>
+        <span>{post.data.title}</span>
+      </nav>
+
+      <div class="article-meta">
+        <span class="date">{post.data.date}</span>
+        <span class="reading-time">{formatReadingTime(readingTime)}</span>
+        <span class="tag tag-ai">{t('nav.ai')}</span>
+      </div>
+
+      <h1 class="article-title">{post.data.title}</h1>
+
+      <p class="article-summary">{post.data.summary}</p>
+
+      {post.data.tags && (
+        <div class="article-tags">
+          {post.data.tags.map(tag => (
+            <span class="tag tag-outline">{tag}</span>
+          ))}
+        </div>
+      )}
+
+      <SocialShare
+        title={post.data.title}
+        url={fullUrl}
+        description={post.data.summary}
+      />
+    </header>
+
+    <div class="article-content">
+      <Content />
+    </div>
+
+    <footer class="article-footer">
+      <div class="back-link">
+        <a href="/en/ai">← {t('back.to.home')} {t('nav.ai')}</a>
+      </div>
+
+      <SocialShare
+        title={post.data.title}
+        url={fullUrl}
+        description={post.data.summary}
+      />
+    </footer>
+  </article>
+</Layout>
+
+<style>
+  .article-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .article-header {
+    padding: 40px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .breadcrumb {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .breadcrumb a {
+    color: var(--link);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumb span {
+    margin: 0 8px;
+  }
+
+  .article-meta {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .article-title {
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 20px;
+    color: var(--brand);
+  }
+
+  .article-summary {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0 0 24px;
+  }
+
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .tag-ai {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .tag-outline {
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  .article-content {
+    padding: 40px 0;
+    line-height: 1.7;
+  }
+
+  .article-content :global(h2) {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 32px 0 16px;
+    color: var(--brand);
+  }
+
+  .article-content :global(h3) {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    color: var(--brand);
+  }
+
+  .article-content :global(p) {
+    margin: 16px 0;
+    color: #e5e7eb;
+  }
+
+  .article-content :global(ul, ol) {
+    margin: 16px 0;
+    padding-left: 24px;
+  }
+
+  .article-content :global(li) {
+    margin: 8px 0;
+    color: #e5e7eb;
+  }
+
+  .article-content :global(code) {
+    background: var(--card);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 14px;
+  }
+
+  .article-content :global(pre) {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+
+  .article-content :global(blockquote) {
+    border-left: 4px solid var(--link);
+    padding-left: 20px;
+    margin: 20px 0;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  .article-footer {
+    padding: 40px 0;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .back-link a {
+    color: var(--link);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .back-link a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .article-title {
+      font-size: 32px;
+    }
+
+    .article-summary {
+      font-size: 16px;
+    }
+
+    .article-meta {
+      font-size: 13px;
+    }
+
+    .article-content {
+      padding: 30px 0;
+    }
+
+    .article-footer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

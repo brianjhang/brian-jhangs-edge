@@ -1,0 +1,110 @@
+---
+import { languages, getLangFromUrl } from '../i18n';
+
+const currentUrl = Astro.url;
+const currentLang = getLangFromUrl(currentUrl);
+const pathname = currentUrl.pathname;
+
+// 智能路徑轉換
+function getLanguageUrl(targetLang: string, currentPath: string, currentLang: string) {
+  // 如果目標語言與當前語言相同，不改變路徑
+  if (targetLang === currentLang) {
+    return currentPath;
+  }
+
+  // 如果目標語言是中文，移除 /en 前綴
+  if (targetLang === 'zh') {
+    if (currentPath.startsWith('/en/')) {
+      return currentPath.replace('/en/', '/');
+    } else if (currentPath === '/en') {
+      return '/';
+    }
+    return currentPath;
+  }
+
+  // 如果目標語言是英文，添加 /en 前綴
+  if (targetLang === 'en') {
+    if (currentPath === '/') {
+      return '/en';
+    } else if (currentPath.startsWith('/') && !currentPath.startsWith('/en/')) {
+      return `/en${currentPath}`;
+    }
+    return currentPath;
+  }
+
+  return currentPath;
+}
+---
+
+<div class="language-switcher">
+  {Object.entries(languages).map(([lang, label]) => {
+    const href = getLanguageUrl(lang, pathname, currentLang);
+    const isActive = currentLang === lang;
+
+    return (
+      <a
+        href={href}
+        class={`lang-link ${isActive ? 'active' : ''}`}
+        aria-label={`Switch to ${label}`}
+      >
+        {label}
+      </a>
+    );
+  })}
+</div>
+
+<style>
+  .language-switcher {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: 14px;
+  }
+
+  .lang-link {
+    padding: 6px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #9ca3af;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .lang-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .lang-link.active {
+    color: #60a5fa;
+    border-color: #60a5fa;
+    background: rgba(96, 165, 250, 0.1);
+  }
+</style>
+
+<script>
+  // Add lang attribute to html element for CSS targeting
+  document.documentElement.setAttribute('data-lang', document.documentElement.lang || 'zh');
+
+  // 記錄用戶語言偏好
+  document.addEventListener('DOMContentLoaded', function() {
+    const langLinks = document.querySelectorAll('.lang-link');
+    langLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+
+        // 記錄用戶偏好
+        if (href === '/en' || href.startsWith('/en/')) {
+          localStorage.setItem('userLanguagePreference', 'en');
+          console.log('User preference set to: English');
+        } else {
+          localStorage.setItem('userLanguagePreference', 'zh');
+          console.log('User preference set to: Chinese');
+        }
+      });
+    });
+  });
+</script>

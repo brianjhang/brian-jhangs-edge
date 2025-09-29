@@ -5,9 +5,64 @@ import Layout from '@/layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime.js';
 
-const aiPosts = await getCollection('ai');
+const allAIPosts = await getCollection('ai');
+
+// 智能文章選擇：中文介面優先中文版，避免重複
+const getSmartPostSelection = (posts) => {
+  const postMap = new Map();
+
+  // 先分離中文和非中文文章
+  const chinesePosts = [];
+  const nonChinesePosts = [];
+
+  posts.forEach(post => {
+    const slugParts = post.slug.split('/');
+    const languageCodes = ['en', 'zh-cn', 'ja-jp', 'ko-kr'];
+    const hasLanguagePrefix = languageCodes.includes(slugParts[0]);
+
+    const isCurrentChinese = !hasLanguagePrefix &&
+                            post.data.lang !== 'en' &&
+                            !post.slug.includes('-en');
+
+    if (isCurrentChinese) {
+      chinesePosts.push(post);
+    } else {
+      nonChinesePosts.push(post);
+    }
+  });
+
+  // 先處理非中文文章
+  nonChinesePosts.forEach(post => {
+    const slugParts = post.slug.split('/');
+    const languageCodes = ['en', 'zh-cn', 'ja-jp', 'ko-kr'];
+    const hasLanguagePrefix = languageCodes.includes(slugParts[0]);
+
+    let baseSlug;
+    if (hasLanguagePrefix) {
+      // 新格式：en/ai/tools/example -> ai/tools/example
+      baseSlug = slugParts.slice(1).join('/');
+    } else {
+      // 舊格式：tools/example-en -> tools/example
+      baseSlug = post.slug.replace('-en', '');
+    }
+
+    postMap.set(baseSlug, post);
+  });
+
+  // 再處理中文文章，直接覆蓋
+  chinesePosts.forEach(post => {
+    // 中文文章可能是新格式 ai/tools/example 或舊格式 tools/example
+    let baseSlug = post.slug.replace('-en', '');
+    postMap.set(baseSlug, post);
+  });
+
+  return Array.from(postMap.values());
+};
+
+const smartAIPosts = getSmartPostSelection(allAIPosts);
+
 // 為每篇文章計算閱讀時間
-const postsWithReadingTime = aiPosts.map(post => ({
+const postsWithReadingTime = smartAIPosts.map(post => ({
   ...post,
   dynamicReadingTime: calculateReadingTime(post.body)
 }));
@@ -31,7 +86,7 @@ const sortedPosts = postsWithReadingTime.sort((a, b) => new Date(b.data.date).ge
       
       <div class="series-stats">
         <div class="stat">
-          <span class="number">{aiPosts.length}</span>
+          <span class="number">{smartAIPosts.length}</span>
           <div class="label">篇文章</div>
         </div>
         <div class="stat">
@@ -46,7 +101,15 @@ const sortedPosts = postsWithReadingTime.sort((a, b) => new Date(b.data.date).ge
     <div class="container">
       <div class="posts-grid">
         {sortedPosts.map((post) => (
-          <article class="post-card" onclick={`location.href='/ai/${post.id.replace('.mdx', '')}'`}>
+          <article class="post-card" onclick={`location.href='/ai/${(() => {
+            // 處理 slug 邏輯：如果是新格式（以 ai/ 開頭），移除前綴；否則使用 id
+            let slug = post.slug;
+            if (slug.startsWith('ai/')) {
+              return slug.replace('ai/', '');
+            } else {
+              return post.id.replace('.mdx', '');
+            }
+          })()}'`}>
             <div class="post-meta">
               <time>{post.data.date}</time>
               <span class="difficulty" data-level={post.data.difficulty}>
@@ -56,7 +119,15 @@ const sortedPosts = postsWithReadingTime.sort((a, b) => new Date(b.data.date).ge
               <span class="reading-time">・{formatReadingTime(post.dynamicReadingTime)}</span>
             </div>
             
-            <h2><a href={`/ai/${post.slug}`}>{post.data.title}</a></h2>
+            <h2><a href={`/ai/${(() => {
+              // 處理 slug 邏輯：如果是新格式（以 ai/ 開頭），移除前綴；否則使用 slug
+              let slug = post.slug;
+              if (slug.startsWith('ai/')) {
+                return slug.replace('ai/', '');
+              } else {
+                return slug;
+              }
+            })()}`}>{post.data.title}</a></h2>
             <p class="post-summary">{post.data.summary}</p>
             
             {post.data.tags && (

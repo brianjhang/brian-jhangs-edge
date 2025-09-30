@@ -7,59 +7,23 @@ import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime
 
 const allAIPosts = await getCollection('ai');
 
-// 智能文章選擇：中文介面優先中文版，避免重複
-const getSmartPostSelection = (posts) => {
-  const postMap = new Map();
-
-  // 先分離中文和非中文文章
-  const chinesePosts = [];
-  const nonChinesePosts = [];
-
-  posts.forEach(post => {
-    const slugParts = post.slug.split('/');
-    const languageCodes = ['en', 'zh-cn', 'ja-jp', 'ko-kr'];
-    const hasLanguagePrefix = languageCodes.includes(slugParts[0]);
-
-    const isCurrentChinese = !hasLanguagePrefix &&
-                            post.data.lang !== 'en' &&
-                            !post.slug.endsWith('-en');
-
-    if (isCurrentChinese) {
-      chinesePosts.push(post);
-    } else {
-      nonChinesePosts.push(post);
-    }
-  });
-
-  // 先處理非中文文章
-  nonChinesePosts.forEach(post => {
-    const slugParts = post.slug.split('/');
-    const languageCodes = ['en', 'zh-cn', 'ja-jp', 'ko-kr'];
-    const hasLanguagePrefix = languageCodes.includes(slugParts[0]);
-
-    let baseSlug;
-    if (hasLanguagePrefix) {
-      // 新格式：en/ai/tools/example -> ai/tools/example
-      baseSlug = slugParts.slice(1).join('/');
-    } else {
-      // 舊格式：tools/example-en -> tools/example
-      baseSlug = post.slug.replace('-en', '');
-    }
-
-    postMap.set(baseSlug, post);
-  });
-
-  // 再處理中文文章，直接覆蓋
-  chinesePosts.forEach(post => {
-    // 中文文章可能是新格式 ai/tools/example 或舊格式 tools/example
-    let baseSlug = post.slug.replace('-en', '');
-    postMap.set(baseSlug, post);
-  });
-
-  return Array.from(postMap.values());
+// 標準化語言檢測函數
+const getLanguageFromSlug = (slug) => {
+  const languageCodes = ['en', 'zh-cn', 'ja-jp', 'ko-kr'];
+  const slugParts = slug.split('/');
+  return languageCodes.includes(slugParts[0]) ? slugParts[0] : 'zh-tw';
 };
 
-const smartAIPosts = getSmartPostSelection(allAIPosts);
+// 中文介面：只顯示有中文版本的文章
+const getChinesePostsOnly = (posts) => {
+  // 只返回中文文章，不做任何回退處理
+  return posts.filter(post => {
+    const language = getLanguageFromSlug(post.slug);
+    return language === 'zh-tw';
+  });
+};
+
+const smartAIPosts = getChinesePostsOnly(allAIPosts);
 
 // 為每篇文章計算閱讀時間
 const postsWithReadingTime = smartAIPosts.map(post => ({

@@ -22,7 +22,7 @@ const getSmartPostSelection = (posts) => {
     const hasLanguagePrefix = languageCodes.includes(slugParts[0]);
 
     // 取得基礎 slug（移除語言前綴或舊格式後綴）
-    let baseSlug = hasLanguagePrefix ? slugParts.slice(1).join('/') : post.slug.replace('-en', '');
+    let baseSlug = hasLanguagePrefix ? slugParts.slice(1).join('/') : post.slug;
 
     if (!postMap.has(baseSlug)) {
       // 如果是新文章，直接添加
@@ -31,7 +31,7 @@ const getSmartPostSelection = (posts) => {
       // 如果已存在，檢查是否應該替換
       const existing = postMap.get(baseSlug);
       // 如果當前文章是英文版，優先使用英文版
-      if (post.data.lang === 'en' || post.slug.endsWith('-en') || hasLanguagePrefix) {
+      if (post.data.lang === 'en' || hasLanguagePrefix) {
         postMap.set(baseSlug, post);
       }
     }
@@ -93,7 +93,7 @@ const description = "From basic concepts to practical applications, in-depth AI 
                 } else if (slug.startsWith('en/')) {
                   return slug.replace('en/', '');
                 } else {
-                  return post.id.replace('.mdx', '').replace('-en', '');
+                  return post.id.replace('.mdx', '');
                 }
               })()}`}>
                 <div class="post-meta">

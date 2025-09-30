@@ -5,6 +5,8 @@ import { getCollection } from "astro:content";
 import Layout from '../../layouts/Layout.astro';
 import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime.js';
 import { useTranslations } from '../../i18n';
+import { generateArticleLink } from '../../utils/linkGenerator';
+import { translationMap } from '../../data/translationMap';
 
 const t = useTranslations('en');
 
@@ -29,7 +31,7 @@ const getSmartPostSelection = (posts) => {
     const hasLanguagePrefix = languageCodes.includes(slugParts[0]);
 
     // 取得基礎 slug（移除語言前綴或舊格式後綴）
-    let baseSlug = hasLanguagePrefix ? slugParts.slice(1).join('/') : post.slug.replace('-en', '');
+    let baseSlug = hasLanguagePrefix ? slugParts.slice(1).join('/') : post.slug;
 
     if (!postMap.has(baseSlug)) {
       // 如果是新文章，直接添加
@@ -38,7 +40,7 @@ const getSmartPostSelection = (posts) => {
       // 如果已存在，檢查是否應該替換
       const existing = postMap.get(baseSlug);
       // 如果當前文章是英文版，優先使用英文版
-      if (post.data.lang === 'en' || post.slug.endsWith('-en') || hasLanguagePrefix) {
+      if (post.data.lang === 'en' || hasLanguagePrefix) {
         postMap.set(baseSlug, post);
       }
     }
@@ -54,22 +56,24 @@ const smartCryptoPosts = getSmartPostSelection(cryptoPosts);
 const smartBuildPosts = getSmartPostSelection(buildPosts);
 
 // 手動指定精選文章的 slug（可以指定多個，會自動選最新的）
+// 注意：slug 需要是完整路徑 (series/category/article-name)
 const featuredSlugs = {
   ai: [
-    'trends/openai-economic-report-2025',
-    'trends/o1-reasoning-revolution',
-    'trends/ai-agent-technology',
-    'tools/cursor-programming-revolution'
+    'en/ai/tools/astroedge-complete-guide',  // 英文版使用 en/ 前綴
+    'ai/trends/openai-economic-report-2025',
+    'ai/trends/o1-reasoning-revolution',
+    'ai/trends/ai-agent-technology',
+    'ai/tools/cursor-programming-revolution'
   ],
   startup: [
-    'book/naval-leverage-thinking-complete-guide',
-    'book/naval-wealth-principles',
-    'thiel/monopoly-business-truth'
+    'startup/book/naval-leverage-thinking-complete-guide',
+    'startup/book/naval-wealth-principles',
+    'startup/thiel/monopoly-business-truth'
   ],
   crypto: [
-    'concepts/stablecoin-complete-analysis',
-    'rwa/rwa-tokenization-complete-guide',
-    'concepts/etf-impact'
+    'crypto/concepts/stablecoin-complete-analysis',
+    'crypto/rwa/rwa-tokenization-complete-guide',
+    'crypto/concepts/etf-impact'
   ]
 };
 
@@ -111,15 +115,28 @@ const latestCrypto = getFeaturedPost(smartCryptoPosts, featuredSlugs.crypto);
 const allPosts = [...smartAIPosts, ...smartStartupPosts, ...smartCryptoPosts, ...smartBuildPosts];
 const recentPosts = allPosts.sort(byDateDesc).slice(0, 6);
 
-// 為文章添加閱讀時間
+// 為文章添加閱讀時間和智能連結
 const postsWithReadingTime = recentPosts.map(post => ({
   ...post,
-  readingTime: calculateReadingTime(post.body)
+  readingTime: calculateReadingTime(post.body),
+  displayUrl: generateArticleLink(post, 'en', translationMap)
 }));
 
-const latestAIWithTime = latestAI ? { ...latestAI, readingTime: calculateReadingTime(latestAI.body) } : null;
-const latestStartupWithTime = latestStartup ? { ...latestStartup, readingTime: calculateReadingTime(latestStartup.body) } : null;
-const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calculateReadingTime(latestCrypto.body) } : null;
+const latestAIWithTime = latestAI ? {
+  ...latestAI,
+  readingTime: calculateReadingTime(latestAI.body),
+  displayUrl: generateArticleLink(latestAI, 'en', translationMap)
+} : null;
+const latestStartupWithTime = latestStartup ? {
+  ...latestStartup,
+  readingTime: calculateReadingTime(latestStartup.body),
+  displayUrl: generateArticleLink(latestStartup, 'en', translationMap)
+} : null;
+const latestCryptoWithTime = latestCrypto ? {
+  ...latestCrypto,
+  readingTime: calculateReadingTime(latestCrypto.body),
+  displayUrl: generateArticleLink(latestCrypto, 'en', translationMap)
+} : null;
 
 const title = "Brian Jhang's Edge — AI × Startups × Crypto";
 const description = "Exploring infinite possibilities at the intersection of AI, entrepreneurship, and cryptocurrency. Featured insights and cutting-edge analysis.";
@@ -183,7 +200,7 @@ const description = "Exploring infinite possibilities at the intersection of AI,
       <h2 class="title">{t('featured.title')}</h2>
       <div class="grid grid-3">
         {latestAIWithTime && (
-          <a class="card" href={`/en/ai/${latestAIWithTime.id.replace('.mdx', '')}`}>
+          <a class="card" href={latestAIWithTime.displayUrl}>
             <div class="muted">{latestAIWithTime.data.date} · <span class="tag tag-ai">{t('nav.ai')}</span> · {formatReadingTime(latestAIWithTime.readingTime)}</div>
             <h3 style="margin:6px 0 8px 0;color:#fff">{latestAIWithTime.data.title}</h3>
             <p class="muted">{latestAIWithTime.data.summary}</p>
@@ -195,7 +212,7 @@ const description = "Exploring infinite possibilities at the intersection of AI,
           </a>
         )}
         {latestStartupWithTime && (
-          <a class="card" href={`/en/startup/${latestStartupWithTime.slug}`}>
+          <a class="card" href={latestStartupWithTime.displayUrl}>
             <div class="muted">{latestStartupWithTime.data.date} · <span class="tag tag-startup">{t('nav.startup')}</span> · {formatReadingTime(latestStartupWithTime.readingTime)}</div>
             <h3 style="margin:6px 0 8px 0;color:#fff">{latestStartupWithTime.data.title}</h3>
             <p class="muted">{latestStartupWithTime.data.summary}</p>
@@ -207,7 +224,7 @@ const description = "Exploring infinite possibilities at the intersection of AI,
           </a>
         )}
         {latestCryptoWithTime && (
-          <a class="card" href={`/en/crypto/${latestCryptoWithTime.slug}`}>
+          <a class="card" href={latestCryptoWithTime.displayUrl}>
             <div class="muted">{latestCryptoWithTime.data.date} · <span class="tag tag-crypto">{t('nav.crypto')}</span> · {formatReadingTime(latestCryptoWithTime.readingTime)}</div>
             <h3 style="margin:6px 0 8px 0;color:#fff">{latestCryptoWithTime.data.title}</h3>
             <p class="muted">{latestCryptoWithTime.data.summary}</p>
@@ -231,7 +248,7 @@ const description = "Exploring infinite possibilities at the intersection of AI,
           const categoryPath = post.collection;
           const tagClass = `tag tag-${post.collection}`;
           return (
-            <a class="card" href={`/en/${categoryPath}/${post.id.replace('.mdx', '')}`}>
+            <a class="card" href={post.displayUrl}>
               <div class="muted">{post.data.date} · <span class={tagClass}>{category}</span> · {formatReadingTime(post.readingTime)}</div>
               <h3 style="margin:6px 0 8px 0;color:#fff">{post.data.title}</h3>
               <p class="muted">{post.data.summary}</p>
@@ -506,8 +523,6 @@ const description = "Exploring infinite possibilities at the intersection of AI,
     .card {
       padding: 16px;
     }
-  }
-    margin-bottom: 3rem;
   }
 
   .language-selector {

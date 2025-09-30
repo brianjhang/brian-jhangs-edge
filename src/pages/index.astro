@@ -28,7 +28,7 @@ const getSmartPostSelection = (posts) => {
 
     const isCurrentChinese = !hasLanguagePrefix &&
                             post.data.lang !== 'en' &&
-                            !post.slug.endsWith('-en');
+                            true;
 
     if (isCurrentChinese) {
       chinesePosts.push(post);
@@ -76,21 +76,21 @@ const byDateDesc = (a, b) => new Date(b.data.date) - new Date(a.data.date);
 // 手動指定精選文章的 slug（可以指定多個，會自動選最新的）
 const featuredSlugs = {
   ai: [
-    'tools/astroedge-complete-guide',
-    'trends/openai-economic-report-2025',
-    'trends/o1-reasoning-revolution',
-    'trends/ai-agent-technology',
-    'tools/cursor-programming-revolution'
+    'ai/tools/astroedge-complete-guide',
+    'ai/trends/openai-economic-report-2025',
+    'ai/trends/o1-reasoning-revolution',
+    'ai/trends/ai-agent-technology',
+    'ai/tools/cursor-programming-revolution'
   ],
   startup: [
-    'book/naval-leverage-thinking-complete-guide',
-    'book/naval-wealth-principles',
-    'thiel/monopoly-business-truth'
+    'startup/book/naval-leverage-thinking-complete-guide',
+    'startup/book/naval-wealth-principles',
+    'startup/thiel/monopoly-business-truth'
   ],
   crypto: [
-    'concepts/stablecoin-complete-analysis',
-    'rwa/rwa-tokenization-complete-guide',
-    'concepts/etf-impact'
+    'crypto/concepts/stablecoin-complete-analysis',
+    'crypto/rwa/rwa-tokenization-complete-guide',
+    'crypto/concepts/etf-impact'
   ]
 };
 
@@ -132,15 +132,38 @@ const latestCrypto = getFeaturedPost(cryptoPosts, featuredSlugs.crypto);
 const allPosts = [...aiPosts, ...startupPosts, ...cryptoPosts, ...buildPosts];
 const recentPosts = allPosts.sort(byDateDesc).slice(0, 6);
 
-// 為文章添加閱讀時間
+// 生成完整的顯示 URL（避免 slug 不完整問題）
+const getDisplayUrl = (post) => {
+  // 如果 slug 已包含系列前綴，直接使用
+  if (post.slug && post.slug.startsWith(`${post.collection}/`)) {
+    return `/${post.slug}`;
+  }
+  // 否則使用 collection + id
+  return `/${post.collection}/${post.id.replace('.mdx', '')}`;
+};
+
+// 為文章添加閱讀時間和顯示 URL
 const postsWithReadingTime = recentPosts.map(post => ({
   ...post,
-  readingTime: calculateReadingTime(post.body)
+  readingTime: calculateReadingTime(post.body),
+  displayUrl: getDisplayUrl(post)
 }));
 
-const latestAIWithTime = latestAI ? { ...latestAI, readingTime: calculateReadingTime(latestAI.body) } : null;
-const latestStartupWithTime = latestStartup ? { ...latestStartup, readingTime: calculateReadingTime(latestStartup.body) } : null;
-const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calculateReadingTime(latestCrypto.body) } : null;
+const latestAIWithTime = latestAI ? {
+  ...latestAI,
+  readingTime: calculateReadingTime(latestAI.body),
+  displayUrl: getDisplayUrl(latestAI)
+} : null;
+const latestStartupWithTime = latestStartup ? {
+  ...latestStartup,
+  readingTime: calculateReadingTime(latestStartup.body),
+  displayUrl: getDisplayUrl(latestStartup)
+} : null;
+const latestCryptoWithTime = latestCrypto ? {
+  ...latestCrypto,
+  readingTime: calculateReadingTime(latestCrypto.body),
+  displayUrl: getDisplayUrl(latestCrypto)
+} : null;
 ---
 
 <Layout 
@@ -171,7 +194,7 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
       "@type": "BlogPosting",
       "headline": post.data.title,
       "description": post.data.summary,
-      "url": `https://brianjhang.com/${post.collection}/${post.id.replace('.mdx', '')}`,
+      "url": `https://brianjhang.com/${post.slug}`,
       "datePublished": post.data.publishedDate || `${post.data.date}T00:00:00+08:00`,
       "dateModified": post.data.modifiedDate || `${post.data.date}T00:00:00+08:00`,
       "author": {
@@ -184,7 +207,7 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": `https://brianjhang.com/${post.collection}/${post.id.replace('.mdx', '')}`
+        "@id": `https://brianjhang.com/${post.slug}`
       },
       "keywords": post.data.keywords ? post.data.keywords.join(", ") : "",
       "articleSection": post.collection === 'ai' ? 'AI小百科' : post.collection === 'startup' ? '創業筆記' : post.collection === 'build' ? '建設日誌' : '幣圈筆記'
@@ -202,15 +225,7 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
       <h2 class="title">知識精選</h2>
       <div class="grid grid-3">
         {latestAIWithTime && (
-          <a class="card" href={`/ai/${(() => {
-            // 處理 slug 邏輯：如果是新格式（以 ai/ 開頭），移除前綴；否則使用 id
-            let slug = latestAIWithTime.slug;
-            if (slug.startsWith('ai/')) {
-              return slug.replace('ai/', '');
-            } else {
-              return latestAIWithTime.id.replace('.mdx', '');
-            }
-          })()}`}>
+          <a class="card" href={`/${latestAIWithTime.slug}`}>
             <div class="muted">{latestAIWithTime.data.date} · <span class="tag tag-ai">AI小百科</span> · {formatReadingTime(latestAIWithTime.readingTime)}</div>
             <h3 style="margin:6px 0 8px 0;color:#fff">{latestAIWithTime.data.title}</h3>
             <p class="muted">{latestAIWithTime.data.summary}</p>
@@ -222,7 +237,7 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
           </a>
         )}
         {latestStartupWithTime && (
-          <a class="card" href={`/startup/${latestStartupWithTime.slug}`}>
+          <a class="card" href={latestStartupWithTime.displayUrl}>
             <div class="muted">{latestStartupWithTime.data.date} · <span class="tag tag-startup">創業筆記</span> · {formatReadingTime(latestStartupWithTime.readingTime)}</div>
             <h3 style="margin:6px 0 8px 0;color:#fff">{latestStartupWithTime.data.title}</h3>
             <p class="muted">{latestStartupWithTime.data.summary}</p>
@@ -234,7 +249,7 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
           </a>
         )}
         {latestCryptoWithTime && (
-          <a class="card" href={`/crypto/${latestCryptoWithTime.slug}`}>
+          <a class="card" href={latestCryptoWithTime.displayUrl}>
             <div class="muted">{latestCryptoWithTime.data.date} · <span class="tag tag-crypto">幣圈筆記</span> · {formatReadingTime(latestCryptoWithTime.readingTime)}</div>
             <h3 style="margin:6px 0 8px 0;color:#fff">{latestCryptoWithTime.data.title}</h3>
             <p class="muted">{latestCryptoWithTime.data.summary}</p>
@@ -258,7 +273,7 @@ const latestCryptoWithTime = latestCrypto ? { ...latestCrypto, readingTime: calc
           const categoryPath = post.collection;
           const tagClass = `tag tag-${post.collection}`;
           return (
-            <a class="card" href={`/${categoryPath}/${post.id.replace('.mdx', '')}`}>
+            <a class="card" href={post.displayUrl}>
               <div class="muted">{post.data.date} · <span class={tagClass}>{category}</span> · {formatReadingTime(post.readingTime)}</div>
               <h3 style="margin:6px 0 8px 0;color:#fff">{post.data.title}</h3>
               <p class="muted">{post.data.summary}</p>

@@ -7,6 +7,7 @@ import Breadcrumb from '../../components/Breadcrumb.astro';
 import RelatedArticles from '../../components/RelatedArticles.astro';
 import SocialShare from '../../components/SocialShare.astro';
 import Comments from '../../components/Comments.astro';
+import LanguageNotice from '@/components/LanguageNotice.astro';
 import { calculateReadingTime, formatReadingTime } from '../../utils/readingTime.js';
 import { extractEntityLinks, getEntityLinks } from '../../utils/entityMapping.js';
 import { parseFAQ } from '../../utils/faqParser.js';
@@ -14,10 +15,17 @@ import { parseFAQ } from '../../utils/faqParser.js';
 export async function getStaticPaths() {
   const startupPosts = await getCollection('startup');
 
-  // 只為中文文章生成中文路由，嚴格排除英文文章
+  // 標準化語言檢測函數
+  const getLanguageFromSlug = (slug) => {
+    const languageCodes = ['en', 'zh-cn', 'ja-jp', 'ko-kr'];
+    const slugParts = slug.split('/');
+    return languageCodes.includes(slugParts[0]) ? slugParts[0] : 'zh-tw';
+  };
+
+  // 只為中文文章生成中文路由，嚴格排除其他語言文章
   const chinesePosts = startupPosts.filter(post => {
-    const isEnglish = post.data.lang === 'en' || post.slug.endsWith('-en');
-    return !isEnglish;
+    const language = getLanguageFromSlug(post.slug);
+    return language === 'zh-tw';
   });
 
   return chinesePosts.map((post) => {
@@ -73,6 +81,10 @@ const entityLinks = extractEntityLinks(post.data.tags);
 // 解析 FAQ 內容
 const faqSchema = parseFAQ(post.body, post.data.title);
 
+// 偵測語言切換參數
+const fromLang = Astro.url.searchParams.get('from_lang');
+const contentLang = post.data.lang || 'zh-TW';
+
 // 生成麵包屑
 const breadcrumbItems = [
   { title: '創業筆記', url: '/startup' },
@@ -86,6 +98,13 @@ const breadcrumbItems = [
   description={description}
   image={ogImage}
 >
+  <!-- 語言不匹配提示 -->
+  <LanguageNotice
+    currentLang="zh-TW"
+    contentLang={contentLang}
+    fromLang={fromLang}
+  />
+
   <!-- Article Schema JSON-LD -->
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",

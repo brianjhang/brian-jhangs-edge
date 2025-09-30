@@ -4,6 +4,7 @@ export const prerender = true;
 import { getCollection } from "astro:content";
 import Layout from '../../../layouts/Layout.astro';
 import SocialShare from '../../../components/SocialShare.astro';
+import LanguageNotice from '../../../components/LanguageNotice.astro';
 import { calculateReadingTime, formatReadingTime } from '../../../utils/readingTime.js';
 import { useTranslations } from '../../../i18n';
 
@@ -12,15 +13,77 @@ const t = useTranslations('en');
 export async function getStaticPaths() {
   const allStartupPosts = await getCollection("startup");
 
-  // 只為英文文章生成英文路由
-  const englishPosts = allStartupPosts.filter(post =>
-    post.data.lang === 'en'
-  );
+  // 標準化語言檢測函數
+  const getLanguageFromSlug = (slug) => {
+    const languageCodes = ['en', 'zh-cn', 'ja-jp', 'ko-kr'];
+    const slugParts = slug.split('/');
+    return languageCodes.includes(slugParts[0]) ? slugParts[0] : 'zh-tw';
+  };
 
-  return englishPosts.map(post => ({
-    params: { slug: post.slug },
-    props: { post }
-  }));
+  // 智能文章選擇：英文優先，中文作為 fallback
+  const getSmartPostSelection = (posts) => {
+    const postMap = new Map();
+    const englishPosts = [];
+    const chinesePosts = [];
+
+    posts.forEach(post => {
+      const language = getLanguageFromSlug(post.slug);
+      if (language === 'en') {
+        englishPosts.push(post);
+      } else {
+        chinesePosts.push(post);
+      }
+    });
+
+    // 先處理中文文章作為 fallback
+    chinesePosts.forEach(post => {
+      let baseSlug = post.slug;
+      if (baseSlug.startsWith('startup/')) {
+        baseSlug = baseSlug.replace('startup/', '');
+      } else {
+        baseSlug = post.id.replace('.mdx', '');
+      }
+      postMap.set(baseSlug, post);
+    });
+
+    // 然後處理英文文章，覆蓋中文文章
+    englishPosts.forEach(post => {
+      let baseSlug = post.slug;
+      if (baseSlug.startsWith('en/startup/')) {
+        baseSlug = baseSlug.replace('en/startup/', '');
+      } else if (baseSlug.startsWith('en/')) {
+        baseSlug = baseSlug.replace('en/', '');
+      } else if (baseSlug.startsWith('startup/')) {
+        baseSlug = baseSlug.replace('startup/', '');
+      } else {
+        baseSlug = post.id.replace('.mdx', '');
+      }
+      postMap.set(baseSlug, post);
+    });
+
+    return Array.from(postMap.values());
+  };
+
+  const smartPosts = getSmartPostSelection(allStartupPosts);
+
+  return smartPosts.map(post => {
+    // 根據新的多語架構生成 slug 參數
+    let slugParam;
+    const language = getLanguageFromSlug(post.slug);
+
+    if (language === 'en') {
+      // 英文文章：從 "en/startup/tools/example" 提取 "tools/example"
+      slugParam = post.slug.replace('en/startup/', '');
+    } else {
+      // 中文文章：從 "startup/tools/example" 提取 "tools/example"
+      slugParam = post.slug.replace('startup/', '');
+    }
+
+    return {
+      params: { slug: slugParam },
+      props: { post }
+    };
+  });
 }
 
 const { post } = Astro.props;
@@ -29,8 +92,25 @@ const { Content } = await post.render();
 // 計算閱讀時間
 const readingTime = calculateReadingTime(post.body);
 
-// 構建完整的 URL
-const fullUrl = `https://brianjhang.com/en/startup/${post.slug}`;
+// 檢測語言不匹配 - 使用 data.lang 或從 slug 推斷
+const contentLang = post.data.lang || (post.slug.startsWith('en/') ? 'en' : 'zh-TW');
+const fromLang = Astro.url.searchParams.get('from_lang');
+
+// 判斷是否為 Fallback 頁面（英文 URL 但中文內容）
+const isFallbackPage = contentLang !== 'en';
+
+// 構建 URL
+const currentUrl = `https://brianjhang.com/en/startup/${Astro.params.slug}`;
+const canonicalUrl = isFallbackPage
+  ? `https://brianjhang.com/${post.slug}`  // 指向中文原始版本
+  : currentUrl;  // 英文頁面指向自己
+
+// 構建 hreflang URLs
+const chineseUrl = `https://brianjhang.com/${post.slug.replace(/^en\//, '')}`;
+const englishUrl = contentLang === 'en' ? currentUrl : null;
+
+// 向下相容：保留 fullUrl 供 SocialShare 使用
+const fullUrl = currentUrl;
 
 // 處理 OG 圖片
 const ogImage = post.data.image
@@ -47,6 +127,26 @@ const title = `${post.data.title} - ${t('nav.startup')} - Brian Jhang's Edge`;
   type="article"
   lang="en"
 >
+  <!-- SEO Meta 標籤：智能 Fallback 方案 -->
+  <link rel="canonical" href={canonicalUrl} slot="head" />
+
+  {isFallbackPage ? (
+    <>
+      <!-- Fallback 頁面：禁止索引，指向中文原始版本 -->
+      <meta name="robots" content="noindex, follow" slot="head" />
+      <link rel="alternate" hreflang="zh-Hant" href={chineseUrl} slot="head" />
+      <link rel="alternate" hreflang="zh" href={chineseUrl} slot="head" />
+    </>
+  ) : (
+    <>
+      <!-- 真實英文頁面：雙向 hreflang -->
+      <link rel="alternate" hreflang="en" href={englishUrl} slot="head" />
+      <link rel="alternate" hreflang="zh-Hant" href={chineseUrl} slot="head" />
+      <link rel="alternate" hreflang="zh" href={chineseUrl} slot="head" />
+      <link rel="alternate" hreflang="x-default" href={englishUrl} slot="head" />
+    </>
+  )}
+
   <!-- 結構化數據 -->
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
@@ -54,7 +154,7 @@ const title = `${post.data.title} - ${t('nav.startup')} - Brian Jhang's Edge`;
     "headline": post.data.title,
     "description": post.data.summary,
     "image": ogImage,
-    "url": fullUrl,
+    "url": canonicalUrl,
     "datePublished": post.data.publishedDate || `${post.data.date}T00:00:00+08:00`,
     "dateModified": post.data.modifiedDate || `${post.data.date}T00:00:00+08:00`,
     "author": {
@@ -68,13 +168,20 @@ const title = `${post.data.title} - ${t('nav.startup')} - Brian Jhang's Edge`;
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": fullUrl
+      "@id": currentUrl
     },
     "articleSection": t('nav.startup'),
     "keywords": post.data.keywords ? post.data.keywords.join(", ") : "",
     "wordCount": post.body.split(' ').length,
     "inLanguage": "en-US"
   })}></script>
+
+  <!-- 語言不匹配提醒 -->
+  <LanguageNotice
+    currentLang="en"
+    contentLang={contentLang}
+    fromLang={fromLang}
+  />
 
   <article class="article-container">
     <header class="article-header">

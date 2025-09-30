@@ -15,12 +15,12 @@ const getSmartPostSelection = (posts) => {
   const postMap = new Map();
 
   posts.forEach(post => {
-    const baseSlug = post.slug.replace('-en', '');
+    const baseSlug = post.slug;
 
     if (!postMap.has(baseSlug)) {
       postMap.set(baseSlug, post);
     } else {
-      if (post.data.lang === 'en' || post.slug.endsWith('-en')) {
+      if (post.data.lang === 'en') {
         postMap.set(baseSlug, post);
       }
     }

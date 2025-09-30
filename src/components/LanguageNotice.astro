@@ -1,0 +1,186 @@
+---
+/**
+ * 語言不匹配提醒元件
+ * 當使用者在英文版頁面但內容為中文時顯示
+ */
+export interface Props {
+  currentLang: string;
+  contentLang: string;
+  fromLang?: string | null;
+}
+
+const { currentLang, contentLang, fromLang } = Astro.props;
+
+// 只在語言不匹配時顯示
+const shouldDisplay = currentLang !== contentLang || fromLang;
+---
+
+{shouldDisplay && (
+  <div class="language-notice-banner" id="language-notice">
+    <div class="notice-content">
+      <span class="notice-icon">📢</span>
+      <div class="notice-text">
+        <h4>This article is currently only available in Chinese.</h4>
+        <p>You are now viewing the original version.</p>
+      </div>
+    </div>
+
+    <div class="notice-actions">
+      <button onclick="translatePage()" class="btn-translate" type="button">
+        🌐 Translate to English
+      </button>
+      <a href="/en" class="btn-back">
+        ← Back to English Content
+      </a>
+      <button onclick="dismissNotice()" class="btn-dismiss" type="button" aria-label="Close notice">
+        ×
+      </button>
+    </div>
+  </div>
+)}
+
+<script>
+  function translatePage() {
+    const currentUrl = window.location.href.split('?')[0];
+    const googleTranslateUrl = `https://translate.google.com/translate?sl=auto&tl=en&u=${encodeURIComponent(currentUrl)}`;
+    window.open(googleTranslateUrl, '_blank');
+  }
+
+  function dismissNotice() {
+    const notice = document.getElementById('language-notice');
+    if (notice) {
+      notice.style.display = 'none';
+      sessionStorage.setItem('language-notice-dismissed', 'true');
+    }
+  }
+
+  // 檢查是否已關閉過提醒
+  if (sessionStorage.getItem('language-notice-dismissed')) {
+    const notice = document.getElementById('language-notice');
+    if (notice) {
+      notice.style.display = 'none';
+    }
+  }
+
+  // 綁定全域函數供 inline onclick 使用
+  (window as any).translatePage = translatePage;
+  (window as any).dismissNotice = dismissNotice;
+</script>
+
+<style>
+  .language-notice-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .notice-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .notice-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .notice-text h4 {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .notice-text p {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+
+  .notice-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-translate, .btn-back, .btn-dismiss {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-translate {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  .btn-translate:hover {
+    background: rgba(255,255,255,0.3);
+  }
+
+  .btn-back {
+    color: rgba(255,255,255,0.9);
+    text-decoration: none;
+  }
+
+  .btn-back:hover {
+    color: white;
+    text-decoration: underline;
+  }
+
+  .btn-dismiss {
+    background: transparent;
+    color: rgba(255,255,255,0.7);
+    font-size: 18px;
+    padding: 4px 8px;
+  }
+
+  .btn-dismiss:hover {
+    color: white;
+    background: rgba(255,255,255,0.1);
+  }
+
+  /* 響應式設計 */
+  @media (max-width: 768px) {
+    .language-notice-banner {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .notice-content {
+      min-width: 100%;
+    }
+
+    .notice-actions {
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .btn-translate, .btn-back {
+      flex: 1;
+      text-align: center;
+    }
+
+    .btn-dismiss {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+    }
+  }
+</style>

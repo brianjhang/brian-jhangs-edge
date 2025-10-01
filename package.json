@@ -23,6 +23,7 @@
     "performance:trends": "node scripts/performance-trends.js",
     "build:measure": "node scripts/build-performance-monitor.js",
     "validate:frontmatter": "node scripts/validate-frontmatter.js",
+    "fix:frontmatter": "node scripts/fix-frontmatter.js",
     "system:health": "node scripts/system-health-check.js",
     "project:maintenance": "node scripts/project-maintenance.js",
     "maintenance:audit": "npm audit && npm outdated",

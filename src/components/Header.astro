@@ -81,40 +81,46 @@ const t = useTranslations(currentLang);
   }
   
   @media (max-width: 768px) {
-    .nav-container {
-      gap: 16px;
-    }
-
-    nav {
-      gap: 8px;
-    }
-
-    nav a {
-      font-size: 13px;
-      padding: 4px 6px;
-    }
-
-    .language-switcher-container {
-      margin-left: auto;
-    }
-  }
-
-  @media (max-width: 480px) {
     .header-content {
+      flex-wrap: wrap;
       padding: 12px 16px;
+      gap: 12px;
     }
 
     .brand {
       font-size: 16px;
+      flex: 0 0 auto;
     }
 
     .nav-container {
+      flex: 1 1 100%;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    nav {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .language-switcher-container {
+      flex-shrink: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    nav {
       gap: 12px;
     }
 
     nav a {
-      font-size: 12px;
-      padding: 3px 5px;
+      font-size: 13px;
     }
   }
 </style>

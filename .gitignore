@@ -31,6 +31,10 @@ docs/
 README-dev.md
 *_PLANNING.md
 
+# Performance monitoring reports (local only)
+performance-reports/
+build-metrics/
+
 # AI assistant specific files (not for public)
 CLAUDE.md
 GEMINI.md

@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# Pre-commit hook: 驗證 frontmatter 格式
+# 自動檢查 MDX 文章的 frontmatter 是否符合規範
+
+echo "🔍 執行 frontmatter 驗證..."
+
+# 只檢查被修改的 MDX 檔案
+CHANGED_MDX=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(mdx|md)$' | grep 'src/content/')
+
+if [ -z "$CHANGED_MDX" ]; then
+  echo "✅ 無 MDX 檔案變更，跳過驗證"
+  exit 0
+fi
+
+echo "檢查到以下檔案變更："
+echo "$CHANGED_MDX"
+echo ""
+
+# 執行 frontmatter 驗證
+npm run validate:frontmatter --silent
+
+RESULT=$?
+
+if [ $RESULT -eq 0 ]; then
+  echo "✅ Frontmatter 驗證通過"
+  exit 0
+else
+  echo ""
+  echo "❌ Frontmatter 驗證失敗"
+  echo ""
+  echo "💡 建議："
+  echo "   1. 執行自動修正: npm run fix:frontmatter"
+  echo "   2. 手動修正後重新提交"
+  echo "   3. 如需跳過驗證: git commit --no-verify"
+  echo ""
+  exit 1
+fi

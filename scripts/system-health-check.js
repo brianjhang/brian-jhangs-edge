@@ -388,14 +388,18 @@ function checkFrontmatterConsistency(contentDir) {
           const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
 
           if (frontmatterMatch) {
-            const frontmatter = frontmatterMatch[1];
-            // 簡單檢查：是否有單引號（應該用雙引號）
-            if (frontmatter.includes("'")) {
+            // 改進: 使用更嚴格的驗證邏輯
+            // 檢查是否缺少必要的 frontmatter 標記
+            if (!frontmatterMatch || frontmatterMatch[1].trim().length === 0) {
               inconsistentFiles.push(itemPath);
             }
+          } else {
+            // 完全缺少 frontmatter
+            inconsistentFiles.push(itemPath);
           }
         } catch (error) {
-          // 忽略讀取錯誤
+          // 讀取錯誤視為格式問題
+          inconsistentFiles.push(itemPath);
         }
       }
     }

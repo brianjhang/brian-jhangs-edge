@@ -31,7 +31,7 @@ const CONFIG = {
   ogDir: join(rootDir, 'public/images/og'),
   series: ['ai', 'crypto', 'startup', 'build'],
   supportedExtensions: ['.mdx'],
-  ogExtension: '.png'
+  ogExtension: '.webp'  // 更新: 專案已轉換為 WebP 格式
 };
 
 /**
@@ -95,10 +95,10 @@ class PathUtils {
     const pathParts = relativePath.split('/');
     const fileName = pathParts[pathParts.length - 1];
     
-    // 處理檔名：complete-guide.mdx -> complete-guide.png
+    // 處理檔名：complete-guide.mdx -> complete-guide.webp
     let ogFileName;
     if (fileName === 'complete-guide.mdx') {
-      ogFileName = 'complete-guide.png';
+      ogFileName = 'complete-guide.webp';
     } else {
       ogFileName = fileName.replace(/\.mdx$/, CONFIG.ogExtension);
     }

@@ -95,8 +95,7 @@ const breadcrumbItems = [
     "headline": post.data.title,
     "description": post.data.description || post.data.summary,
     "image": ogImage.startsWith('http') ? ogImage : `https://brianjhang.com${ogImage}`,
-    "articleBody": post.body,
-    "wordCount": post.body.length,
+    "wordCount": post.body.split(/\s+/).length,
     "articleSection": ["建設日誌", post.data.category || "日誌"],
     "about": entityLinks.length > 0 ? entityLinks.map(entity => ({
       "@type": "Thing",

@@ -42,7 +42,7 @@
     "@astrojs/react": "^4.3.0",
     "@astrojs/sitemap": "^3.5.0",
     "@astrojs/vercel": "^8.0.4",
-    "@vercel/og": "^0.8.5",
+    "@vercel/og": "^1.0.0",
     "gray-matter": "^4.0.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
